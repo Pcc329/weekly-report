@@ -35,5 +35,9 @@
 - `index.html`: 主要的入口網頁，包含 CSS 樣式與 Google Doc 嵌入連結。
 - `README.md`: 本說明文件。
 
+## 🔗 快速連結
+- [📅 Weekly Report (Friday Release)](weekly.html) - 每週五定期更新
+- [⚡ Status Update](realtime.html) - 專案最新進度隨時同步
+
 ---
 © 2025 III 產業資料庫專案小組 | Updated Every Friday
