@@ -6,7 +6,7 @@
     <title>Weekly Analysis Report (Friday Release)</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
+            --primary-color: #2c3e50;           
             --bg-color: #f8f9fa;
             --card-bg: #ffffff;
             --accent-color: #3498db;
