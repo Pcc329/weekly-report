@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Analysis Report (Friday Release)</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --accent-color: #3498db;
+        }
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            margin: 2rem 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        .info-bar {
+            background: var(--card-bg);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .report-frame {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            flex-grow: 1;
+            border: 1px solid #e0e0e0;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        footer {
+            padding: 1rem;
+            color: #999;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📊 專案進度週報看板</h1>
+        <div style="font-size: 0.9rem; opacity: 0.8;">Weekly Analysis Report (Friday Release)</div>
+    </header>
+
+    <div class="container">
+        <div class="info-bar">
+            <strong>💡 使用說明：</strong> 本網頁固定同步 Google Doc 最新進度。每週五中午前完成更新，無需更換連結。
+        </div>
+
+        <div class="report-frame">
+            <!-- 重要：請將 src 內的連結替換為您在 Google Doc「發布到網路」取得的連結 -->
+            <iframe src="https://docs.google.com/document/d/e/2PACX-1vT4tLgUbZDafe0_uQeovkovTIhn8JUfNqzI54LuRrVil8eKKAejvSBgeSgs0KTF0Q/pub"></iframe>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 III 產業資料庫專案 | Updated Weekly on Friday
+    </footer>
+
+</body>
+</html>
