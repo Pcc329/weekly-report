@@ -1,63 +1,56 @@
-<a href="index.html" class="back-home-btn">🏠 回到報告首頁</a>
-
 <style>
-    .back-home-btn {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        padding: 12px 24px;
-        background-color: #34495e; /* 深灰藍色，顯專業感 */
-        color: white;
-        text-decoration: none;
-        border-radius: 50px; /* 膠囊狀設計 */
-        font-weight: bold;
-        font-size: 16px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        z-index: 9999; /* 確保按鈕永遠在最上層 */
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .back-home-btn:hover {
-        background-color: #2c3e50;
-        transform: scale(1.05); /* 滑鼠移上去稍微變大 */
-        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    }
-    
-    /* 手機版稍微調小一點，避免擋住太多內容 */
-    @media (max-width: 600px) {
         .back-home-btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            top: 10px;
-            left: 10px;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            padding: 12px 24px;
+            background-color: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-    }
-</style>
+        .back-home-btn:hover {
+            background-color: #2c3e50;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 600px) {
+            .back-home-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- ✅ 按鈕放在 body 裡面才會正常顯示 -->
+    <a href="index.html" class="back-home-btn">🏠 回到報告首頁</a>
 
     <header>
         <h1>📊 專案進度週報看板</h1>
         <div style="font-size: 0.9rem; opacity: 0.8;">Weekly Analysis Report (Friday Release)</div>
     </header>
-
     <div class="container">
         <div class="info-bar">
             <strong>💡 使用說明：</strong> 本網頁固定同步 Google Doc 最新進度。每週五中午前完成更新，無須更換連結。
         </div>
-
         <div class="report-frame">
-            <!-- 重要：請將 src 內的連結替換為您在 Google Doc「發布到網路」取得的連結 -->
             <iframe src="https://docs.google.com/document/d/e/2PACX-1vTHINNxPeX5wuI0yAaDmLJoZvGMDcBC2Jzdr1MxcQX4W5u-SY4ZIGsiRg3fCMtM1Q/pub"></iframe>
         </div>
     </div>
-
     <footer>
         &copy; 2025 III 產業資料庫專案 | Updated Weekly on Friday
     </footer>
-
 </body>
 </html>
