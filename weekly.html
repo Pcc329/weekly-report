@@ -1,115 +1,140 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Report - 專案週報</title>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --bg-color: #f4f7f6;
-        }
-        body {
-            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* 膠囊按鈕樣式 */
-        .back-home-btn {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            padding: 12px 24px;
-            background-color: #34495e;
-            color: white !important;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 9999;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .back-home-btn:hover {
-            background-color: #2c3e50;
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>專案進度週報</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <style>
+    :root { --primary: #2c3e50; --teal: #1D9E75; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      background: #f4f7f6; margin: 0; padding: 0;
+    }
+    .back-home-btn {
+      position: fixed; top: 15px; left: 15px;
+      padding: 10px 20px; background: #34495e; color: white;
+      text-decoration: none; border-radius: 50px; font-weight: bold;
+      font-size: 14px; z-index: 9999; transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .back-home-btn:hover { background: #2c3e50; transform: scale(1.05); }
+    header {
+      background: var(--primary); color: white;
+      padding: 48px 20px 24px; text-align: center;
+    }
+    header h1 { margin: 0 0 6px; font-size: 1.8rem; }
+    header p { margin: 0; opacity: 0.7; font-size: 0.9rem; }
+    .container { width: 95%; max-width: 1000px; margin: 24px auto; }
 
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 0 20px;
-            text-align: center;
-        }
-        .container {
-            width: 95%;
-            max-width: 1000px;
-            margin: 20px auto;
-        }
-        .info-bar {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #3498db;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .report-frame {
-            background: white;
-            border-radius: 8px;
-            height: 80vh;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        footer {
-            padding: 20px;
-            color: #999;
-            font-size: 0.8rem;
-            text-align: center;
-        }
+    /* KPI 自動數字列 */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: white; border-radius: 10px; padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center;
+      border-top: 3px solid var(--teal);
+    }
+    .kpi-num { font-size: 1.8rem; font-weight: 800; color: var(--teal); }
+    .kpi-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
+    .kpi-loading { color: #ccc; font-size: 1.2rem; }
 
-        @media (max-width: 600px) {
-            .back-home-btn {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    /* 週報內容 */
+    .report-card {
+      background: white; border-radius: 10px; padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); line-height: 1.8;
+    }
+    .report-card h1 { color: var(--primary); border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+    .report-card h2 { color: var(--primary); margin-top: 2rem; }
+    .report-card h3 { color: #34495e; }
+    .report-card table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .report-card th { background: var(--primary); color: white; padding: 10px; text-align: left; }
+    .report-card td { padding: 9px 10px; border-bottom: 1px solid #eee; }
+    .report-card tr:nth-child(even) td { background: #f9f9f9; }
+    .report-card code { background: #f1f1f1; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .report-card blockquote { border-left: 4px solid var(--teal); margin: 0; padding: 8px 16px; background: #f0faf6; color: #555; }
+
+    .update-time { text-align: right; font-size: 0.75rem; color: #aaa; margin-bottom: 8px; }
+    footer { text-align: center; padding: 24px; color: #aaa; font-size: 0.8rem; }
+
+    @media (max-width: 600px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .report-card { padding: 20px; }
+    }
+  </style>
 </head>
 <body>
+  <a href="index.html" class="back-home-btn">🏠 回到報告首頁</a>
+  <header>
+    <h1>📊 產業資料庫 專案週報</h1>
+    <p>III 內部進度看板 · 每週更新</p>
+  </header>
 
-    <a href="index.html" class="back-home-btn">🏠 回到報告首頁</a>
-
-    <header>
-        <h1>📊 專案進度週報看板</h1>
-        <div style="font-size: 0.9rem; opacity: 0.8;">Weekly Analysis Report (Friday Release)</div>
-    </header>
-
-    <div class="container">
-        <div class="info-bar">
-            <strong>📅 週報提醒：</strong> 每週五中午前完成更新，內容固定同步 Google Doc。
-        </div>
-
-        <div class="report-frame">
-            <iframe src="https://docs.google.com/document/d/e/2PACX-1vS8sIZZQ_USQOL9_juFVPGuEuSGpt3gonotT_sgHJkR1jgcEZvfho1NNV9yBvKN4zch3Z0Bx90Ap-Z3/pub"></iframe>
-        </div>
+  <div class="container">
+    <!-- 自動數字列（串 api/stats）-->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-num kpi-loading" id="kpi-total">—</div>
+        <div class="kpi-label">方案總數</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num kpi-loading" id="kpi-ai">—</div>
+        <div class="kpi-label">AI 方案數</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num kpi-loading" id="kpi-company">—</div>
+        <div class="kpi-label">業者總數</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num kpi-loading" id="kpi-price">—</div>
+        <div class="kpi-label">費用中位數</div>
+      </div>
     </div>
 
-    <footer>
-        &copy; 2025 III 產業資料庫專案 | Updated Weekly on Friday
-    </footer>
+    <!-- 週報內容（讀 report.md）-->
+    <div class="update-time" id="update-time"></div>
+    <div class="report-card" id="report-content">
+      <p style="color:#ccc; text-align:center; padding: 40px 0;">載入週報中...</p>
+    </div>
+  </div>
 
+  <footer>© 2026 III 產業資料庫專案 · 數字每次開啟自動更新</footer>
+
+  <script>
+    // 1. 串 api/stats 自動更新數字
+    fetch('https://solution-finder-gray.vercel.app/api/stats')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('kpi-total').textContent = data.total.toLocaleString();
+        document.getElementById('kpi-ai').textContent = data.aiCount.toLocaleString();
+        document.getElementById('kpi-company').textContent = data.companyTotal.toLocaleString();
+        document.getElementById('kpi-price').textContent =
+          'NT$ ' + data.medianPrice.toLocaleString();
+      })
+      .catch(() => {
+        ['kpi-total','kpi-ai','kpi-company','kpi-price'].forEach(id => {
+          document.getElementById(id).textContent = '—';
+        });
+      });
+
+    // 2. 讀 report.md 並渲染
+    fetch('report.md?t=' + Date.now())
+      .then(r => {
+        if (!r.ok) throw new Error('report.md not found');
+        return r.text();
+      })
+      .then(md => {
+        document.getElementById('report-content').innerHTML = marked.parse(md);
+        document.getElementById('update-time').textContent =
+          '最後讀取：' + new Date().toLocaleString('zh-TW');
+      })
+      .catch(() => {
+        document.getElementById('report-content').innerHTML =
+          '<p style="color:#aaa;text-align:center;padding:40px">report.md 尚未建立，請上傳本週週報內容。</p>';
+      });
+  </script>
 </body>
 </html>
