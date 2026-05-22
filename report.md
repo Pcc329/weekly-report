@@ -84,3 +84,5 @@ Prompt 不夠好？→ 修改 system prompt
 | 開啟 Vercel Analytics | 追蹤頁面瀏覽與使用行為 |
 | 觀察 Log 累積狀況 | 確認 Search_Logs 和 Ask_Logs 正常記錄 |
 | 準備第一次 Log 分析報告 | 2 週後依資料決定優化方向 |
+
+每月檢視一次，持續改善搜尋品質與 AI 回答精準度。
