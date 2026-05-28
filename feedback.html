@@ -544,11 +544,29 @@
 // 設定區：填入你的 Airtable Token 和 Base/Table ID
 // ============================================================
 const CONFIG = {
-  AIRTABLE_TOKEN: "patEdPuMvYls6hPpF.1ab5afee8b3cd9c5d3be3f342b201e89ca92b8c0bd1ed42d5703cc9e1e2ead4c",  // ← 填入完整 Token
+  AIRTABLE_TOKEN: "patEdPuMvYls6hPpF.1ab5afee8b3cd9c5d3be3f342b201e89ca92b8c0bd1ed42d5703cc9e1e2ead4c",
   BASE_ID:  "appttP04OnzzC7qxG",
-  TABLE_ID: "tbly0aNVLiogY9Eu1"   // ← 填入回饋表的 Table ID（需先在 Airtable 建立）
+  TABLE_ID: "tbly0aNVLiogY9Eu1"
 };
 // ============================================================
+
+// 欄位中文 → Airtable 實際欄位名稱對應表（只有 Name 不同，其他相同）
+const FIELD_MAP = {
+  "姓名":           "Name",
+  "部門":           "部門",
+  "信箱":           "信箱",
+  "測試功能":       "測試功能",
+  "搜尋關鍵字":     "搜尋關鍵字",
+  "參考網站":       "參考網站",
+  "整體評分":       "整體評分",
+  "搜尋相關性評分": "搜尋相關性評分",
+  "介面易用性評分": "介面易用性評分",
+  "最喜歡的功能":   "最喜歡的功能",
+  "改善分類":       "改善分類",
+  "具體改善建議":   "具體改善建議",
+  "備註":           "備註",
+  "提交時間":       "提交時間"
+};
 
 // 星星互動
 const starLabels = ["", "很差", "普通偏差", "普通", "不錯", "很好"];
@@ -624,7 +642,8 @@ async function submitForm() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>送出中…';
 
-  const fields = {
+  // 用中文 key 建立資料
+  const rawFields = {
     "姓名":           name,
     "部門":           document.getElementById('f-dept').value.trim(),
     "信箱":           document.getElementById('f-email').value.trim(),
@@ -641,9 +660,13 @@ async function submitForm() {
     "提交時間":       new Date().toISOString()
   };
 
-  // 移除空值
-  Object.keys(fields).forEach(k => {
-    if (fields[k] === '' || fields[k] === null) delete fields[k];
+  // 移除空值並轉譯欄位名稱（中文 → Airtable 實際欄位名）
+  const fields = {};
+  Object.keys(rawFields).forEach(k => {
+    if (rawFields[k] !== '' && rawFields[k] !== null && rawFields[k] !== undefined) {
+      const mappedKey = FIELD_MAP[k] || k;
+      fields[mappedKey] = rawFields[k];
+    }
   });
 
   try {
