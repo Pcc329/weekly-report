@@ -6,15 +6,9 @@
 
 ## 一、本週整體進度
 
-本週完成模擬測試系統的建立與兩輪測試執行。
-
-第一輪（Round 01）發現搜尋 API 未做語意篩選，所有情境都回傳全庫 2,169 筆，測試結果無效。
-
-經過根本原因調查與腳本修正
-
-第二輪（Round 02）改走正確的語意搜尋路徑，成功找出 20 個真實資料缺口。
-
-本週測試系統從「跑得動但沒意義」升級為「可以真正反映資料庫品質」的工具。
+本週完成模擬測試系統修正與第二輪測試執行，成功找出 20 個真實資料缺口。
+同步推進 GOV 批次資料品質提升，與隔壁軟採院完成跨部門協作，確認 service_region、has_ai 等欄位更新方向。
+啟動臺灣雲市集自動化爬蟲開發（v1 → v3），目前全量爬取進行中，預計本週完成首批資料補充。
 
 ***
 
@@ -28,6 +22,10 @@
 | Round 02 執行與分析 | ✅ 完成 | 語意篩選生效，發現 20 個缺口情境，平均結果 128.7 筆 |
 | Airtable 欄位型態修正 | ✅ 完成 | `need`、`query`、`industry` 從 Single Select 改為 Text |
 | `is_startup_auto` Formula 欄位 | ✅ 完成 | 成立日期起算 8 年內自動標記，登入 Airtable 自動重算 |
+| GOV 規格書比對（v3→v5） | ✅ 完成 | 確認 100 筆已匯入，產出更新 CSV（has_ai、service_region、website_url） |
+| 跨部門協作（軟採院） | ✅ 完成 | 確認 service_region 全台灣、has_ai 13筆、補強欄位建議已寄出 |
+| 臺灣雲市集爬蟲開發 | ✅ 完成 | v1→v3 迭代，確認 `planDetail` JSON 結構 |
+| 臺灣雲市集全量爬取 | ✅ 完成 | 333 筆爬取，去重後 329 筆全新方案 |
 | Log 系統確認 | ✅ 確認 | Search_Logs 18 筆、Ask_Logs 9 筆，持續累積中 |
 
 ***
@@ -93,7 +91,76 @@
 
 ***
 
-## 六、開發費用（累計，4月～5月，台幣計算）
+## 六、GOV 批次資料品質提升
+
+### 本週更新內容
+
+| 欄位 | 更新方式 | 筆數 |
+| --- | --- | --- |
+| `service_region` | 統一填入「全台灣」（軟採院確認） | 100 筆 |
+| `has_ai` | 依 v5 規格書標記 | 13 筆（是）、87 筆（否） |
+| `website_url` | 從規格書補入 | 19 筆 |
+
+### 跨部門協作結論
+
+| 欄位 | 結論 |
+| --- | --- |
+| `target_industry` | 軟採院無法提供，改用 AI 根據 description 批次推斷 |
+| `target_scale` | 同上 |
+| `service_region` | 確認全台灣，已批次填入 |
+| `website_url` | 有提供就填，19 筆已補 |
+| `subscription_months` | 空白 = 買斷制，邏輯正確，不需調整 |
+| 資料期間 | 下批次只提供最近 3 年內資料 |
+
+***
+
+## 七、臺灣雲市集爬蟲開發
+
+### 開發歷程
+
+| 版本 | 方法 | 結果 |
+| --- | --- | --- |
+| v1 | Playwright 爬 HTML | 欄位全空，selector 不準 |
+| v2 | requests + `__NEXT_DATA__` JSON | 列表頁 pageProps 為空，無法取 URL |
+| v3 | Playwright 取 URL + `planDetail` JSON 解析 | ✅ 結構確認，全量爬取進行中 |
+
+### 爬取規模
+
+| 項目 | 數值 |
+| --- | --- |
+| 總頁數 | 35 頁 |
+| 實際爬取筆數 | 333 筆，去重後 329 筆全新方案 |
+| price 中位數 | NT$ 38,500 |
+| 欄位完整度 | solution_name / company / price / months / website_url 100% ✅ |
+| 待補欄位 | features_list、tech_tags（0%）、description（45%）|
+| 執行狀態 | ✅ 完成 |
+
+***
+
+## 八、內部測試回饋問卷
+
+### 問卷資訊
+
+| 項目 | 內容 |
+| --- | --- |
+| 問卷網址 | https://pcc329.github.io/weekly-report/feedback.html |
+| 對象 | III 內部同仁 |
+| 填寫時間 | 約 3–5 分鐘 |
+| 回饋儲存 | Airtable Feedback 表 |
+| 目前回饋數 | 0 筆（問卷剛上線，尚未發送） |
+
+### 問卷涵蓋項目
+
+- 測試功能勾選（AI 語意搜尋、詢問 AI、方案比較、儀表板、多維篩選）
+- 實際輸入的搜尋關鍵字
+- 整體滿意度 / 搜尋相關性 / 介面易用性（1–5 星）
+- 改善建議分類與具體回饋
+
+> 問卷尚未對內發送，下週完成雲市集資料補充後，搭配系統更新一併邀請內部測試。
+
+***
+
+## 九、開發費用（累計，4月～5月，台幣計算）
 
 | 項目 | 單價 | 次數 | 小計 | 說明 |
 | --- | --- | --- | --- | --- |
@@ -107,7 +174,7 @@
 
 ***
 
-## 七、系統現況
+## 十、系統現況
 
 | 項目 | 數字 |
 | --- | --- |
@@ -122,32 +189,32 @@
 
 ***
 
-## 八、待辦事項
+## 十一、待辦事項
 
 | 優先序 | 任務 | 說明 | 時程 |
 | --- | --- | --- | --- |
-| 🔴 高 | 補充「提升辦公室效率」相關方案 | 8 個產業都沒有，最大系統性缺口 | 本週 |
-| 🔴 高 | 補充「吸引人才 / HR」相關方案 | 6 個產業缺口，HR 工具類方案不足 | 本週 |
+| 🔴 高 | 雲市集爬蟲結果審核 → 匯入 | 全量爬取完成後人工審核 CSV，匯入 Airtable | 本週 |
+| 🔴 高 | GOV 更新 CSV 匯入 Airtable | `has_ai`、`service_region`、`website_url` 批次更新 | 本週 |
 | 🔴 高 | 累積 Log 資料 | 目標 50–100 筆，支撐 Prompt 優化 | 持續進行 |
-| 🟡 中 | GOV 批次欄位補完（AI 推斷） | `target_industry`、`service_region`、`target_scale` 全空，用 Claude API 根據 description 批次推斷 | 下週 |
-| 🟡 中 | GOV 補充 `website_url` | Excel 規格書有 19 筆網址，可直接補入 Airtable | 下週 |
-| 🟡 中 | GOV 補充 `subscription_months` | Excel 規格書有 62 筆期程，可直接補入 Airtable | 下週 |
-| 🟡 中 | 修正篩選失效的 4 個情境 | 調整 `/api/claude` system prompt | 下週 |
-| 🟡 中 | 補充「數位轉型入門」方案（零售、金融、電商） | 3 個產業缺口 | 下週 |
+| 🟡 中 | GOV `target_industry` AI 批次推斷 | 用 Claude API 根據 description 批次推斷 | 下週 |
+| 🟡 中 | 補充「提升辦公室效率」相關方案 | 8 個產業缺口，雲市集爬蟲完成後可從中篩選 | 下週 |
+| 🟡 中 | 補充「吸引人才 / HR」相關方案 | 6 個產業缺口 | 下週 |
 | 🟡 中 | Round 03 重跑 | 補充資料後驗證缺口是否改善 | 下週 |
+| 🟡 中 | 修正篩選失效的 4 個情境 | 調整 `/api/claude` system prompt | 下週 |
+| 🟡 中 | 新創嚴選爬蟲開發 | 雲市集完成後接續 | 下週 |
 | 🟡 中 | 評估政府採購搜尋邏輯 | 是否獨立顯示 | 下週 |
 | 🟢 低 | is_startup Cron Job | Vercel 每日自動更新 | 下個月 |
 | 🟢 低 | Log 儀表板 | dashboard.html 加入使用統計 | 4 週後 |
 
 ***
 
-## 九、下週計畫
+## 十二、下週計畫
 
 | 任務 | 說明 |
 | --- | --- |
-| 補充辦公室效率 & HR 方案 | 從雲市集、新創嚴選手動搜尋，CSV 整理後匯入 |
-| GOV 批次補全欄位（直接補） | 從 Excel 規格書補入 `website_url`（19筆）、`subscription_months`（62筆） |
-| GOV 批次補全欄位（AI 推斷） | 用 Claude API 根據 description 推斷 `target_industry`、`service_region`、`target_scale` |
-| 修正 `/api/claude` system prompt | 解決 4 個篩選失效情境 |
+| 雲市集資料審核匯入 | 人工審核爬蟲 CSV，去重後匯入 Airtable |
+| GOV 批次更新匯入 | 上傳 GOV_solutions_update_v5.csv |
+| GOV `target_industry` AI 推斷 | Colab 腳本批次推斷，補齊 100 筆空值 |
 | Round 03 執行 | 驗證缺口從 20 筆降至 10 筆以下 |
+| 新創嚴選爬蟲開發 | 接續雲市集，擴大資料來源 |
 | 持續觀察 Log 累積 | 確認 Search_Logs 和 Ask_Logs 正常記錄 |
