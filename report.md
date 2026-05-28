@@ -124,7 +124,9 @@
 | 🔴 高 | 補充「提升辦公室效率」相關方案 | 8 個產業都沒有，最大系統性缺口 | 本週 |
 | 🔴 高 | 補充「吸引人才 / HR」相關方案 | 6 個產業缺口，HR 工具類方案不足 | 本週 |
 | 🔴 高 | 累積 Log 資料 | 目標 50–100 筆，支撐 Prompt 優化 | 持續進行 |
-| 🟡 中 | GOV 批次缺漏欄位補充 | `target_industry`、`service_region` 全空 | 下週 |
+| 🟡 中 | GOV 批次欄位補完（AI 推斷） | `target_industry`、`service_region`、`target_scale` 全空，用 Claude API 根據 description 批次推斷 | 下週 |
+| 🟡 中 | GOV 補充 `website_url` | Excel 規格書有 19 筆網址，可直接補入 Airtable | 下週 |
+| 🟡 中 | GOV 補充 `subscription_months` | Excel 規格書有 62 筆期程，可直接補入 Airtable | 下週 |
 | 🟡 中 | 修正篩選失效的 4 個情境 | 調整 `/api/claude` system prompt | 下週 |
 | 🟡 中 | 補充「數位轉型入門」方案（零售、金融、電商） | 3 個產業缺口 | 下週 |
 | 🟡 中 | Round 03 重跑 | 補充資料後驗證缺口是否改善 | 下週 |
@@ -139,7 +141,8 @@
 | 任務 | 說明 |
 | --- | --- |
 | 補充辦公室效率 & HR 方案 | 從雲市集、新創嚴選手動搜尋，CSV 整理後匯入 |
-| GOV 批次補全欄位 | 補充 `target_industry` 與 `service_region` |
+| GOV 批次補全欄位（直接補） | 從 Excel 規格書補入 `website_url`（19筆）、`subscription_months`（62筆） |
+| GOV 批次補全欄位（AI 推斷） | 用 Claude API 根據 description 推斷 `target_industry`、`service_region`、`target_scale` |
 | 修正 `/api/claude` system prompt | 解決 4 個篩選失效情境 |
 | Round 03 執行 | 驗證缺口從 20 筆降至 10 筆以下 |
 | 持續觀察 Log 累積 | 確認 Search_Logs 和 Ask_Logs 正常記錄 |
