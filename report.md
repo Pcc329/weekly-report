@@ -22,7 +22,7 @@
 | Round 03 執行與分析 | ✅ 完成 | 2,322 筆資料庫，缺口 22 個，篩選失效減為 3 個 |
 | Airtable 欄位型態修正 | ✅ 完成 | `need`、`query`、`industry` 從 Single Select 改為 Text |
 | GOV 批次更新匯入 Airtable | ✅ 完成 | has_ai 13筆、service_region 100筆、website_url 19筆 更新完成 |
-| 跨部門協作（軟採院） | ✅ 完成 | 確認 service_region 全台灣、has_ai 13筆、補強欄位建議已寄出 |
+| 跨部門協作（共構平台組(軟採網)） | ✅ 完成 | 確認 service_region 全台灣、has_ai 13筆、補強欄位建議已寄出 |
 | 臺灣雲市集爬蟲開發 | ✅ 完成 | v1→v4 迭代，確認 `planDetail` JSON 結構及 price/months 欄位 |
 | 臺灣雲市集全量爬取 | ✅ 完成 | 333 筆爬取，去重後 329 筆 |
 | 雲市集資料匯入 Airtable | ✅ 完成 | 153 筆全新方案匯入，總筆數 2,169 → 2,322 |
@@ -119,7 +119,7 @@
 
 | 欄位 | 更新方式 | 筆數 | 狀態 |
 |---|---|---|---|
-| `service_region` | 統一填入「全台灣」（軟採院確認）| 100 筆 | ✅ 已匯入 |
+| `service_region` | 統一填入「全台灣」（共構平台組(軟採網)確認）| 100 筆 | ✅ 已匯入 |
 | `has_ai` | 依 v5 規格書標記 | 13 筆（是）| ✅ 已匯入 |
 | `website_url` | 從規格書補入 | 19 筆 | ✅ 已匯入 |
 | `target_industry` | AI 批次推斷 | 100 筆 | 🔄 待執行 |
@@ -128,7 +128,7 @@
 
 | 欄位 | 結論 |
 |---|---|
-| `target_industry` | 軟採院無法提供，改用 AI 根據 description 批次推斷 |
+| `target_industry` | 共構平台組(軟採網)無法提供，改用 AI 根據 description 批次推斷 |
 | `service_region` | 確認全台灣，已批次填入 ✅ |
 | `website_url` | 有提供就填，19 筆已補 ✅ |
 | `subscription_months` | 空白 = 買斷制，邏輯正確，不需調整 |
