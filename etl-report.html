@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資料 ETL 檢查報告｜共構平台組(軟採網)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  :root {
+    --primary: #2c3e50;
+    --teal: #1D9E75;
+    --red: #e74c3c;
+    --yellow: #f39c12;
+    --bg: #f4f7f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg); margin: 0; padding: 0; color: #333;
+  }
+
+  /* 回首頁按鈕 */
+  .back-btn {
+    position: fixed; top: 15px; left: 15px;
+    padding: 10px 20px; background: #34495e; color: white;
+    text-decoration: none; border-radius: 50px; font-weight: bold;
+    font-size: 14px; z-index: 9999; transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  .back-btn:hover { background: #2c3e50; transform: scale(1.05); }
+
+  /* Header */
+  header {
+    background: var(--primary); color: white;
+    padding: 52px 20px 28px; text-align: center;
+  }
+  header .badge {
+    display: inline-block; background: var(--teal);
+    color: white; font-size: 0.75rem; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  header h1 { margin: 0 0 8px; font-size: 1.9rem; }
+  header p { margin: 0; opacity: 0.65; font-size: 0.9rem; }
+
+  .container { width: 95%; max-width: 1000px; margin: 28px auto; }
+
+  /* KPI 卡片列 */
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: white; border-radius: 10px; padding: 18px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center;
+    border-top: 3px solid var(--teal);
+  }
+  .kpi-card.warn { border-top-color: var(--yellow); }
+  .kpi-card.danger { border-top-color: var(--red); }
+  .kpi-num { font-size: 1.9rem; font-weight: 800; color: var(--teal); }
+  .kpi-card.warn .kpi-num { color: var(--yellow); }
+  .kpi-card.danger .kpi-num { color: var(--red); }
+  .kpi-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
+  .kpi-sub { font-size: 0.7rem; color: #bbb; margin-top: 2px; }
+
+  /* 狀態 badge */
+  .status-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .status-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+  }
+  .status-badge.ok { background: #e8f8f2; color: #1D9E75; }
+  .status-badge.warn { background: #fef9e7; color: #d68910; }
+  .status-badge.danger { background: #fdecea; color: #c0392b; }
+  .status-badge.info { background: #eaf3fb; color: #2471a3; }
+
+  /* 主內容卡片 */
+  .card {
+    background: white; border-radius: 10px; padding: 28px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 18px;
+  }
+  .card h2 {
+    color: var(--primary); margin: 0 0 16px;
+    font-size: 1.1rem; border-left: 4px solid var(--teal);
+    padding-left: 12px;
+  }
+
+  /* 表格 */
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .cell-ok { color: var(--teal); font-weight: 600; }
+  .cell-warn { color: var(--yellow); font-weight: 600; }
+  .cell-danger { color: var(--red); font-weight: 600; }
+
+  /* 結論區塊 */
+  .conclusion {
+    border-radius: 10px; padding: 20px 24px; margin-bottom: 18px;
+  }
+  .conclusion.danger { background: #fdecea; border-left: 5px solid var(--red); }
+  .conclusion.warn { background: #fef9e7; border-left: 5px solid var(--yellow); }
+  .conclusion.ok { background: #e8f8f2; border-left: 5px solid var(--teal); }
+  .conclusion h3 { margin: 0 0 8px; font-size: 1rem; }
+  .conclusion p { margin: 0; font-size: 0.9rem; line-height: 1.7; }
+
+  /* 進度條 */
+  .progress-bar-wrap { margin: 6px 0 2px; }
+  .progress-bar-bg { background: #eee; border-radius: 99px; height: 8px; }
+  .progress-bar-fill { height: 8px; border-radius: 99px; background: var(--teal); }
+  .progress-bar-fill.warn { background: var(--yellow); }
+  .progress-bar-fill.danger { background: var(--red); }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 2px; }
+
+  /* 下一步清單 */
+  .next-steps { list-style: none; padding: 0; margin: 0; }
+  .next-steps li {
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+    font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .next-steps li.high { background: #fdecea; }
+  .next-steps li.mid { background: #fef9e7; }
+  .next-steps li.low { background: #f4f7f6; }
+  .next-steps .step-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .next-steps .step-text { line-height: 1.5; }
+  .next-steps .step-text strong { display: block; }
+
+  .update-time { text-align: right; font-size: 0.75rem; color: #aaa; margin-bottom: 10px; }
+
+  footer { text-align: center; padding: 28px; color: #aaa; font-size: 0.8rem; }
+
+  @media (max-width: 600px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">🏠 回到報告首頁</a>
+
+<header>
+  <div class="badge">ETL 檢查報告</div>
+  <h1>📋 共構平台組(軟採網) 來源資料</h1>
+  <p>III_方案資料匯入規格書_v3_1150201.xlsx · 分析日期：2026-05-29</p>
+</header>
+
+<div class="container">
+
+  <div class="update-time" id="update-time"></div>
+
+  <!-- KPI 列 -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-num">27,092</div>
+      <div class="kpi-label">原始筆數</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">21,948</div>
+      <div class="kpi-label">去重後筆數</div>
+      <div class="kpi-sub">移除 5,144 筆重複</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-num">315</div>
+      <div class="kpi-label">唯一業者數</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="kpi-num">6</div>
+      <div class="kpi-label">必填欄位全空</div>
+      <div class="kpi-sub">需補充或推斷</div>
+    </div>
+  </div>
+
+  <!-- 狀態 badges -->
+  <div class="status-row">
+    <span class="status-badge ok">✅ 方案名稱 100% 完整</span>
+    <span class="status-badge ok">✅ 聯絡人資訊 100% 完整</span>
+    <span class="status-badge ok">✅ 價格 100% 完整</span>
+    <span class="status-badge warn">⚠️ subscription_months 58% 空值</span>
+    <span class="status-badge danger">❌ 沒有年份欄位</span>
+    <span class="status-badge danger">❌ target_industry 全空</span>
+  </div>
+
+  <!-- 欄位完整度 -->
+  <div class="card">
+    <h2>欄位完整度</h2>
+    <table>
+      <thead>
+        <tr><th>欄位</th><th>完整度</th><th>視覺</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>solution_name</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>全部有值 ✅</td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>全部有值 ✅</td>
+        </tr>
+        <tr>
+          <td>price</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>全部有值 ✅</td>
+        </tr>
+        <tr>
+          <td>has_ai</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>是：1,201 筆 / 否：20,747 筆</td>
+        </tr>
+        <tr>
+          <td>company_name / company_id</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>全部有值 ✅</td>
+        </tr>
+        <tr>
+          <td>聯絡人（姓名/email/電話）</td>
+          <td class="cell-ok">100%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%"></div></div></td>
+          <td>全部有值 ✅</td>
+        </tr>
+        <tr>
+          <td>subscription_months</td>
+          <td class="cell-warn">42%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill warn" style="width:42%"></div></div></td>
+          <td>空白 = 買斷制，邏輯可接受</td>
+        </tr>
+        <tr>
+          <td>website_url</td>
+          <td class="cell-danger">0%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:2%"></div></div></td>
+          <td>全部空值，需另外補充</td>
+        </tr>
+        <tr>
+          <td>target_industry</td>
+          <td class="cell-danger">0%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:2%"></div></div></td>
+          <td>全部空值，需 AI 批次推斷</td>
+        </tr>
+        <tr>
+          <td>target_scale</td>
+          <td class="cell-danger">0%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:2%"></div></div></td>
+          <td>全部空值，需 AI 批次推斷</td>
+        </tr>
+        <tr>
+          <td>service_region</td>
+          <td class="cell-danger">0%</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:2%"></div></div></td>
+          <td>全部空值，建議統一填「全台灣」</td>
+        </tr>
+        <tr>
+          <td><strong>年份（無此欄位）</strong></td>
+          <td class="cell-danger">—</td>
+          <td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:2%"></div></div></td>
+          <td><strong>本次分析最大缺口，需回信索取</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 價格分布 -->
+  <div class="card">
+    <h2>價格分布（去重後 21,948 筆）</h2>
+    <table>
+      <thead><tr><th>價格區間</th><th>筆數</th><th>佔比</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>1 萬以下</td><td>3,755</td><td>17%</td><td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:17%"></div></div></td></tr>
+        <tr><td>1～5 萬</td><td>3,765</td><td>17%</td><td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:17%"></div></div></td></tr>
+        <tr><td>5～20 萬</td><td>5,405</td><td>25%</td><td><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:25%"></div></div></td></tr>
+        <tr><td>20～100 萬</td><td>5,857</td><td>27%</td><td><div class="progress-bar-bg"><div class="progress-bar-fill warn" style="width:27%"></div></div></td></tr>
+        <tr><td>100 萬以上</td><td>3,166</td><td>14%</td><td><div class="progress-bar-bg"><div class="progress-bar-fill danger" style="width:14%"></div></div></td></tr>
+        <tr><td><strong>中位數</strong></td><td colspan="3"><strong>NT$ 124,744</strong>（現有資料庫 NT$ 38,000，⚠️ 這批偏貴 3 倍）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 結論 -->
+  <div class="conclusion danger">
+    <h3>🚨 最大問題：沒有年份</h3>
+    <p>這份資料沒有年份欄位，無法判斷方案是 2021 年還是 2025 年的。若直接全量匯入，可能引入大量已停售的舊方案，反而降低資料庫品質。<strong>建議先回信索取年份，篩選近 3 年資料後再匯入。</strong></p>
+  </div>
+
+  <div class="conclusion warn">
+    <h3>⚠️ 次要問題：價格偏高，定位偏大型採購</h3>
+    <p>price 中位數 NT$ 124,744，比現有資料庫貴 3 倍。這批方案偏向政府採購等級，與中小企業數位轉型的定位有落差。建議匯入前評估是否設定篩選條件（如 price ≤ 50 萬）。</p>
+  </div>
+
+  <div class="conclusion ok">
+    <h3>✅ 好消息：基本欄位品質不錯</h3>
+    <p>去重後 21,948 筆，方案名、公司、價格、聯絡人全部完整，可以直接對應到資料庫欄位。只要補上年份篩選，這批資料有機會讓資料庫規模從 2,322 筆大幅擴充。</p>
+  </div>
+
+  <!-- 下一步 -->
+  <div class="card">
+    <h2>建議下一步</h2>
+    <ul class="next-steps">
+      <li class="high">
+        <span class="step-icon">🔴</span>
+        <span class="step-text"><strong>回信索取年份欄位（本週）</strong>請對方在每筆資料加上「年份」（2024 / 2025），方便篩選近 3 年有效方案。</span>
+      </li>
+      <li class="high">
+        <span class="step-icon">🔴</span>
+        <span class="step-text"><strong>收到後篩選近 3 年資料</strong>過濾掉舊方案，估計可用筆數待年份回來後確認。</span>
+      </li>
+      <li class="mid">
+        <span class="step-icon">🟡</span>
+        <span class="step-text"><strong>AI 批次推斷 target_industry / service_region</strong>與 GOV 批次做法相同，用 Colab 腳本批次補齊。</span>
+      </li>
+      <li class="mid">
+        <span class="step-icon">🟡</span>
+        <span class="step-text"><strong>評估價格篩選條件</strong>考慮只匯入 price ≤ 500,000 的方案，避免大型採購方案稀釋中小企業定位。</span>
+      </li>
+      <li class="low">
+        <span class="step-icon">🟢</span>
+        <span class="step-text"><strong>確認後匯入 Airtable，跑 Round 05</strong>補充資料後重跑模擬測試，驗證缺口情境數下降。</span>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>III 產業資料庫專案 · ETL 報告系統 · 2026-05-29</footer>
+
+<script>
+  document.getElementById('update-time').textContent =
+    '報告產出時間：2026-05-29　|　分析工具：Python + openpyxl';
+</script>
+
+</body>
+</html>
