@@ -121,7 +121,14 @@
       });
 
     // 2. 讀 report.md 並渲染
-    fetch('report.md?t=' + Date.now())
+    const urlParams = new URLSearchParams(window.location.search);
+const reportFile = urlParams.get('report') || 'report.md';
+if (urlParams.get('report')) {
+  const dateMatch = reportFile.match(/(\d{4}-\d{2}-\d{2})/);
+  document.querySelector('header p').textContent =
+    'III 內部進度看板 · 歷史週報 · ' + (dateMatch ? dateMatch[1] : reportFile);
+}
+fetch(reportFile + '?t=' + Date.now())
       .then(r => {
         if (!r.ok) throw new Error('report.md not found');
         return r.text();
