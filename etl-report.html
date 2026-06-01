@@ -286,17 +286,52 @@
   <!-- 結論 -->
   <div class="conclusion danger">
     <h3>🚨 最大問題：沒有年份</h3>
-    <p>這份資料沒有年份欄位，無法判斷方案是 2021 年還是 2025 年的。若直接全量匯入，可能引入大量已停售的舊方案，反而降低資料庫品質。<strong>建議先回信索取年份，篩選近 3 年資料後再匯入。</strong></p>
+    <p>這份資料沒有年份欄位，無法判斷方案是 2021 年還是 2025 年的。若直接全量匯入，可能引入大量已停售的舊方案，反而降低資料庫品質。若無法索取年份，可改用「價格篩選 + 公司比對」的替代方案（見下方估算）。</p>
   </div>
 
   <div class="conclusion warn">
     <h3>⚠️ 次要問題：價格偏高，定位偏大型採購</h3>
-    <p>price 中位數 NT$ 124,744，比現有資料庫貴 3 倍。這批方案偏向政府採購等級，與中小企業數位轉型的定位有落差。建議匯入前評估是否設定篩選條件（如 price ≤ 50 萬）。</p>
+    <p>price 中位數 NT$ 124,744，比現有資料庫貴 3 倍。這批方案偏向政府採購等級，與中小企業數位轉型的定位有落差。建議匯入前設定價格上限篩選（如 price ≤ 500,000）。</p>
   </div>
 
   <div class="conclusion ok">
-    <h3>✅ 好消息：基本欄位品質不錯</h3>
-    <p>去重後 21,948 筆，方案名、公司、價格、聯絡人全部完整，可以直接對應到資料庫欄位。只要補上年份篩選，這批資料有機會讓資料庫規模從 2,322 筆大幅擴充。</p>
+    <h3>✅ 好消息：即使沒有年份，估計仍可安全匯入 5,000～10,000 筆</h3>
+    <p>去重後 21,948 筆，方案名、公司、價格、聯絡人全部完整。透過 A+C 組合篩選，不需要年份也能過濾掉大部分風險資料，資料庫規模預計可從 2,322 筆擴大 2～4 倍。</p>
+  </div>
+
+  <!-- 無年份替代方案估算 -->
+  <div class="card">
+    <h2>🔢 無年份替代方案：A+C 組合篩選估算</h2>
+    <p style="font-size:0.88rem; color:#666; margin-bottom:16px;">若對方無法提供年份，可改用以下兩道篩選替代，邏輯清晰、可對主管說明。</p>
+    <table>
+      <thead><tr><th>篩選步驟</th><th>剩餘筆數</th><th>篩掉原因</th></tr></thead>
+      <tbody>
+        <tr><td>去重後基準</td><td><strong>21,948 筆</strong></td><td>—</td></tr>
+        <tr>
+          <td>方式 A：price 1,000～500,000</td>
+          <td><strong>15,477 筆</strong></td>
+          <td>篩掉 6,471 筆（976 筆 &lt; NT$1,000，5,495 筆 &gt; NT$50萬）</td>
+        </tr>
+        <tr>
+          <td>方式 C：比對現有 Companies 表（保守）</td>
+          <td><strong>~4,900 筆</strong></td>
+          <td>只保留現役業者的方案</td>
+        </tr>
+        <tr>
+          <td>方式 C：比對現有 Companies 表（中間估）</td>
+          <td><strong>~9,800 筆</strong></td>
+          <td>同上</td>
+        </tr>
+        <tr style="background:#e8f8f2;">
+          <td><strong>建議採用：A+C 中間估</strong></td>
+          <td><strong>~9,800 筆</strong></td>
+          <td>資料庫從 2,322 筆增加至約 12,000 筆（+9,700 筆）</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px; padding:12px 16px; background:#fef9e7; border-radius:8px; font-size:0.85rem; color:#666;">
+      ⚠️ 方式 C 的實際筆數需要將 315 家業者的 company_id 與 Airtable Companies 表實際比對後確認，以上為估算值。
+    </div>
   </div>
 
   <!-- 下一步 -->
@@ -305,23 +340,23 @@
     <ul class="next-steps">
       <li class="high">
         <span class="step-icon">🔴</span>
-        <span class="step-text"><strong>回信索取年份欄位（本週）</strong>請對方在每筆資料加上「年份」（2024 / 2025），方便篩選近 3 年有效方案。</span>
+        <span class="step-text"><strong>確認是否能索取年份（等主管評估）</strong>有年份最理想，可精確篩選近 3 年資料。若無法取得，改走 A+C 替代方案。</span>
       </li>
       <li class="high">
         <span class="step-icon">🔴</span>
-        <span class="step-text"><strong>收到後篩選近 3 年資料</strong>過濾掉舊方案，估計可用筆數待年份回來後確認。</span>
+        <span class="step-text"><strong>實際執行 A+C 比對</strong>將 315 家 company_id 與 Airtable Companies 表比對，確認實際可匯入筆數。</span>
       </li>
       <li class="mid">
         <span class="step-icon">🟡</span>
-        <span class="step-text"><strong>AI 批次推斷 target_industry / service_region</strong>與 GOV 批次做法相同，用 Colab 腳本批次補齊。</span>
+        <span class="step-text"><strong>AI 批次推斷 target_industry / service_region</strong>與 GOV 批次做法相同，用 Colab 腳本批次補齊空值。</span>
       </li>
       <li class="mid">
         <span class="step-icon">🟡</span>
-        <span class="step-text"><strong>評估價格篩選條件</strong>考慮只匯入 price ≤ 500,000 的方案，避免大型採購方案稀釋中小企業定位。</span>
+        <span class="step-text"><strong>匯入後跑 Round 05</strong>補充資料後重跑模擬測試，驗證缺口情境數下降。</span>
       </li>
       <li class="low">
         <span class="step-icon">🟢</span>
-        <span class="step-text"><strong>確認後匯入 Airtable，跑 Round 05</strong>補充資料後重跑模擬測試，驗證缺口情境數下降。</span>
+        <span class="step-text"><strong>雲市集 features_list 補強</strong>爬蟲 v4 補抓功能規格欄位，提升搜尋精準度。</span>
       </li>
     </ul>
   </div>
