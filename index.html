@@ -139,6 +139,17 @@
     <span class="card-badge">最新版本</span>
   </a>
 
+  <!-- 臨時重大事項 -->
+  <div class="section-title">臨時重大事項</div>
+  <a href="statusUpdate.html" class="nav-card" style="border-left-color: #e74c3c;">
+    <span class="card-icon">⚡</span>
+    <div class="card-body">
+      <div class="card-title">重大事項更新</div>
+      <div class="card-desc">系統異常、緊急進度、臨時公告 · 有事才更新</div>
+    </div>
+    <span class="card-badge" style="background:#fdecea; color:#c0392b;">隨時更新</span>
+  </a>
+
   <!-- 週報歷史（自動從 GitHub API 抓） -->
   <div class="section-title">週報歷史版本</div>
   <div class="log-section">
@@ -234,7 +245,7 @@ async function loadReportHistory() {
     }));
 
     container.innerHTML = items.map(item => `
-      <a href="weekly.html?report=${item.name}" class="log-item">
+      <a href="${item.name}" class="log-item">
         <div class="log-dot done"></div>
         <div class="log-body">
           <div class="log-title">${parseDate(item.name)}</div>
