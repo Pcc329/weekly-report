@@ -256,7 +256,7 @@ async function loadReportHistory() {
     }));
 
     container.innerHTML = items.map(item => `
-      <a href="${item.name}" class="log-item">
+     <a href="reader.html?file=${item.name}" class="log-item">
         <div class="log-dot done"></div>
         <div class="log-body">
           <div class="log-title">${parseDate(item.name)}</div>
