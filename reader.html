@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>週報閱讀器</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  :root {
+    --primary: #2c3e50;
+    --teal: #1D9E75;
+    --bg: #f0f2f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg); min-height: 100vh; padding-bottom: 48px;
+  }
+  header {
+    background: var(--primary); color: white;
+    padding: 28px 20px 24px; text-align: center;
+  }
+  header h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  header p { opacity: 0.6; font-size: 0.85rem; }
+
+  .container { max-width: 780px; margin: 0 auto; padding: 28px 20px 0; }
+
+  .nav-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px;
+    background: white; color: var(--primary);
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; border: 1px solid #e0e0e0;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: #f5f5f5; }
+  .file-label {
+    font-size: 0.8rem; color: #999;
+  }
+
+  .report-card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 36px 40px;
+  }
+
+  /* Markdown 樣式 */
+  .report-card h1 {
+    font-size: 1.6rem; color: var(--primary);
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 10px; margin-bottom: 20px;
+  }
+  .report-card h2 {
+    font-size: 1.15rem; color: var(--primary);
+    margin: 28px 0 12px; padding-left: 10px;
+    border-left: 4px solid var(--teal);
+  }
+  .report-card h3 {
+    font-size: 1rem; color: #444;
+    margin: 20px 0 8px;
+  }
+  .report-card p {
+    font-size: 0.93rem; line-height: 1.8;
+    color: #444; margin-bottom: 12px;
+  }
+  .report-card table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0 20px; font-size: 0.88rem;
+  }
+  .report-card th {
+    background: #f7f9fc; color: #555;
+    padding: 8px 12px; border: 1px solid #e8e8e8;
+    font-weight: 600; text-align: left;
+  }
+  .report-card td {
+    padding: 8px 12px; border: 1px solid #eee;
+    color: #444; vertical-align: top;
+  }
+  .report-card tr:nth-child(even) td { background: #fafafa; }
+  .report-card ul, .report-card ol {
+    padding-left: 20px; margin: 8px 0 16px;
+  }
+  .report-card li {
+    font-size: 0.9rem; color: #444;
+    line-height: 1.7; margin-bottom: 4px;
+  }
+  .report-card code {
+    background: #f0f2f5; padding: 1px 6px;
+    border-radius: 4px; font-size: 0.85rem;
+    font-family: 'Consolas', monospace; color: #d63384;
+  }
+  .report-card pre {
+    background: #f0f2f5; border-radius: 8px;
+    padding: 16px; overflow-x: auto; margin: 12px 0;
+  }
+  .report-card pre code {
+    background: transparent; color: #333;
+    padding: 0; font-size: 0.85rem;
+  }
+  .report-card blockquote {
+    border-left: 4px solid var(--teal);
+    background: #f0faf5; padding: 10px 16px;
+    margin: 12px 0; border-radius: 0 8px 8px 0;
+  }
+  .report-card blockquote p { margin: 0; color: #2c7a5c; }
+  .report-card hr {
+    border: none; border-top: 1px solid #eee; margin: 24px 0;
+  }
+  .report-card strong { color: #333; }
+
+  /* Loading & Error */
+  .state {
+    text-align: center; padding: 60px 20px;
+    color: #aaa; font-size: 0.9rem;
+  }
+  .spinner {
+    display: inline-block; width: 20px; height: 20px;
+    border: 2px solid #eee; border-top-color: var(--teal);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { text-align: center; padding: 28px 20px 0; color: #bbb; font-size: 0.78rem; }
+
+  @media(max-width: 560px) {
+    .report-card { padding: 24px 18px; }
+    .report-card h1 { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 III 產業資料庫</h1>
+  <p>週報閱讀器</p>
+</header>
+
+<div class="container">
+  <div class="nav-row">
+    <a href="index.html" class="back-btn">← 回報告中心</a>
+    <span class="file-label" id="file-label"></span>
+  </div>
+
+  <div class="report-card" id="report-card">
+    <div class="state">
+      <span class="spinner"></span>載入週報中...
+    </div>
+  </div>
+</div>
+
+<footer>III 產業資料庫專案 · 數位轉型研究院 · 2026</footer>
+
+<script>
+(async function() {
+  const params = new URLSearchParams(window.location.search);
+  const file   = params.get('file');
+  const card   = document.getElementById('report-card');
+  const label  = document.getElementById('file-label');
+
+  if (!file) {
+    card.innerHTML = '<div class="state">未指定週報檔案。</div>';
+    return;
+  }
+
+  // 解析日期顯示
+  const dateMatch = file.match(/(\d{4}-\d{2}-\d{2})/);
+  label.textContent = dateMatch ? `週報 ${dateMatch[1]}` : file;
+  document.title    = dateMatch ? `週報 ${dateMatch[1]} — III 產業資料庫` : '週報 — III 產業資料庫';
+
+  try {
+    const RAW = `https://raw.githubusercontent.com/Pcc329/weekly-report/main/${file}`;
+    const res = await fetch(RAW);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const md = await res.text();
+    card.innerHTML = marked.parse(md);
+  } catch (e) {
+    card.innerHTML = `<div class="state">載入失敗：${e.message}<br><br><a href="index.html" style="color:var(--teal)">← 回報告中心</a></div>`;
+  }
+})();
+</script>
+
+</body>
+</html>
