@@ -23,30 +23,21 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; }
     body { font-family: -apple-system, "Microsoft JhengHei", sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
-
     .page { max-width: 1000px; margin: 0 auto; padding: 40px 28px 80px; }
-
-    /* Header */
     .header { margin-bottom: 36px; }
     .header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
     .header h1 { font-size: 32px; font-weight: 600; }
     .header-meta { font-size: 14px; color: var(--muted); }
     .back-link { font-size: 14px; color: var(--green); text-decoration: none; font-weight: 500; }
     .back-link:hover { text-decoration: underline; }
-
-    /* Section */
     .sec { margin-bottom: 36px; }
     .sec-title { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
-
-    /* Stats */
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .stat { background: var(--card); border: .5px solid var(--border); border-radius: 10px; padding: 18px 20px; }
     .stat-num { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2; }
     .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
     .stat-sub { font-size: 12px; color: var(--faint); margin-top: 3px; }
     @media(max-width:600px){ .stats { grid-template-columns: repeat(2,1fr); } }
-
-    /* Gantt */
     .gantt-wrap { overflow-x: auto; }
     .gantt-inner { min-width: 720px; }
     .gantt-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
@@ -65,23 +56,17 @@
     .g-section { height: 28px; display: flex; align-items: center; }
     .g-section-name { width: 160px; flex-shrink: 0; text-align: right; padding-right: 12px; font-size: 12px; font-weight: 500; color: var(--faint); letter-spacing: .04em; text-transform: uppercase; }
     .g-section-line { flex: 1; border-top: 1px dashed var(--border); }
-
-    /* ETL */
     .etl { display: flex; flex-wrap: wrap; align-items: center; gap: 0; }
     .etl-step { background: var(--card); border: .5px solid var(--border); border-radius: 8px; padding: 12px 18px; text-align: center; min-width: 100px; }
     .etl-n { font-size: 22px; font-weight: 600; color: var(--green); display: block; }
     .etl-l { font-size: 12px; color: var(--muted); margin-top: 3px; }
     .etl-arr { font-size: 16px; color: var(--faint); padding: 0 8px; }
-
-    /* Phase cards */
     .phases { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
     .phase-card { background: var(--card); border: .5px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top-width: 3px; }
     .phase-tag { font-size: 12px; font-weight: 600; letter-spacing: .06em; margin-bottom: 12px; }
     .phase-item { font-size: 14px; color: var(--muted); padding: 5px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
     .p-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
     @media(max-width:640px){ .phases { grid-template-columns: 1fr; } }
-
-    /* Feature table */
     .feat-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .feat-table th { text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 1px solid var(--border); }
     .feat-table td { padding: 10px 12px; border-bottom: .5px solid #f3f4f6; color: var(--text); }
@@ -89,15 +74,12 @@
     .badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
     .badge-done  { background: #d1fae5; color: #065f46; }
     .badge-wip   { background: #fef3c7; color: #92400e; }
-
-    /* Round table */
     .round-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .round-table th { text-align: center; padding: 8px 10px; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 1px solid var(--border); }
     .round-table td { padding: 8px 10px; text-align: center; border-bottom: .5px solid #f3f4f6; }
     .round-table tr:last-child td { font-weight: 600; background: #f0fdf4; }
     .chk { color: var(--green); font-weight: 600; }
     .x   { color: var(--red); }
-
     footer { text-align: center; font-size: 13px; color: var(--faint); margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); }
   </style>
 </head>
@@ -109,7 +91,7 @@
       <h1>產業策略智庫 — 系統全盤點</h1>
       <a href="https://pcc329.github.io/weekly-report/weekly.html" class="back-link">← 週報</a>
     </div>
-    <div class="header-meta">III 數位轉型研究院 · 盤點日期：2026-06-05 · v10</div>
+    <div class="header-meta">III 數位轉型研究院 · 盤點日期：2026-06-09 · v11</div>
   </div>
 
   <!-- Stats -->
@@ -118,7 +100,7 @@
     <div class="stats">
       <div class="stat"><div class="stat-num">2,322</div><div class="stat-label">方案總數</div><div class="stat-sub">7 大來源</div></div>
       <div class="stat"><div class="stat-num">842</div><div class="stat-label">業者總數</div><div class="stat-sub">統編覆蓋率 90%+</div></div>
-      <div class="stat"><div class="stat-num">5.00<small style="font-size:13px;color:var(--muted)">/5</small></div><div class="stat-label">R06 回答品質</div><div class="stat-sub">100/100 筆 AI 評分</div></div>
+      <div class="stat"><div class="stat-num">172.3</div><div class="stat-label">R07 平均搜尋筆數</div><div class="stat-sub">語意升級後大幅改善</div></div>
       <div class="stat"><div class="stat-num">7</div><div class="stat-label">策略智庫頁籤</div><div class="stat-sub">含缺口分析 / 競爭態勢</div></div>
     </div>
   </div>
@@ -161,29 +143,31 @@
     <div class="sec-title">功能上線狀態</div>
     <table class="feat-table">
       <tr><th>功能</th><th>頁面</th><th>說明</th><th>狀態</th></tr>
-      <tr><td>AI 語意搜尋</td><td>index.html</td><td>Claude 解析自然語言查詢</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
+      <tr><td>AI 語意搜尋</td><td>index.html</td><td>category 精確篩選 + industryKeyword 產業排序</td><td><span class="badge badge-done">✅ 本週升級</span></td></tr>
       <tr><td>方案比較</td><td>compare.html</td><td>最多4筆並排 + AI摘要</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>ROI Modal（預算反推）</td><td>index.html</td><td>當下估算，不跳頁</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>戰情儀表板</td><td>dashboard.html</td><td>KPI + 圖表 + 密度地圖</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
-      <tr><td>缺口分析矩陣</td><td>strategy-guide.html</td><td>10×10 產業需求覆蓋</td><td><span class="badge badge-done">✅ 本週新上</span></td></tr>
-      <tr><td>競爭態勢 Grid</td><td>strategy-guide.html</td><td>G2 風格氣泡矩陣</td><td><span class="badge badge-done">✅ 本週新上</span></td></tr>
+      <tr><td>缺口分析矩陣</td><td>strategy-guide.html</td><td>10×10 產業需求覆蓋</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
+      <tr><td>競爭態勢 Grid</td><td>strategy-guide.html</td><td>G2 風格氣泡矩陣</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>資料來源說明</td><td>sources.html</td><td>7 大來源三層架構</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
-      <tr><td>顧問數位診斷流程</td><td>—</td><td>方法論框架</td><td><span class="badge badge-wip">⏳ 下週</span></td></tr>
+      <tr><td>AI 批次分類</td><td>Airtable</td><td>564筆自動分類，暫無法分類剩15筆</td><td><span class="badge badge-done">✅ 本週完成</span></td></tr>
+      <tr><td>顧問數位診斷工具</td><td>diagnosis.html</td><td>產業/規模/預算/痛點 → 方案推薦</td><td><span class="badge badge-wip">⏳ 進行中</span></td></tr>
       <tr><td>方案評分視覺化</td><td>—</td><td>雷達圖 / 對比表</td><td><span class="badge badge-wip">⏳ Phase 3</span></td></tr>
     </table>
   </div>
 
   <!-- Test rounds -->
   <div class="sec">
-    <div class="sec-title">模擬測試歷輪比較（Round 01–06）</div>
+    <div class="sec-title">模擬測試歷輪比較（Round 01–07）</div>
     <table class="round-table">
-      <tr><th>輪次</th><th>方案數</th><th>0缺口</th><th>0失效</th><th>有效問答</th><th>平均字數</th><th>品質評分</th></tr>
-      <tr><td>R01</td><td>2,169</td><td class="x">假值</td><td>—</td><td>100/100</td><td>592</td><td>—</td></tr>
-      <tr><td>R02</td><td>2,169</td><td class="x">20個</td><td class="x">4個</td><td>80/100</td><td>511</td><td>—</td></tr>
-      <tr><td>R03</td><td>2,322</td><td class="x">22個</td><td class="x">3個</td><td>78/100</td><td>485</td><td>—</td></tr>
+      <tr><th>輪次</th><th>方案數</th><th>0缺口</th><th>0失效</th><th>有效問答</th><th>平均筆數</th><th>品質評分</th></tr>
+      <tr><td>R01</td><td>2,169</td><td class="x">假值</td><td>—</td><td>100/100</td><td>2,169</td><td>—</td></tr>
+      <tr><td>R02</td><td>2,169</td><td class="x">20個</td><td class="x">4個</td><td>80/100</td><td>128.7</td><td>—</td></tr>
+      <tr><td>R03</td><td>2,322</td><td class="x">22個</td><td class="x">3個</td><td>78/100</td><td>—</td><td>—</td></tr>
       <tr><td>R04</td><td>2,322</td><td class="chk">✅</td><td class="x">2個</td><td>100/100</td><td>694</td><td>—</td></tr>
       <tr><td>R05</td><td>2,322</td><td class="chk">✅</td><td class="chk">✅</td><td>98/100</td><td>696</td><td>—</td></tr>
-      <tr><td><strong>R06</strong></td><td>2,322</td><td class="chk">✅</td><td class="chk">✅</td><td>100/100</td><td>696</td><td>5.00/5 ⭐</td></tr>
+      <tr><td>R06</td><td>2,322</td><td class="chk">✅</td><td class="chk">✅</td><td>100/100</td><td>696</td><td>5.00/5 ⭐</td></tr>
+      <tr><td><strong>R07</strong></td><td>2,322</td><td class="chk">✅</td><td class="chk">✅</td><td>100/100</td><td><strong>172.3</strong></td><td>待統計</td></tr>
     </table>
   </div>
 
@@ -192,28 +176,28 @@
     <div class="sec-title">發展路線圖</div>
     <div class="phases">
       <div class="phase-card" style="border-top-color:#1d9e75">
-        <div class="phase-tag" style="color:#1d9e75">PHASE 2 — 下週</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>顧問數位診斷流程</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>差異化排序 Debug</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>Round 07 測試</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>軟採網年份確認</div>
+        <div class="phase-tag" style="color:#1d9e75">PHASE 2 — 本週</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>顧問數位診斷工具（進行中）</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>Round 07 完成 ✅</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>語意搜尋升級 ✅</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>篩選功能修復 ✅</div>
       </div>
       <div class="phase-card" style="border-top-color:#f59e0b">
-        <div class="phase-tag" style="color:#b45309">PHASE 3 — 下週中</div>
+        <div class="phase-tag" style="color:#b45309">PHASE 3 — 下週</div>
+        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>診斷報告 PDF 輸出</div>
         <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>方案評分視覺化</div>
-        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>競爭態勢可互動</div>
         <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>需求 × 規模矩陣</div>
       </div>
       <div class="phase-card" style="border-top-color:#8b5cf6">
-        <div class="phase-tag" style="color:#7c3aed">PHASE 4 — 下下週</div>
-        <div class="phase-item"><div class="p-dot" style="background:#8b5cf6"></div>競爭態勢深化</div>
+        <div class="phase-tag" style="color:#7c3aed">PHASE 4 — 之後</div>
+        <div class="phase-item"><div class="p-dot" style="background:#8b5cf6"></div>競爭態勢可互動</div>
         <div class="phase-item"><div class="p-dot" style="background:#8b5cf6"></div>Log 儀表板</div>
         <div class="phase-item"><div class="p-dot" style="background:#8b5cf6"></div>is_startup Cron Job</div>
       </div>
     </div>
   </div>
 
-  <footer>產業策略智庫 系統盤點 · III 數位轉型研究院 · 2026-06-05</footer>
+  <footer>產業策略智庫 系統盤點 · III 數位轉型研究院 · 2026-06-09</footer>
 </div>
 
 <script>
@@ -223,26 +207,26 @@ function dayOf(s){ const [m,d]=s.split('/').map(Number); return Math.round((new 
 
 const tasks = [
   {sec:'已完成', items:[
-    {name:'Ask Prompt強化', s:'5/28',e:'5/28',col:'#1d9e75'},
-    {name:'軟性排序上線',   s:'5/29',e:'5/31',col:'#1d9e75'},
-    {name:'Airtable自動備份',s:'6/02',e:'6/02',col:'#8b5cf6'},
-    {name:'Round 06 完成', s:'6/03',e:'6/03',col:'#3b82f6'},
-    {name:'統一導覽列',    s:'6/03',e:'6/04',col:'#1d9e75'},
-    {name:'統編批次補查',  s:'6/04',e:'6/04',col:'#f59e0b'},
-    {name:'缺口分析上線',  s:'6/05',e:'6/05',col:'#1d9e75'},
-    {name:'競爭態勢Grid',  s:'6/05',e:'6/05',col:'#1d9e75'},
-    {name:'ROI Modal',     s:'6/05',e:'6/05',col:'#1d9e75'},
+    {name:'Ask Prompt強化',   s:'5/28',e:'5/28',col:'#1d9e75'},
+    {name:'軟性排序上線',     s:'5/29',e:'5/31',col:'#1d9e75'},
+    {name:'Airtable自動備份', s:'6/02',e:'6/02',col:'#8b5cf6'},
+    {name:'Round 06 完成',    s:'6/03',e:'6/03',col:'#3b82f6'},
+    {name:'缺口分析上線',     s:'6/05',e:'6/05',col:'#1d9e75'},
+    {name:'ROI Modal',        s:'6/05',e:'6/05',col:'#1d9e75'},
+    {name:'AI批次分類564筆',  s:'6/08',e:'6/08',col:'#f59e0b'},
+    {name:'語意搜尋升級',     s:'6/08',e:'6/08',col:'#1d9e75'},
+    {name:'篩選功能修復',     s:'6/08',e:'6/08',col:'#1d9e75'},
+    {name:'Round 07 完成',    s:'6/09',e:'6/09',col:'#3b82f6'},
   ]},
-  {sec:'規劃中', items:[
-    {name:'顧問診斷流程',  s:'6/09',e:'6/11',col:'#d1d5db'},
-    {name:'差異化Debug',   s:'6/09',e:'6/11',col:'#d1d5db'},
-    {name:'方案評分視覺化',s:'6/10',e:'6/13',col:'#d1d5db'},
-    {name:'競爭態勢互動',  s:'6/16',e:'6/18',col:'#d1d5db'},
+  {sec:'進行中', items:[
+    {name:'顧問診斷工具',     s:'6/09',e:'6/11',col:'#d1d5db'},
+    {name:'診斷報告輸出',     s:'6/12',e:'6/15',col:'#d1d5db'},
+    {name:'方案評分視覺化',   s:'6/16',e:'6/18',col:'#d1d5db'},
   ]},
 ];
 
 const ticks = ['5/25','6/01','6/08','6/15','6/22'];
-const TODAY = dayOf('6/05');
+const TODAY = dayOf('6/09');
 const trackW = 520;
 const px = d => (d/TOTAL_DAYS)*trackW;
 
