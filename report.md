@@ -13,6 +13,12 @@
 
 ## 二、本週完成事項
 
+## 📊 0615 期中報告簡報
+
+<a href="https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/Pcc329/weekly-report/main/0615_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V6_F.pptx" target="_blank">🖥️ 線上開啟簡報（Office Online）</a>
+
+<iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/Pcc329/weekly-report/main/0615_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V6_F.pptx" width="100%" height="450px" frameborder="0"></iframe>
+
 ### 搜尋品質 & 測試
 
 | 任務 | 狀態 | 說明 |
