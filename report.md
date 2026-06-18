@@ -1,13 +1,19 @@
-# III 產業資料庫週報 2026-06-11
+# III 產業資料庫週報 2026-06-18
 
-**週期：W11–12（2026/06/08–06/11）**  
-**撰寫：2026-06-11（週四，週五請假提前送出）**
+**週期：W13（2026/06/15–06/18）**  
+**撰寫：2026-06-18（週四，週五放假提前送出）**
 
 ---
 
 ## 一、本週整體進度
 
-本週是功能整合週，語意搜尋品質大幅提升並通過 Round 07 測試驗證，顧問診斷工具 Phase 1 上線，儀表板完成色系升級，0615 期中報告簡報製作完成。
+本週為製造業專屬入口建置與細節打磨週，重點如下：
+
+- 0615 期中報告順利完成口頭報告
+- 製造業方案探索（manufacturing.html）：新頁面建立、雙通道輸入、AI 推薦，至本日一連串使用體驗優化全部到位
+- 智能方案探索（diagnosis.html）：改版為 AI Agent 對話介面
+- index.html 白屏問題排除，正式機恢復正常
+- Companies industry_vertical 完成 568 筆 AI 分類補全
 
 ---
 
@@ -19,39 +25,43 @@
 
 <iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/Pcc329/weekly-report/main/0615_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V6_F.pptx" width="100%" height="450px" frameborder="0"></iframe>
 
-### 搜尋品質 & 測試
+> 本週為 0615 期中報告口頭報告週，簡報沿用上週完成之 V6_F（22 頁），本週無新增簡報產出。
+
+### 製造業方案探索（manufacturing.html）
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| 語意搜尋全面升級 | ✅ merged | api/claude.js 新增 category 精確篩選 + industryKeyword 產業排序，醫療照護 2322→44 筆 |
-| AI 批次分類 | ✅ 完成 | 564 筆 industry_category 補完（Claude Haiku，US$0.27），暫無法分類降至 15 筆 |
-| Round 07 模擬測試 | ✅ 完成 | 100 情境全成功，**0 缺口 / 0 失效**，平均搜尋筆數 696 → **172.3**（精準度提升 4 倍） |
+| 新頁面建立 | ✅ merged | 製造業專屬入口，左右兩欄版面，雙通道輸入（PDF 上傳 + AI Agent 逐項詢問） |
+| 後端 API 新增 | ✅ merged | manufacturing-analyze.js（PDF 解析）、manufacturing-recommend.js（AI 推薦，JSON 輸出） |
+| 雙上傳區拆分 | ✅ merged | 評量表（teal）/ 診斷報告（indigo）分開上傳，診斷書資料優先、pain_points 合併去重 |
+| 分析結果加入公司名稱 | ✅ merged | 一次分析多家時可辨識當前企業，顯示於資訊區最上方 |
+| 清除文件按鈕 | ✅ merged | 一鍵清空文件與分析狀態，方便切換分析對象 |
+| 排序邏輯提示 | ✅ merged | 方案欄加 ⓘ tooltip，說明依「適配程度」而非價格排序 |
+| 結論與卡片對齊 | ✅ merged | 結論建議前三名固定跟隨卡片排序，AI 僅負責撰寫理由與效益 |
+| 方案數量精簡 | ✅ merged | 推薦方案 10 → 5 筆，結論建議改 AI 顧問式建議 |
 
-### 功能上線
+### 智能方案探索（diagnosis.html）
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| 顧問診斷工具 Phase 1 | ✅ merged | diagnosis.html 上線，產業/規模/預算/痛點 → 推薦 20 筆方案，三組情境驗收通過 |
-| 多選篩選 + Chip 優化 | ✅ merged | region/category/program/industry_vertical 改多選陣列，同類 OR 異類 AND（Crunchbase 風格） |
-| 篩選邏輯說明 | ✅ merged | ? tooltip + filterSummary 顯示篩選條件摘要 |
-| 顏色重構分層 | ✅ merged | 「特質」（AI黃/新創綠）+ 「來源」（咖啡色），9 種獨立顏色，按鈕選中色 = chip 色 |
-| 儀表板色系升級 | ✅ merged | IT Product Warehouse 風格：深海軍藍 header、Teal 主色、9 色 categorical palette、KPI 語意分色、地圖 teal 漸層 |
+| AI Agent 對話改版 | ✅ merged | 由靜態表單改為對話介面，左對話右推薦，haiku 對話 + sonnet 推薦，手動按鈕觸發省 API 成本 |
+| 頁面命名與用詞 | ✅ merged | 定名「智能方案探索」，頁內「診斷」字眼改為「規劃」 |
+
+### 系統穩定性 & 全站調整
+
+| 任務 | 狀態 | 說明 |
+|---|---|---|
+| index.html 白屏修復 | ✅ merged | 移除 Babel 標籤誤加的 data-type="script"，恢復 JSX 正常渲染 |
+| PDF-only 限制 | ✅ merged | 上傳僅支援 PDF（Anthropic Documents API 限制，DOCX 轉換不穩定） |
+| navbar 箭頭移除 | ✅ merged | 全站 7 頁移除導覽列 ↗ 符號 |
+| AGENTS.md 更新 | ✅ 完成 | 新增 Babel 標籤禁改規則、Codex 自動開 PR 指令 |
 
 ### 資料品質
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| 員工規模推算 | ✅ 完成 | employee_range_estimated 欄位，資本額推算，準確率 60.8%，838 筆寫入 |
-| is_startup 同步 | ✅ 完成 | is_startup_auto → is_startup，補齊 112 筆 |
-| employee_range_final | ✅ 完成 | Airtable Formula 三來源合併（手動 > 爬蟲 > 推算） |
-| score_overall 分析 | ✅ 完成 | 鑑別度分析：創新力（SD=1.14）最佳，支援度（SD=0.57）趨同待優化 |
-
-### 報告 & 文件
-
-| 任務 | 狀態 | 說明 |
-|---|---|---|
-| 0615 期中報告簡報 | ✅ 完成 | V6_F，22 頁，含雙層進度列，結論頁附兩大努力方向 |
-| 交接清冊 v10 | ✅ 完成 | 2026-06-10 版本 |
+| industry_vertical 分類 | ✅ 完成 | 568 筆 Companies AI 補全（成功 568 / 失敗 0），資訊服務業 529、其餘分散電商/農食/文創等 |
+| SEMI → SME AI平台 修正 | ✅ 完成 | 279 筆 Airtable 標籤更正（SEMI 為半導體組織，正確為中企署 SME AI 平台） |
 
 ---
 
@@ -60,12 +70,11 @@
 | 表 | 筆數 |
 |---|---|
 | Solutions（方案）| 2,322 筆 |
-| Companies（業者）| 840 家 |
+| Companies（業者）| 840 家（industry_vertical 已補 568 筆） |
 | Contacts（聯絡人）| 601 筆 |
 | Awards（得獎）| 148 筆 |
 
-**本週新增**：0 筆（整合升級週，無新增資料）  
-**R07 搜尋品質**：100/100 情境有結果，平均 172.3 筆（↓ vs 上週 696 筆，精準）
+**本週新增**：0 筆（功能與體驗打磨週，無新增方案資料）
 
 ---
 
@@ -73,10 +82,10 @@
 
 | 項目 | 說明 |
 |---|---|
+| manufacturing.html 方案卡片點擊 | 點卡片跳轉方案詳細頁行為待確認後實作 |
+| diagnosis.html Phase 2 | PDF/列印一頁報告，暫緩（本週評估後移出優先序） |
 | twincn 爬蟲 | requests/Playwright 均被反爬蟲封鎖，暫緩 |
-| GCIS 統編反查 | API 回傳空值（BOM 字元問題已修），需找替代資料源 |
 | Google Trends API | 已申請 alpha，等 iii-fdb project 核准通知 |
-| industry_vertical 補全 | AI 批次執行中（568 筆），預計本週內完成 |
 
 ---
 
@@ -84,12 +93,11 @@
 
 | 優先 | 任務 | 說明 |
 |---|---|---|
-| 🔴 | 0615 期中報告 | 週一上午報告，V6_F 已備妥 |
-| 🔴 | 診斷工具 Phase 2 | 推薦結果輸出一頁報告（PDF/列印）|
-| 🟡 | Round 08 模擬測試 | 調整「數位轉型入門」「接觸新客戶」keyword 後重跑 |
-| 🟡 | Companies 屬性補全 | logo Favicon 批次 + website 從 Solutions 繼承 |
+| 🟡 | Round 08 模擬測試 | 調整「數位轉型入門」「接觸新客戶」keyword 過泛問題後重跑 |
+| 🟡 | manufacturing 卡片點擊跳轉 | 確認預期行為後實作方案詳細頁導覽 |
 | 🟡 | score 評分前端改版 | 改顯示相對位置（百分位），不顯示絕對分數 |
+| 🟢 | Companies 屬性補全 | logo Favicon 批次 + website 從 Solutions 繼承 |
 
 ---
 
-*產業資料庫專案 · III 數位轉型研究院 · 2026-06-11*
+*產業資料庫專案 · III 數位轉型研究院 · 2026-06-18*
