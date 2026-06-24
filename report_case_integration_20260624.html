@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>產業策略智庫 × 案例資料庫整合評估報告</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;600&display=swap');
+
+:root {
+  --navy:   #1a2b4a;
+  --teal:   #1D9E75;
+  --teal-l: #e8f5f1;
+  --amber:  #d4820a;
+  --amber-l:#fdf3e3;
+  --ink:    #2c2c2a;
+  --muted:  #5f5e5a;
+  --hint:   #9b9990;
+  --border: rgba(44,44,42,.1);
+  --bg:     #f8f7f4;
+  --white:  #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+/* ── Cover ── */
+.cover {
+  background: var(--navy);
+  color: #fff;
+  padding: 80px 60px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -80px;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: rgba(29,158,117,.18);
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(212,130,10,.12);
+}
+.cover-label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); margin-bottom: 20px;
+}
+.cover-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 32px; font-weight: 700;
+  line-height: 1.4; margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.cover-sub {
+  font-size: 15px; color: rgba(255,255,255,.7);
+  margin-bottom: 40px; position: relative; z-index: 1;
+}
+.cover-meta {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,.15);
+  padding-top: 24px;
+}
+.cover-meta-item { font-size: 13px; }
+.cover-meta-item span { display: block; color: rgba(255,255,255,.45); font-size: 11px; letter-spacing: .08em; margin-bottom: 2px; }
+
+/* ── Layout ── */
+.container { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
+
+/* ── Section ── */
+.section { margin-top: 56px; }
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--navy); margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--navy);
+}
+.section-body { font-size: 15px; color: var(--ink); line-height: 1.9; }
+.section-body p + p { margin-top: 14px; }
+
+/* ── Summary box ── */
+.summary-box {
+  background: var(--teal-l);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 8px 8px 0;
+  padding: 20px 24px;
+  margin: 24px 0;
+  font-size: 15px; line-height: 1.85;
+}
+.summary-box strong { color: var(--teal); }
+
+/* ── Compare table ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 14px; margin: 24px 0;
+}
+.compare-table th {
+  background: var(--navy); color: #fff;
+  padding: 12px 16px; text-align: left;
+  font-weight: 500; font-size: 13px;
+}
+.compare-table th:first-child { border-radius: 8px 0 0 0; }
+.compare-table th:last-child { border-radius: 0 8px 0 0; }
+.compare-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.7;
+}
+.compare-table tr:nth-child(even) td { background: #f2f1ed; }
+.compare-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.compare-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 2px 8px; border-radius: 999px;
+}
+.badge-high { background: #e8f5f1; color: #0f6e56; }
+.badge-mid  { background: #fdf3e3; color: #854f0b; }
+
+/* ── Integration cards ── */
+.integration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.int-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.int-card-icon { font-size: 22px; margin-bottom: 10px; }
+.int-card-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.int-card-body { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+.int-card.highlight { border-color: var(--teal); border-width: 2px; }
+.int-card.highlight .int-card-title { color: var(--teal); }
+.int-card-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; margin-bottom: 10px;
+  background: var(--teal); color: #fff;
+}
+
+/* ── Phase timeline ── */
+.phase-list { margin: 24px 0; display: flex; flex-direction: column; gap: 0; }
+.phase-item {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.phase-item:last-child { border-bottom: none; }
+.phase-num {
+  flex-shrink: 0; width: 40px; height: 40px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px; font-weight: 700; color: #fff;
+}
+.phase-num.p1 { background: var(--hint); }
+.phase-num.p2 { background: var(--teal); }
+.phase-num.p3 { background: var(--navy); }
+.phase-content { flex: 1; }
+.phase-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.phase-period { font-size: 12px; color: var(--hint); margin-bottom: 8px; }
+.phase-body { font-size: 14px; color: var(--muted); line-height: 1.75; }
+.phase-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.phase-tag {
+  font-size: 11px; padding: 2px 10px; border-radius: 999px;
+  background: var(--bg); color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+/* ── Key insight ── */
+.insight-box {
+  background: var(--navy); color: #fff;
+  border-radius: 12px; padding: 28px 32px;
+  margin: 32px 0; position: relative; overflow: hidden;
+}
+.insight-box::before {
+  content: ''; position: absolute;
+  right: -30px; top: -30px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(29,158,117,.2);
+}
+.insight-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .18em;
+  color: var(--teal); margin-bottom: 12px; text-transform: uppercase;
+}
+.insight-text {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 18px; line-height: 1.7;
+  position: relative; z-index: 1;
+}
+
+/* ── Priority table ── */
+.priority-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+.priority-table th {
+  background: var(--bg); color: var(--muted);
+  padding: 10px 14px; text-align: left;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em;
+  border-bottom: 2px solid var(--border);
+}
+.priority-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.65; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.dot-high { background: var(--teal); }
+.dot-mid  { background: var(--amber); }
+.dot-low  { background: var(--hint); }
+
+/* ── Footer ── */
+.report-footer {
+  margin-top: 60px; padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--hint);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .cover { padding: 48px 28px 40px; }
+  .cover-title { font-size: 24px; }
+  .container { padding: 0 20px 60px; }
+  .integration-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-label">資策會數位轉型研究院 · 對內報告</div>
+  <div class="cover-title">產業策略智庫 × AI顧問知識助理<br>整合評估與商用化路徑規劃</div>
+  <div class="cover-sub">現行產業資料庫與案例資料庫的功能差異、整合機會與三階段推廣建議</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><span>日期</span>2026-06-24</div>
+    <div class="cover-meta-item"><span>撰寫單位</span>數位轉型研究院</div>
+    <div class="cover-meta-item"><span>文件性質</span>對內評估報告</div>
+    <div class="cover-meta-item"><span>版本</span>v1.0</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 一、背景 -->
+  <div class="section">
+    <div class="section-label">Section 01</div>
+    <div class="section-title">背景與目的</div>
+    <div class="section-body">
+      <p>本院目前已建立「產業策略智庫」平台（Solution Finder），彙整逾 2,300 筆政府補助與商業 IT 解決方案，提供語意搜尋、AI 推薦與製造業診斷等功能，主要服務對象為輔導員與顧問。</p>
+      <p>近期，院內顧問輔導團提出「AI顧問服務知識助理平台」構想，核心為將顧問結案報告、訪談紀錄等實戰經驗結構化，建立可搜尋、可複製的個案知識庫。</p>
+      <p>本報告針對兩個系統的功能差異進行評估，提出整合機會與商用化路徑建議，供後續規劃參考。</p>
+    </div>
+  </div>
+
+  <!-- 二、差異比較 -->
+  <div class="section">
+    <div class="section-label">Section 02</div>
+    <div class="section-title">兩系統功能差異對照</div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>比較維度</th>
+          <th>產業策略智庫（現行）</th>
+          <th>AI顧問知識助理（案例庫）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>核心資料</td>
+          <td>方案（Solution）+ 廠商（Company）</td>
+          <td>個案（Case）+ 顧問輔導紀錄</td>
+        </tr>
+        <tr>
+          <td>資料來源</td>
+          <td>政府補助計畫、雲市集、廠商自報</td>
+          <td>顧問結案報告、訪談紀錄、輔導附件</td>
+        </tr>
+        <tr>
+          <td>資料含金量</td>
+          <td><span class="badge badge-mid">中（公開資料為主）</span></td>
+          <td><span class="badge badge-high">高（顧問實戰經驗，非公開）</span></td>
+        </tr>
+        <tr>
+          <td>搜尋邏輯</td>
+          <td>語意搜尋 + 條件篩選</td>
+          <td>語意搜尋 + 相似案例向量比對</td>
+        </tr>
+        <tr>
+          <td>AI 輸出</td>
+          <td>推薦方案清單 + 分析摘要</td>
+          <td>相似案例 + 解法組合 + 服務書草案</td>
+        </tr>
+        <tr>
+          <td>解決的核心問題</td>
+          <td>「有哪些方案可用？」</td>
+          <td>「別人遇到類似問題怎麼處理？」</td>
+        </tr>
+        <tr>
+          <td>使用者</td>
+          <td>輔導員、顧問</td>
+          <td>顧問、輔導員</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary-box">
+      <strong>關鍵差異一句話：</strong>產業策略智庫解決「工具選擇」問題；AI顧問知識助理解決「經驗傳承」問題。兩者定位互補，合則更強。
+    </div>
+  </div>
+
+  <!-- 三、整合機會 -->
+  <div class="section">
+    <div class="section-label">Section 03</div>
+    <div class="section-title">整合機會分析</div>
+    <div class="section-body">
+      <p>以下列出三個具體整合切入點，依開發成本與效益排序。</p>
+    </div>
+
+    <div class="integration-grid" style="margin-top:20px">
+      <div class="int-card highlight">
+        <div class="int-card-tag">優先推薦</div>
+        <div class="int-card-icon">📎</div>
+        <div class="int-card-title">推薦方案附帶案例佐證</div>
+        <div class="int-card-body">在現有推薦卡片旁附上「相似企業導入案例摘要」，提供成效數據（如：排程時間縮短 40%），大幅提升顧問說服力。技術成本最低，效益最即時。</div>
+      </div>
+      <div class="int-card">
+        <div class="int-card-icon">🔍</div>
+        <div class="int-card-title">診斷流程加入案例比對</div>
+        <div class="int-card-body">現行製造業診斷流程（文件→條件→推薦）加入「相似案例比對」環節，讓顧問在看到推薦方案前先了解同類企業的輔導路徑，增加決策信心。</div>
+      </div>
+      <div class="int-card">
+        <div class="int-card-icon">📄</div>
+        <div class="int-card-title">服務書自動生成</div>
+        <div class="int-card-body">整合案例庫後，系統可依企業條件自動產生建議服務書草案，顧問僅需微調即可輸出正式文件，大幅縮短提案準備時間。</div>
+      </div>
+      <div class="int-card">
+        <div class="int-card-icon">🏷️</div>
+        <div class="int-card-title">跨庫 Tag 標籤統一</div>
+        <div class="int-card-body">方案庫與案例庫採用共同的產業別、問題分類、技術標籤體系，讓搜尋結果可同時呈現「可用方案」與「參考案例」，減少資料孤島效應。</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">核心洞察</div>
+      <div class="insight-text">「顧問的經驗不再只存在顧問腦子裡。」<br>每一個成功輔導案例沉澱為可檢索、可複製的知識資產，是本整合方案最核心的價值主張。</div>
+    </div>
+  </div>
+
+  <!-- 四、商用化路徑 -->
+  <div class="section">
+    <div class="section-label">Section 04</div>
+    <div class="section-title">三階段商用化路徑</div>
+    <div class="section-body">
+      <p>以下以民間企業推廣為目標，規劃三階段推進路徑，每階段均可獨立交付並驗證效果。</p>
+    </div>
+
+    <div class="phase-list">
+      <div class="phase-item">
+        <div class="phase-num p1">1</div>
+        <div class="phase-content">
+          <div class="phase-title">方案搜尋 + AI 推薦（現行）</div>
+          <div class="phase-period">目前階段 · 已上線</div>
+          <div class="phase-body">產業策略智庫平台已完成核心功能：語意搜尋、條件篩選、製造業 AI 診斷工具（PDF 上傳→條件萃取→推薦方案）。主要服務輔導員內部使用，建立資料基礎與使用習慣。</div>
+          <div class="phase-tags">
+            <span class="phase-tag">2,300+ 筆方案</span>
+            <span class="phase-tag">製造業診斷工具</span>
+            <span class="phase-tag">輔導員內部使用</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-num p2">2</div>
+        <div class="phase-content">
+          <div class="phase-title">案例庫整合 + 相似案例比對</div>
+          <div class="phase-period">近期目標 · 建議優先推進</div>
+          <div class="phase-body">建立顧問個案資料庫，將結案報告結構化（痛點/診斷/化解/成效），與現有方案庫以共同 Tag 體系串接。推薦結果附帶相似案例，服務對象從個人輔導員擴展至整個顧問團隊，實現知識共享。</div>
+          <div class="phase-tags">
+            <span class="phase-tag">案例結構化</span>
+            <span class="phase-tag">相似案例比對</span>
+            <span class="phase-tag">顧問團隊知識共享</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-num p3">3</div>
+        <div class="phase-content">
+          <div class="phase-title">服務書自動生成 + 對外商用推廣</div>
+          <div class="phase-period">中期目標 · 商用化關鍵</div>
+          <div class="phase-body">整合案例庫與方案庫後，系統具備依企業條件自動產生建議服務書草案的能力。此功能對企業端（協會、產業公會、中大型企業 IT 部門）具明顯付費意願，可作為對外推廣的核心服務項目。</div>
+          <div class="phase-tags">
+            <span class="phase-tag">服務書自動生成</span>
+            <span class="phase-tag">廠商媒合</span>
+            <span class="phase-tag">對外銷售</span>
+            <span class="phase-tag">協會 / 公會</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 五、優先行動建議 -->
+  <div class="section">
+    <div class="section-label">Section 05</div>
+    <div class="section-title">優先行動建議</div>
+
+    <table class="priority-table">
+      <thead>
+        <tr>
+          <th>優先序</th>
+          <th>行動項目</th>
+          <th>預期效益</th>
+          <th>資源需求</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dot dot-high"></span>高</td>
+          <td>與顧問輔導團對齊案例資料結構規格</td>
+          <td>確認資料欄位定義，避免後續重工</td>
+          <td>低（會議討論）</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-high"></span>高</td>
+          <td>建立 Airtable 案例庫雛形（10-20 筆試驗）</td>
+          <td>驗證結構化流程可行性</td>
+          <td>低（Airtable 現有帳號）</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-mid"></span>中</td>
+          <td>推薦頁面加入案例佐證顯示區塊</td>
+          <td>立即提升顧問說服力</td>
+          <td>中（前端開發 1-2 天）</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-mid"></span>中</td>
+          <td>統一方案庫與案例庫的 Tag 標籤體系</td>
+          <td>跨庫搜尋基礎建設</td>
+          <td>中（資料治理討論）</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-low"></span>低</td>
+          <td>評估服務書輸出格式（PDF/Word）</td>
+          <td>Phase 3 商用化前期規劃</td>
+          <td>低（規格討論）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 六、資訊安全與個資合規 -->
+  <div class="section">
+    <div class="section-label">Section 06</div>
+    <div class="section-title">資訊安全與個資合規考量</div>
+    <div class="section-body">
+      <p>III 作為財團法人第三方機構，在建置與推廣本平台時，須同時兼顧 ISO 27001 資訊安全管理要求、《個人資料保護法》規範，以及使用便利性三者之間的平衡。以下針對主要風險面向提出對應原則。</p>
+    </div>
+
+    <!-- 資料分級 -->
+    <div style="margin-top:24px">
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:14px">① 資料分級保護原則</div>
+      <table class="priority-table">
+        <thead>
+          <tr>
+            <th>資料類型</th>
+            <th>範例</th>
+            <th>建議等級</th>
+            <th>處理原則</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>公開資料</td>
+            <td>方案名稱、功能描述、費用區間</td>
+            <td><span class="badge badge-high">公開</span></td>
+            <td>可對外展示，無限制</td>
+          </tr>
+          <tr>
+            <td>限閱資料</td>
+            <td>廠商聯繫電話、負責人姓名、Email</td>
+            <td><span class="badge badge-mid">限閱</span></td>
+            <td>僅限授權輔導員查閱，不得匯出或截圖傳送</td>
+          </tr>
+          <tr>
+            <td>機密資料</td>
+            <td>輔導企業名稱、診斷內容、財務資訊</td>
+            <td><span class="badge" style="background:#fce8e8;color:#a32d2d">機密</span></td>
+            <td>去識別化後才可入庫；原始資料禁止上傳系統</td>
+          </tr>
+          <tr>
+            <td>AI 處理資料</td>
+            <td>PDF 上傳內容、診斷對話紀錄</td>
+            <td><span class="badge" style="background:#fce8e8;color:#a32d2d">機密</span></td>
+            <td>不得永久儲存；Log 僅保留去識別化摘要</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 核心原則 -->
+    <div style="margin-top:28px">
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:14px">② 資料不落地與最小授權原則</div>
+      <div class="integration-grid">
+        <div class="int-card">
+          <div class="int-card-icon">🔐</div>
+          <div class="int-card-title">AI 分析不留存原始內容</div>
+          <div class="int-card-body">顧問上傳的 PDF 文件僅於當次 API 呼叫中使用，Anthropic 文件 API 採零資料保留（Zero Data Retention）模式，不得將原始文件或診斷對話寫入任何資料庫。</div>
+        </div>
+        <div class="int-card">
+          <div class="int-card-icon">👤</div>
+          <div class="int-card-title">角色權限分層控管</div>
+          <div class="int-card-body">建議區分三種角色：一般使用者（只看公開欄位）、授權輔導員（可查閱限閱資料）、系統管理員（可存取完整資料）。權限設定應對應 III 內部職務，不得自行調整。</div>
+        </div>
+        <div class="int-card">
+          <div class="int-card-icon">🏷️</div>
+          <div class="int-card-title">案例庫去識別化入庫</div>
+          <div class="int-card-body">顧問結案報告入庫前，須將企業名稱、負責人、聯絡資訊等識別欄位以代號替換。去識別化程序應有人工審核步驟，不得僅依賴 AI 自動判斷。</div>
+        </div>
+        <div class="int-card">
+          <div class="int-card-icon">📋</div>
+          <div class="int-card-title">Log 去識別化與保存期限</div>
+          <div class="int-card-body">系統操作 Log（搜尋紀錄、問答紀錄）不得記錄個人可識別資訊。建議設定保存期限（如 90 天），到期自動清除，符合個資法比例原則。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 台灣個資法 -->
+    <div style="margin-top:28px">
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:12px">③ 台灣個人資料保護法對應要點</div>
+      <div class="summary-box">
+        依據《個人資料保護法》，蒐集、處理、利用個人資料需具備合法基礎。本平台涉及廠商聯繫資訊與輔導企業資料，建議確認以下三點：
+        <ul style="margin-top:10px;padding-left:20px;line-height:2">
+          <li>廠商資料的蒐集是否已取得當事人同意或具有合法蒐集目的</li>
+          <li>輔導企業資料的使用是否符合原始蒐集目的（輔導用途），跨目的使用需另取得同意</li>
+          <li>資料主體的查閱、更正、刪除請求應有對應的處理流程</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 待釐清項目 -->
+    <div style="margin-top:28px">
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:14px">④ 待向 III 內部取得明確規範的事項</div>
+      <div style="background:var(--amber-l);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:20px 24px;font-size:14px;line-height:2">
+        <div style="font-weight:600;color:var(--amber);margin-bottom:10px">⚠ 以下項目建議於開發前向相關單位確認，避免上線後需大幅修改</div>
+        <ol style="padding-left:20px">
+          <li>III 現行 ISO 27001 資訊安全政策中，對「雲端 SaaS 服務使用」的規範為何？（本平台使用 Airtable、Vercel、Anthropic API）</li>
+          <li>廠商聯繫資訊（電話、Email）的蒐集原始授權文件為何？是否允許在平台上對輔導員展示？</li>
+          <li>輔導結案報告的著作權歸屬為 III 或顧問個人？對應入庫授權如何處理？</li>
+          <li>平台使用者的身份驗證機制需達到何種等級？（目前無登入機制，需評估是否需要 SSO 或帳號管理）</li>
+          <li>AI 生成內容（推薦方案、分析摘要）的法律責任歸屬聲明，是否需要加入免責條款？</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ISO 27001 參考 -->
+    <div style="margin-top:28px">
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:14px">⑤ 可參考的 ISO 27001 控制措施（附錄 A）</div>
+      <table class="priority-table">
+        <thead>
+          <tr>
+            <th>控制項</th>
+            <th>名稱</th>
+            <th>與本平台的關聯</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A.5.12</td>
+            <td>資訊分類</td>
+            <td>建立資料分級標準（公開/限閱/機密）</td>
+          </tr>
+          <tr>
+            <td>A.5.34</td>
+            <td>隱私與個人識別資訊保護</td>
+            <td>廠商與客戶個資的蒐集、處理與刪除流程</td>
+          </tr>
+          <tr>
+            <td>A.8.2</td>
+            <td>特殊存取權限管理</td>
+            <td>系統管理員與 Airtable 存取權限控管</td>
+          </tr>
+          <tr>
+            <td>A.8.10</td>
+            <td>資訊刪除</td>
+            <td>Log 保存期限與到期刪除機制</td>
+          </tr>
+          <tr>
+            <td>A.5.23</td>
+            <td>雲端服務資訊安全</td>
+            <td>Airtable、Vercel、Anthropic API 的供應商風險評估</td>
+          </tr>
+          <tr>
+            <td>A.6.7</td>
+            <td>遠端工作</td>
+            <td>輔導員在外使用平台的安全連線要求</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 結語 -->
+  <div class="section">
+    <div class="section-label">Section 07</div>
+    <div class="section-title">結語</div>
+    <div class="section-body">
+      <p>現行產業策略智庫已具備穩定的方案資料基礎與 AI 推薦能力；AI 顧問知識助理平台則擁有高含金量的顧問實戰知識。兩者定位互補，整合後可從「工具推薦平台」升級為「顧問智慧決策系統」。</p>
+      <p>建議以低成本的案例資料結構化為起點，逐步累積個案知識庫，再以服務書自動生成為商用化的核心賣點，向民間企業與產業協會推廣。資訊安全與個資合規的框架應在 Phase 2 啟動前與 III 內部法務、資安單位完成確認，作為後續開發的前提條件。</p>
+      <p>整體路徑風險可控，且每個階段均有獨立的內部使用價值，不需等到全部完成才能看到效果。</p>
+    </div>
+  </div>
+
+  <div class="report-footer">
+    <span>資策會數位轉型研究院 · 產業策略智庫專案</span>
+    <span>2026-06-24 · v1.1 · 對內文件，請勿對外流通</span>
+  </div>
+
+</div>
+</body>
+</html>
