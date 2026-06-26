@@ -1,80 +1,63 @@
-# III 產業資料庫週報 2026-06-18
+# III 產業資料庫週報 2026-06-26
 
-**週期：W13（2026/06/15–06/18）**  
-**撰寫：2026-06-18（週四，週五放假提前送出）**
+**週期：W14（2026/06/23–06/26）**  
+**撰寫：2026-06-26（週五）**
 
 ---
 
 ## 一、本週整體進度
 
-本週為製造業專屬入口建置與細節打磨週，重點如下：
+本週為製造業診斷工具深化週，重點如下：
 
-- 0615 期中報告順利完成口頭報告
-- 製造業方案探索（manufacturing.html）：新頁面建立、雙通道輸入、AI 推薦，至本日一連串使用體驗優化全部到位
-- 智能方案探索（diagnosis.html）：改版為 AI Agent 對話介面
-- index.html 白屏問題排除，正式機恢復正常
-- Companies industry_vertical 完成 568 筆 AI 分類補全
+- manufacturing.html 方案卡片全面升級：複數行內展開、description_short 整合
+- 參考案例資料庫 MVP 建立：Cases 表 30 筆種子資料、前端卡片展開功能上線
+- description_short 批次生成：2,214 筆 AI 短摘要寫入 Airtable
+- 三議題評估完成：案例資料庫、會員機制、資料庫升級規模的決策方向確立
 
 ---
 
 ## 二、本週完成事項
 
-## 📊 0615 期中報告簡報
-
-<a href="https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/Pcc329/weekly-report/main/0615_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V6_F.pptx" target="_blank">🖥️ 線上開啟簡報（Office Online）</a>
-
-<iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/Pcc329/weekly-report/main/0615_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V6_F.pptx" width="100%" height="450px" frameborder="0"></iframe>
-
-> 本週為 0615 期中報告口頭報告週，簡報沿用上週完成之 V6_F（22 頁），本週無新增簡報產出。
-
 ### 製造業方案探索（manufacturing.html）
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| 新頁面建立 | ✅ merged | 製造業專屬入口，左右兩欄版面，雙通道輸入（PDF 上傳 + AI Agent 逐項詢問） |
-| 後端 API 新增 | ✅ merged | manufacturing-analyze.js（PDF 解析）、manufacturing-recommend.js（AI 推薦，JSON 輸出） |
-| 雙上傳區拆分 | ✅ merged | 評量表（teal）/ 診斷報告（indigo）分開上傳，診斷書資料優先、pain_points 合併去重 |
-| 分析結果加入公司名稱 | ✅ merged | 一次分析多家時可辨識當前企業，顯示於資訊區最上方 |
-| 清除文件按鈕 | ✅ merged | 一鍵清空文件與分析狀態，方便切換分析對象 |
-| 排序邏輯提示 | ✅ merged | 方案欄加 ⓘ tooltip，說明依「適配程度」而非價格排序 |
-| 結論與卡片對齊 | ✅ merged | 結論建議前三名固定跟隨卡片排序，AI 僅負責撰寫理由與效益 |
-| 方案數量精簡 | ✅ merged | 推薦方案 10 → 5 筆，結論建議改 AI 顧問式建議 |
+| 方案卡片複數行內展開 | ✅ merged | 桌機最多同時展開 3 張，手機 1 張，lastToggledId 控制動畫不重複播放 |
+| description_short 前端整合 | ✅ merged | 優先顯示 ds 短摘要全文，無值則 fallback 到 description 前 100 字截字 |
+| solutions.js 加入 ds 欄位 | ✅ merged | `ds: f['description_short'] \|\| ''`，最小改動原則，核心搜尋邏輯不動 |
+| 參考案例區塊 Phase 1 | ✅ merged | 推薦方案下方加入「參考案例」區塊，30 筆靜態真實樣本，支援產業 chip 篩選 |
+| 案例卡片行內展開 | ✅ merged | 點案例卡展開顧問診斷結論、推動阻力、化解方法、可複製條件 |
+| 案例展開橫列式版面 | ✅ merged | icon + label + text 各一列，PC 與手機兼容，不需 media query |
+| 案例最多同時展開 3 張 | ✅ merged | 比照推薦方案邏輯，桌機 3 張 / 手機 1 張，第 4 張自動收合最早展開 |
 
-### 智能方案探索（diagnosis.html）
-
-| 任務 | 狀態 | 說明 |
-|---|---|---|
-| AI Agent 對話改版 | ✅ merged | 由靜態表單改為對話介面，左對話右推薦，haiku 對話 + sonnet 推薦，手動按鈕觸發省 API 成本 |
-| 頁面命名與用詞 | ✅ merged | 定名「智能方案探索」，頁內「診斷」字眼改為「規劃」 |
-
-### 系統穩定性 & 全站調整
+### 資料工作
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| index.html 白屏修復 | ✅ merged | 移除 Babel 標籤誤加的 data-type="script"，恢復 JSX 正常渲染 |
-| PDF-only 限制 | ✅ merged | 上傳僅支援 PDF（Anthropic Documents API 限制，DOCX 轉換不穩定） |
-| navbar 箭頭移除 | ✅ merged | 全站 7 頁移除導覽列 ↗ 符號 |
-| AGENTS.md 更新 | ✅ 完成 | 新增 Babel 標籤禁改規則、Codex 自動開 PR 指令 |
+| description_short 批次生成 | ✅ 完成 | Colab + Claude Haiku，2,214 筆成功，失敗 0，費用約 US$0.61（約 NT$20）|
+| Cases 表建立 | ✅ 完成 | Airtable 新增 Cases 表，15 個欄位，含 diagnosis / resistance / resolution / replicable_condition |
+| Cases 種子資料 30 筆 | ✅ 完成 | 涵蓋製造、醫療、零售、服務業、物流、旅遊住宿、金融、教育、電商、建築營造、餐飲 11 個產業 |
 
-### 資料品質
+### 架構決策
 
-| 任務 | 狀態 | 說明 |
-|---|---|---|
-| industry_vertical 分類 | ✅ 完成 | 568 筆 Companies AI 補全（成功 568 / 失敗 0），資訊服務業 529、其餘分散電商/農食/文創等 |
-| SEMI → SME AI平台 修正 | ✅ 完成 | 279 筆 Airtable 標籤更正（SEMI 為半導體組織，正確為中企署 SME AI 平台） |
+| 議題 | 決策 |
+|---|---|
+| 案例資料庫 | P0 優先，先取得真實資料再談複雜架構；Phase 1 靜態常數驗證 UI |
+| 會員機制 | Phase 3 商用化前再規劃，現在用 Vercel Deployment Protection 做輕量入口保護 |
+| 資料庫升級 | 觀察症狀（搜尋 >2 秒、Airtable 429 頻率），不急著遷移 Supabase |
 
 ---
 
 ## 三、資料庫現況
 
-| 表 | 筆數 |
-|---|---|
-| Solutions（方案）| 2,322 筆 |
-| Companies（業者）| 840 家（industry_vertical 已補 568 筆） |
-| Contacts（聯絡人）| 601 筆 |
-| Awards（得獎）| 148 筆 |
+| 表 | 筆數 | 變化 |
+|---|---|---|
+| Solutions（方案）| 2,322 筆 | 無變動 |
+| Companies（業者）| 840 家 | 無變動 |
+| Cases（案例）| 30 筆 | 🆕 本週新建 |
+| Contacts（聯絡人）| 601 筆 | 無變動 |
 
-**本週新增**：0 筆（功能與體驗打磨週，無新增方案資料）
+**description_short 覆蓋率**：2,214 筆（佔 Solutions 95.3%）
 
 ---
 
@@ -82,9 +65,11 @@
 
 | 項目 | 說明 |
 |---|---|
-| manufacturing.html 方案卡片點擊 | 點卡片跳轉方案詳細頁行為待確認後實作 |
-| diagnosis.html Phase 2 | PDF/列印一頁報告，暫緩（本週評估後移出優先序） |
-| twincn 爬蟲 | requests/Playwright 均被反爬蟲封鎖，暫緩 |
+| Cases 真實資料取得 | 目前為 30 筆模擬種子資料，需找顧問訪談取得真實案例 |
+| 農業雲市集數位館資料補充 | agdigi.atri.org.tw，待排 Colab 爬蟲 |
+| 新創方案補充 | 待確認同事進度後啟動 |
+| manufacturing.html 官方欄篩選邏輯 | 雲市集工業館 vs SME AI平台 定義待確認 |
+| Daily English Day 10–12 | 三天未產出，待補 |
 | Google Trends API | 已申請 alpha，等 iii-fdb project 核准通知 |
 
 ---
@@ -101,38 +86,22 @@
 | Crunchbase | NT$ 3,150 | 1 | NT$ 3,150 | 99 美金，一次性 |
 | **累計合計** | | | **NT$ 8,029** | 4 月起至今 |
 
-> API Credit 為儲值制，實際消耗依使用量計算，非固定月費。
+### 5-2 本週 API 使用量概算
 
-### 5-2 API 使用量概算（Anthropic Claude，使用 Haiku 模型）
-
-| 使用情境 | 資料量 | 每次/批次估算 |
+| 使用情境 | 資料量 | 估算費用 |
 |---|---|---|
-| 製造業方案探索（單次分析） | 1 份文件 | 約 NT$ 0.1 |
-| 方案評分批次 | 2,322 筆 | 約 NT$ 50（US$1–1.5） |
-| industry_vertical 產業分類 | 568 筆 | 約 NT$ 8.5（US$0.27） |
+| description_short 批次生成 | 2,214 筆 | 約 US$0.61（NT$20）|
+| 製造業方案探索（單次分析）| 1 份文件 | 約 US$0.02（NT$0.6）|
 
-> 單次互動成本極低，主要費用集中在「全庫批次處理」，且批次屬一次性工作（資料補完後不需重跑）。
+> 本週主要費用為 description_short 一次性批次生成，後續不需重跑。
 
 ### 5-3 模型成本比較（單次製造業方案探索）
 
 | 模型 | 相對成本 | 單次估算 | 1,000 次估算 |
 |---|---|---|---|
-| **Haiku 4.5（目前採用）** | 1× | NT$ 0.1 | NT$ 100 |
-| Sonnet 4.6 | 3× | NT$ 0.3 | NT$ 300 |
-| Opus 4.8 | 5× | NT$ 0.5 | NT$ 500 |
-
-> 標準定價（每百萬 tokens，美金）：Haiku $1/$5、Sonnet $3/$15、Opus $5/$25，倍數關係固定。
-
-### 5-4 為何採用 Haiku
-
-| 考量 | 說明 |
-|---|---|
-| 任務性質吻合 | 本專案主要用途為「文件欄位抽取、批次分類、語意路由」，正是 Haiku 的設計取向，準確度與高階模型差距小 |
-| 成本效益 | 較 Sonnet 便宜 3 倍、較 Opus 便宜 5 倍，全庫批次處理成本可壓在數十元 |
-| 反應速度 | 延遲最低，前端互動（如方案探索）體感流暢 |
-| 升級彈性 | 真正需要高品質生成的環節（如顧問結論文字）可單獨改用 Sonnet，屬低頻呼叫、成本影響極小 |
-
-> 結論：以 Haiku 承擔高量、結構化的基礎任務，必要時針對少數高價值環節局部升級，兼顧品質與成本。
+| **Haiku 4.5（目前採用）** | 1× | NT$ 0.6 | NT$ 600 |
+| Sonnet 4.6 | 3× | NT$ 1.8 | NT$ 1,800 |
+| Opus 4.8 | 5× | NT$ 3.0 | NT$ 3,000 |
 
 ---
 
@@ -140,11 +109,13 @@
 
 | 優先 | 任務 | 說明 |
 |---|---|---|
-| 🟡 | Round 08 模擬測試 | 調整「數位轉型入門」「接觸新客戶」keyword 過泛問題後重跑 |
-| 🟡 | manufacturing 卡片點擊跳轉 | 確認預期行為後實作方案詳細頁導覽 |
-| 🟡 | score 評分前端改版 | 改顯示相對位置（百分位），不顯示絕對分數 |
-| 🟢 | Companies 屬性補全 | logo Favicon 批次 + website 從 Solutions 繼承 |
+| 🔴 | Cases 真實資料取得 | 找 1 位顧問，完成 3 筆真實案例「入庫確認」|
+| 🔴 | Daily English Day 10–12 補做 | 三天未產出，優先補齊 |
+| 🟡 | 農業雲市集數位館資料補充 | agdigi.atri.org.tw，排 Colab 爬蟲 |
+| 🟡 | 新創方案補充 | 確認同事進度後啟動 |
+| 🟡 | manufacturing.html 官方欄篩選邏輯確認 | 雲市集工業館 vs SME AI平台 定義 |
+| 🟢 | Round 08 模擬測試 | 調整 keyword 過泛問題後重跑 |
 
 ---
 
-*產業資料庫專案 · III 數位轉型研究院 · 2026-06-18*
+*產業資料庫專案 · III 數位轉型研究院 · 2026-06-26*
