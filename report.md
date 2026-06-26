@@ -1,7 +1,8 @@
 # III 產業資料庫週報 2026-06-26
 
 **週期：W14（2026/06/23–06/26）**  
-**撰寫：2026-06-26（週五）**
+**撰寫：2026-06-26（週五）**  
+**系統連結**：[產業策略智庫](https://solution-finder-gray.vercel.app) ｜ [製造業診斷](https://solution-finder-gray.vercel.app/manufacturing.html)
 
 ---
 
