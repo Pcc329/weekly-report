@@ -1,122 +1,90 @@
-# III 產業資料庫週報 2026-06-26
+# 產業策略智庫 — Project 背景說明
 
-**週期：W14（2026/06/23–06/26）**  
-**撰寫：2026-06-26（週五）**  
-**系統連結**：[產業策略智庫](https://solution-finder-gray.vercel.app) ｜ [製造業診斷](https://solution-finder-gray.vercel.app/manufacturing.html)
+## 專案定位
+資策會數位轉型研究院「產業策略智庫」專案。
+建立 AI 語意搜尋智庫，彙整台灣中小企業數位轉型補助與解決方案資料。
+
+## 系統連結
+- 線上系統：https://solution-finder-gray.vercel.app
+- 儀表板：https://solution-finder-gray.vercel.app/dashboard.html
+- GitHub：https://github.com/Pcc329/solution-finder
+
+## Airtable 設定
+- Base ID：appttP04OnzzC7qxG
+- Solutions Table：tblqQkVQ4dSo7xgoE（2,320 筆，最新統計 2026-07-03）
+- Companies Table：tblkOaOBGK96vfRm1（825 筆，最新統計 2026-07-03）
+- Logs Table：tblLdVCmLwkzDFtMq（建置中）
+- 環境變數：AIRTABLE_TOKEN、ANTHROPIC_API_KEY
+- Claude Model：claude-sonnet-4-5
+
+## 資料庫三層架構
+- 層一：Companies（主鍵 company_id）
+- 層二：Contacts / Awards / Digital_needs / Solutions
+- 層三：Solution_Domains / Service_Domains / Logs
+
+## 工作流程
+你描述需求 → Claude 產規格書 → 貼給 Codex 執行
+→ Codex 回傳 SYNC .md → Claude review → PR → Merge → 驗收
+
+## 進行中任務（最新更新 2026-07-03）
+- W8 任務 8-B：ask.js 寫入 Airtable Logs（Codex 執行中）
+- W9+ 待啟動：Log 儀表板、Vercel Analytics
+- 剩餘檢查碼問題 company_id：約20多筆檢查碼未過但無重複，低優先，待後續處理
+- Solutions.company_id 格式一致性檢查：前導0格式不一致，建議近期一併排查
+
+## 本 Project 的對話分工
+- 資料整理：CSV 清洗、欄位補齊、覆蓋率分析
+- 網頁製作：前端功能、API、Codex 規格書
+- 簡報製作：PPT、圖表、ERD、交接清冊
+- 每個新對話開頭請說明本次任務類型
 
 ---
+
+# III 產業資料庫週報 2026-07-03
+
+**週期：W27（2026/06/29–07/03）**
+**撰寫：2026-07-03（週五）**
 
 ## 一、本週整體進度
 
-本週為製造業診斷工具深化週，重點如下：
-
-- manufacturing.html 方案卡片全面升級：複數行內展開、description_short 整合
-- 參考案例資料庫 MVP 建立：Cases 表 30 筆種子資料、前端卡片展開功能上線
-- description_short 批次生成：2,214 筆 AI 短摘要寫入 Airtable
-- 三議題評估完成：案例資料庫、會員機制、資料庫升級規模的決策方向確立
-
----
+本週為資料品質收尾週。完成 Companies 表與財政部 B05 稅籍登記資料集的比對整合，company_id 重複清理（Phase 4）全數清零，並完成 Solutions 表 282 筆缺編號方案的批次補號與驗證，資料庫主鍵完整性大幅提升。
 
 ## 二、本週完成事項
 
-### 製造業方案探索（manufacturing.html）
+### 資料整合 & 品質
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| 方案卡片複數行內展開 | ✅ merged | 桌機最多同時展開 3 張，手機 1 張，lastToggledId 控制動畫不重複播放 |
-| description_short 前端整合 | ✅ merged | 優先顯示 ds 短摘要全文，無值則 fallback 到 description 前 100 字截字 |
-| solutions.js 加入 ds 欄位 | ✅ merged | `ds: f['description_short'] \|\| ''`，最小改動原則，核心搜尋邏輯不動 |
-| 參考案例區塊 Phase 1 | ✅ merged | 推薦方案下方加入「參考案例」區塊，30 筆靜態真實樣本，支援產業 chip 篩選 |
-| 案例卡片行內展開 | ✅ merged | 點案例卡展開顧問診斷結論、推動阻力、化解方法、可複製條件 |
-| 案例展開橫列式版面 | ✅ merged | icon + label + text 各一列，PC 與手機兼容，不需 media query |
-| 案例最多同時展開 3 張 | ✅ merged | 比照推薦方案邏輯，桌機 3 張 / 手機 1 張，第 4 張自動收合最早展開 |
+| B05 稅籍資料比對 | ✅ 完成 | 用統編比對財政部全國營業稅籍登記資料集，命中率 96.3%（771/801 有效統編），779 筆寫入 Airtable |
+| B05 新增欄位 | ✅ 完成 | `paid_in_capital_official`（實收資本額）、`established_date_official`、`industry_code_official`、`b05_match_status`、`b05_synced_at` 五個欄位 |
+| B05 異常人工排除 | ✅ 完成 | 抽查10筆資本額差異>5倍案例，2筆確認B05錯誤，人工排除不寫入 |
+| company_id 重複清理（Phase 4） | ✅ 完成 | 從49筆問題清單逐組排查至清零，含前導0格式合併、統編填錯修正 |
+| Companies 表現況 | — | 825 筆 |
 
-### 資料工作
+### Solutions 補號 & 驗證
 
 | 任務 | 狀態 | 說明 |
 |---|---|---|
-| description_short 批次生成 | ✅ 完成 | Colab + Claude Haiku，2,214 筆成功，失敗 0，費用約 US$0.61（約 NT$20）|
-| Cases 表建立 | ✅ 完成 | Airtable 新增 Cases 表，15 個欄位，含 diagnosis / resistance / resolution / replicable_condition |
-| Cases 種子資料 30 筆 | ✅ 完成 | 涵蓋製造、醫療、零售、服務業、物流、旅遊住宿、金融、教育、電商、建築營造、餐飲 11 個產業 |
+| 缺 solution_id 批次補號 | ✅ 完成 | 282 筆（臺灣雲市集149筆 SOL-1216~1364、領域型調查(人工搜查)133筆 SOL-FIELD-0001~0133）正式寫入 |
+| 補號驗證腳本 | ✅ 完成 | 建立 `solutions_renumber_verify_v1.ipynb`，三項驗證（空值歸零 / SOL-FIELD- 系列對應正確 program_type / SOL-1216~1364 對應正確 program_type）全數通過，無串錯行 |
+| Solutions 表現況 | — | 2,320 筆，solution_id 空值已歸零 |
 
-### 架構決策
-
-| 議題 | 決策 |
-|---|---|
-| 案例資料庫 | P0 優先，先取得真實資料再談複雜架構；Phase 1 靜態常數驗證 UI |
-| 會員機制 | Phase 3 商用化前再規劃，現在用 Vercel Deployment Protection 做輕量入口保護 |
-| 資料庫升級 | 觀察症狀（搜尋 >2 秒、Airtable 429 頻率），不急著遷移 Supabase |
-
----
-
-## 三、資料庫現況
-
-| 表 | 筆數 | 變化 |
-|---|---|---|
-| Solutions（方案）| 2,322 筆 | 無變動 |
-| Companies（業者）| 840 家 | 無變動 |
-| Cases（案例）| 30 筆 | 🆕 本週新建 |
-| Contacts（聯絡人）| 601 筆 | 無變動 |
-
-**description_short 覆蓋率**：2,214 筆（佔 Solutions 95.3%）
-
----
-
-## 四、已知問題 & 暫緩項目
-
-| 項目 | 說明 |
-|---|---|
-| Cases 真實資料取得 | 目前為 30 筆模擬種子資料，需找顧問訪談取得真實案例 |
-| 農業雲市集數位館資料補充 | agdigi.atri.org.tw，待排 Colab 爬蟲 |
-| 新創方案補充 | 待確認同事進度後啟動 |
-| manufacturing.html 官方欄篩選邏輯 | 雲市集工業館 vs SME AI平台 定義待確認 |
-| Daily English Day 10–12 | 三天未產出，待補 |
-| Google Trends API | 已申請 alpha，等 iii-fdb project 核准通知 |
-
----
-
-## 五、開發費用
-
-### 5-1 訂閱與儲值（4月起累計，台幣）
-
-| 項目 | 單價 | 次數 | 小計 | 說明 |
-|---|---|---|---|---|
-| Claude AI 月費 | NT$ 680 | 3 | NT$ 2,040 | 4/5/6 月 |
-| Codex / ChatGPT 月費 | NT$ 640 | 2 | NT$ 1,280 | 5/6 月 |
-| Claude API Credit 儲值 | — | 3 | NT$ 1,559 | 4月 301・5月 629・6月 629 |
-| Crunchbase | NT$ 3,150 | 1 | NT$ 3,150 | 99 美金，一次性 |
-| **累計合計** | | | **NT$ 8,029** | 4 月起至今 |
-
-### 5-2 本週 API 使用量概算
-
-| 使用情境 | 資料量 | 估算費用 |
-|---|---|---|
-| description_short 批次生成 | 2,214 筆 | 約 US$0.61（NT$20）|
-| 製造業方案探索（單次分析）| 1 份文件 | 約 US$0.02（NT$0.6）|
-
-> 本週主要費用為 description_short 一次性批次生成，後續不需重跑。
-
-### 5-3 模型成本比較（單次製造業方案探索）
-
-| 模型 | 相對成本 | 單次估算 | 1,000 次估算 |
-|---|---|---|---|
-| **Haiku 4.5（目前採用）** | 1× | NT$ 0.6 | NT$ 600 |
-| Sonnet 4.6 | 3× | NT$ 1.8 | NT$ 1,800 |
-| Opus 4.8 | 5× | NT$ 3.0 | NT$ 3,000 |
-
----
-
-## 六、下週計畫
+## 三、待辦事項（延續至下週）
 
 | 優先 | 任務 | 說明 |
 |---|---|---|
-| 🔴 | Cases 真實資料取得 | 找 1 位顧問，完成 3 筆真實案例「入庫確認」|
-| 🔴 | Daily English Day 10–12 補做 | 三天未產出，優先補齊 |
-| 🟡 | 農業雲市集數位館資料補充 | agdigi.atri.org.tw，排 Colab 爬蟲 |
-| 🟡 | 新創方案補充 | 確認同事進度後啟動 |
-| 🟡 | manufacturing.html 官方欄篩選邏輯確認 | 雲市集工業館 vs SME AI平台 定義 |
-| 🟢 | Round 08 模擬測試 | 調整 keyword 過泛問題後重跑 |
+| 🟡 中 | 剩餘檢查碼問題 company_id | 約20多筆檢查碼未過但無重複，低優先，待後續處理 |
+| 🟡 中 | Solutions.company_id 格式一致性檢查 | 前導0格式不一致，建議補號完成後一併檢查 |
+
+## 四、關鍵腳本
+
+| 腳本 | 用途 | 狀態 |
+|---|---|---|
+| `companies_tax_registry_match_v1.ipynb` | B05 稅籍比對 | 完成 |
+| `companies_merge_duplicates_v1.ipynb` | 重複統編自動合併 | 完成 |
+| `solutions_batch_renumber_v1.ipynb` | 缺編號批次補號 | 完成 |
+| `solutions_renumber_verify_v1.ipynb` | 補號結果驗證 | 完成（本週新建） |
 
 ---
 
-*產業資料庫專案 · III 數位轉型研究院 · 2026-06-26*
+*文件由 Claude 產出，2026-07-03*
