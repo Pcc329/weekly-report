@@ -6,6 +6,16 @@
 
 ---
 
+## 本週簡報
+
+<div style="margin: 20px 0;">
+  <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2FPcc329%2Fweekly-report%2Fmain%2Fpresentation-2026-07-07.pptx"
+    width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  </iframe>
+</div>
+
+---
+
 ## 重點網址入口
 
 | 項目 | 連結 |
@@ -118,6 +128,7 @@
 | 🟡 | 農業雲市集數位館資料補充 | 排 Colab 爬蟲 |
 | 🟡 | 新創方案補充 | 確認同事進度後啟動 |
 | 🟢 | company_id 檢查碼問題 | 20 多筆低優先項目 |
+| 🟢 | Daily English 補齊 | 確認進度缺口 |
 
 ---
 
