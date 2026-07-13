@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>產業策略智庫 資安檢測基線與補強報告</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;600&display=swap');
+
+:root {
+  --navy:   #232b33;   /* 墨石墨 */
+  --teal:   #3d6b99;   /* 鋼藍 */
+  --teal-l: #e9f0f7;
+  --amber:  #b85c2e;   /* 銅橘 */
+  --amber-l:#faefe7;
+  --red:    #a63d3d;
+  --red-l:  #f9ecec;
+  --ink:    #26292c;
+  --muted:  #5c6166;
+  --hint:   #979da3;
+  --border: rgba(38,41,44,.1);
+  --bg:     #f5f6f7;
+  --white:  #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+/* ── Cover ── */
+.cover {
+  background: var(--navy);
+  color: #fff;
+  padding: 80px 60px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.cover {
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -90px; right: -60px;
+  width: 380px; height: 380px;
+  background: rgba(61,107,153,.28);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  transform: rotate(14deg);
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -70px; left: -40px;
+  width: 260px; height: 260px;
+  background: rgba(184,92,46,.16);
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+.cover-slash {
+  position: absolute;
+  top: 0; right: 240px;
+  width: 2px; height: 100%;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.14), transparent);
+  transform: skewX(-18deg);
+}
+.cover-label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); margin-bottom: 20px;
+}
+.cover-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 32px; font-weight: 700;
+  line-height: 1.4; margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.cover-sub {
+  font-size: 15px; color: rgba(255,255,255,.7);
+  margin-bottom: 40px; position: relative; z-index: 1;
+}
+.cover-meta {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,.15);
+  padding-top: 24px;
+}
+.cover-meta-item { font-size: 13px; }
+.cover-meta-item span { display: block; color: rgba(255,255,255,.45); font-size: 11px; letter-spacing: .08em; margin-bottom: 2px; }
+
+/* ── Layout ── */
+.container { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
+
+/* ── Section ── */
+.section { margin-top: 56px; }
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 10px;
+}
+.section-label::before {
+  content: '◆'; font-size: 8px; margin-right: 8px;
+  vertical-align: 2px;
+}
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--navy); margin-bottom: 20px;
+  padding-bottom: 12px;
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 64px; height: 3px;
+  background: var(--teal);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+}
+.section-body { font-size: 15px; color: var(--ink); line-height: 1.9; }
+.section-body p + p { margin-top: 14px; }
+
+/* ── Summary box ── */
+.summary-box {
+  background: var(--teal-l);
+  border-left: 4px solid var(--teal);
+  padding: 20px 24px;
+  margin: 24px 0;
+  font-size: 15px; line-height: 1.85;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+.summary-box strong { color: var(--teal); }
+.warn-box {
+  background: var(--amber-l);
+  border-left: 4px solid var(--amber);
+  padding: 20px 24px;
+  margin: 24px 0;
+  font-size: 14.5px; line-height: 1.85;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+.warn-box strong { color: var(--amber); }
+
+/* ── Table ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 14px; margin: 24px 0;
+}
+.compare-table th {
+  background: var(--navy); color: #fff;
+  padding: 12px 16px; text-align: left;
+  font-weight: 500; font-size: 13px;
+}
+.compare-table th:first-child { border-radius: 8px 0 0 0; }
+.compare-table th:last-child { border-radius: 0 8px 0 0; }
+.compare-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.7;
+}
+.compare-table tr:nth-child(even) td { background: #f2f1ed; }
+.compare-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.compare-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+}
+.badge-pass { background: var(--teal-l); color: #0f6e56; }
+.badge-warn { background: var(--amber-l); color: #854f0b; }
+.badge-fail { background: var(--red-l); color: #8f2d24; }
+.badge-info { background: #eceef2; color: #445; }
+
+/* ── Grade cards ── */
+.grade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+.grade-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px; padding: 22px;
+  text-align: center;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+.grade-card .tool { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: .04em; margin-bottom: 12px; }
+.grade-flow { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.grade-pill {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 26px; font-weight: 700;
+  width: 58px; height: 58px; line-height: 58px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.g-before { background: var(--red-l); color: #8f2d24; }
+.g-after  { background: var(--teal-l); color: #0f6e56; }
+.grade-arrow { color: var(--hint); font-size: 18px; }
+.grade-note { font-size: 12px; color: var(--hint); margin-top: 10px; }
+
+/* ── Layer cards ── */
+.layer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.layer-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px; padding: 20px 22px;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+}
+.layer-card-icon { font-size: 22px; margin-bottom: 10px; }
+.layer-card-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.layer-card-body { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+.layer-card.risk { border-left: 4px solid var(--amber); }
+.layer-card.risk .layer-card-title { color: var(--amber); }
+
+/* ── Timeline ── */
+.timeline { margin: 24px 0; }
+.tl-item { display: flex; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.tl-item:last-child { border-bottom: none; }
+.tl-time { flex: 0 0 96px; font-size: 12.5px; color: var(--hint); font-weight: 600; padding-top: 2px; }
+.tl-body { font-size: 14px; line-height: 1.75; }
+.tl-body strong { color: var(--navy); }
+
+/* ── Footer ── */
+.footer {
+  margin-top: 72px; padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--hint);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .cover { padding: 56px 28px 44px; }
+  .cover-title { font-size: 24px; }
+  .container { padding: 0 20px 60px; }
+  .grade-grid { grid-template-columns: 1fr; }
+  .layer-grid { grid-template-columns: 1fr; }
+  .compare-table { font-size: 12.5px; }
+  .compare-table th, .compare-table td { padding: 9px 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-slash"></div>
+  <div class="cover-label">資策會數位轉型研究院 · 對內報告</div>
+  <div class="cover-title">產業策略智庫<br>資安檢測基線與第一波補強報告</div>
+  <div class="cover-sub">三層外部掃描結果、HTTP 安全標頭補強成效，與架構層風險處理計畫</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><span>日期</span>2026-07-13</div>
+    <div class="cover-meta-item"><span>撰寫單位</span>數位轉型研究院</div>
+    <div class="cover-meta-item"><span>文件性質</span>對內檢測報告</div>
+    <div class="cover-meta-item"><span>版本</span>v1.0</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- Section 01 -->
+<div class="section">
+  <div class="section-label">Section 01</div>
+  <div class="section-title">背景與範圍</div>
+  <div class="section-body">
+    <p>本報告回應近期會議提出之平台資訊安全議題，針對「產業策略智庫」線上系統（solution-finder-gray.vercel.app）進行外部安全檢測，建立基線紀錄，並完成第一波可立即實施的補強項目。</p>
+    <p>檢測範圍涵蓋三個層面：網路基礎設施層（由院內其他單位以 Tenable Nessus 協助掃描）、TLS 傳輸層（Qualys SSL Labs 憑證驗證），以及應用回應層（Mozilla HTTP Observatory、SecurityHeaders、Google Lighthouse）。所有檢測均為被動式掃描或平台方協助執行，未對系統發送侵入性攻擊請求。</p>
+  </div>
+  <div class="summary-box">
+    <strong>一頁結論：</strong>網路層與 TLS 層檢測結果乾淨（零弱點、憑證鏈驗證通過）；應用回應層原缺五個 HTTP 安全標頭，已於當日補齊四個並完成部署驗證，評分由 D 提升至 A（SecurityHeaders）、C- 提升至 B（Observatory）。惟外部掃描無法涵蓋應用架構層風險（API 認證、流量限制、個資防護），該部分依既定計畫由「安全層一」與資料庫遷移（Row Level Security）處理，於使用者範圍擴大前完成。
+  </div>
+</div>
+
+<!-- Section 02 -->
+<div class="section">
+  <div class="section-label">Section 02</div>
+  <div class="section-title">檢測執行紀錄</div>
+  <div class="section-body">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">07-13 上午</div>
+        <div class="tl-body"><strong>基線掃描</strong>：SecurityHeaders 評分 D、Mozilla Observatory 評分 C-（45/100，6/10 項通過）。缺失標頭五項：Content-Security-Policy、X-Frame-Options、X-Content-Type-Options、Referrer-Policy、Permissions-Policy。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07-13 上午</div>
+        <div class="tl-body"><strong>TLS 憑證驗證</strong>（SSL Labs）：憑證鏈完整無問題、五大平台信任（Mozilla / Apple / Android / Java / Windows）、RSA 2048、DNS CAA 已設定。掃描工具與 Vercel TLS 1.3 架構不相容致無法產出總評分，惟憑證面驗證項目全數通過。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07-13 中午</div>
+        <div class="tl-body"><strong>網路層掃描</strong>（Tenable Nessus，院內其他單位協助執行）：0 Critical / 0 High / 0 Medium / 0 Low，21 筆均為資訊性項目。開放埠僅 80（轉址）與 443（TLS 1.3）。掃描過程中 Vercel 平台之機器人防護機制偵測到掃描行為並啟動驗證挑戰，顯示託管平台具備自動化防護。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07-13 下午</div>
+        <div class="tl-body"><strong>標頭補強部署</strong>：於 vercel.json 新增四個安全標頭（僅設定檔異動，未觸及任何 API 與前端程式），經 PR 流程與 Preview 驗證後合併上線。全站頁面渲染、語意搜尋、圖表功能抽驗正常。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07-13 下午</div>
+        <div class="tl-body"><strong>正式站複掃</strong>：SecurityHeaders 評分 A、Observatory 評分 B（70/100，8/10 項通過）、Lighthouse Best Practices 77 分。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 03 -->
+<div class="section">
+  <div class="section-label">Section 03</div>
+  <div class="section-title">補強前後成效</div>
+  <div class="section-body">
+    <div class="grade-grid">
+      <div class="grade-card">
+        <div class="tool">SecurityHeaders</div>
+        <div class="grade-flow">
+          <div class="grade-pill g-before">D</div>
+          <div class="grade-arrow">→</div>
+          <div class="grade-pill g-after">A</div>
+        </div>
+        <div class="grade-note">五標頭全數通過，僅餘 CSP</div>
+      </div>
+      <div class="grade-card">
+        <div class="tool">Mozilla Observatory</div>
+        <div class="grade-flow">
+          <div class="grade-pill g-before">C-</div>
+          <div class="grade-arrow">→</div>
+          <div class="grade-pill g-after">B</div>
+        </div>
+        <div class="grade-note">45 → 70 分，6/10 → 8/10 項通過</div>
+      </div>
+      <div class="grade-card">
+        <div class="tool">Nessus 網路層</div>
+        <div class="grade-flow">
+          <div class="grade-pill g-after" style="width:auto; padding:0 16px; font-size:18px;">0 弱點</div>
+        </div>
+        <div class="grade-note">Critical / High / Medium / Low 均為 0</div>
+      </div>
+    </div>
+
+    <table class="compare-table">
+      <tr><th>安全標頭</th><th>補強前</th><th>補強後</th><th>作用</th></tr>
+      <tr><td>Strict-Transport-Security</td><td><span class="badge badge-pass">已具備</span></td><td><span class="badge badge-pass">維持</span></td><td>強制 HTTPS 連線（Vercel 平台預設，max-age 兩年 + preload）</td></tr>
+      <tr><td>X-Content-Type-Options</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-pass">已補</span></td><td>阻止瀏覽器猜測內容類型，防範 MIME 混淆攻擊</td></tr>
+      <tr><td>X-Frame-Options</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-pass">已補</span></td><td>禁止頁面被嵌入 iframe，防範點擊劫持</td></tr>
+      <tr><td>Referrer-Policy</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-pass">已補</span></td><td>限制跨站連結時傳遞的來源資訊</td></tr>
+      <tr><td>Permissions-Policy</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-pass">已補</span></td><td>停用相機、麥克風、定位等本平台未使用之瀏覽器權限</td></tr>
+      <tr><td>Content-Security-Policy</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-warn">規劃中</span></td><td>限制可載入之外部資源來源；因涉及全站 CDN 白名單盤點，另案以 Report-Only 模式先行試運行後再正式啟用</td></tr>
+    </table>
+
+    <p>本次補強僅修改部署設定檔（vercel.json），未變動任何 API 邏輯與前端程式碼，變更風險受控。CSP 為剩餘唯一缺失標頭，因設定錯誤將直接造成頁面外部資源（前端框架、圖表函式庫等 CDN）載入失敗，採「先觀察後啟用」的兩階段方式另案處理。</p>
+  </div>
+</div>
+
+<!-- Section 04 -->
+<div class="section">
+  <div class="section-label">Section 04</div>
+  <div class="section-title">網路層掃描結果解讀（Tenable Nessus）</div>
+  <div class="section-body">
+    <p>本項掃描由院內其他單位主動協助執行（Tenable Nessus 10.11.2，Advanced Scan 原則、Safe Checks 啟用、未含網頁應用測試），掃描時間 2026-07-13 11:26–11:44，歷時約 17 分鐘。結果為 <strong>0 Critical / 0 High / 0 Medium / 0 Low</strong>，21 筆偵測項目均為資訊性（INFO）等級。</p>
+
+    <table class="compare-table">
+      <tr><th>掃描發現</th><th>內容</th><th>解讀</th></tr>
+      <tr>
+        <td>開放埠</td>
+        <td>僅 80（HTTP 轉址）與 443（TLS 1.3）</td>
+        <td><span class="badge badge-pass">正常</span> 攻擊面最小化，無其他服務暴露</td>
+      </tr>
+      <tr>
+        <td>HSTS 標頭</td>
+        <td>max-age 兩年 + includeSubDomains + preload</td>
+        <td><span class="badge badge-pass">正常</span> 與應用層掃描結果一致</td>
+      </tr>
+      <tr>
+        <td>掃描防護觸發</td>
+        <td>443 埠回應 403，回應標頭含 X-Vercel-Mitigated: challenge</td>
+        <td><span class="badge badge-pass">正面訊號</span> 託管平台之機器人防護偵測到自動化掃描並啟動驗證挑戰，屬平台內建防護能力的實地驗證</td>
+      </tr>
+      <tr>
+        <td>作業系統指紋「SonicWALL」</td>
+        <td>OS 辨識信心度僅 56%</td>
+        <td><span class="badge badge-info">誤判</span> 為 Vercel 邊緣網路設備之 TCP 指紋特徵，非本系統實際運行環境，不需處理</td>
+      </tr>
+      <tr>
+        <td>其他主機名清單（mta / pop / webmail 等 *.vercel.app）</td>
+        <td>29 個指向相同節點的主機名</td>
+        <td><span class="badge badge-info">與本系統無關</span> 為 vercel.app 共用網域下的其他主機名，非本平台之攻擊面</td>
+      </tr>
+      <tr>
+        <td>STS 轉址狀態碼</td>
+        <td>port 80 轉址使用 308 而非標準草案之 301</td>
+        <td><span class="badge badge-info">無風險</span> 308 為語意更嚴格的永久轉址，功能等價</td>
+      </tr>
+    </table>
+
+    <p>綜合解讀：本系統採無伺服器（Serverless）架構託管，不存在自行維運的主機與服務埠，網路層攻擊面本質上由託管平台管理。本次掃描驗證了此架構特性——無可利用之網路層弱點，且平台自動化防護實際發揮作用。惟同一特性也意味網路層掃描無法觸及應用邏輯與資料層，該範圍的風險評估見次章。</p>
+  </div>
+</div>
+
+<!-- Section 05 -->
+<div class="section">
+  <div class="section-label">Section 05</div>
+  <div class="section-title">檢測範圍的界限：外部掃描測不到的風險</div>
+  <div class="section-body">
+    <p>本次三層掃描的共同性質為「由外部觀察系統回應」。掃描結果良好代表<strong>網路層與回應層沒有低級失誤</strong>，但不代表系統整體安全——應用架構層的既知風險不在任何外部掃描工具的偵測範圍內，需明確區分，避免以掃描評分推論整體安全狀態。</p>
+
+    <div class="layer-grid">
+      <div class="layer-card risk">
+        <div class="layer-card-icon">🔑</div>
+        <div class="layer-card-title">API 無身分驗證</div>
+        <div class="layer-card-body">各 API 端點目前無存取控管，知悉網址即可呼叫。於使用者範圍擴大前需建立認證機制。</div>
+      </div>
+      <div class="layer-card risk">
+        <div class="layer-card-icon">🚦</div>
+        <div class="layer-card-title">無流量限制（Rate Limiting）</div>
+        <div class="layer-card-body">API 層無請求頻率限制，且底層 Airtable 免費方案有每秒 5 請求之硬上限，多人同時使用時存在服務中斷風險。</div>
+      </div>
+      <div class="layer-card risk">
+        <div class="layer-card-icon">📇</div>
+        <div class="layer-card-title">聯絡人個資（個資法）</div>
+        <div class="layer-card-body">Contacts 資料表含 677 筆廠商真實聯絡電話，屬個資法規範範圍，需比照資料分級原則以限閱等級控管。</div>
+      </div>
+      <div class="layer-card risk">
+        <div class="layer-card-icon">🛡️</div>
+        <div class="layer-card-title">欄位白名單為唯一防線</div>
+        <div class="layer-card-body">敏感欄位（如案例企業真實名稱）目前僅依賴 API 回傳欄位白名單過濾，缺乏資料庫層級的存取控制作為第二道防線。</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>解讀原則：</strong>掃描評分 A 反映的是「HTTP 回應層設定完善」，上述四項架構層風險均非外部掃描可偵測，其處理依既定計畫進行（見 Section 06），並作為使用者範圍由試行小組擴大至完整群組前的前置條件。
+    </div>
+  </div>
+</div>
+
+<!-- Section 06 -->
+<div class="section">
+  <div class="section-label">Section 06</div>
+  <div class="section-title">後續處理計畫</div>
+  <div class="section-body">
+    <table class="compare-table">
+      <tr><th>優先序</th><th>項目</th><th>內容</th><th>時點</th></tr>
+      <tr>
+        <td><span class="badge badge-pass">已完成</span></td>
+        <td>安全標頭第一波</td>
+        <td>四個零風險標頭部署上線，掃描複驗通過</td>
+        <td>2026-07-13</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-warn">近期</span></td>
+        <td>CSP 第二波</td>
+        <td>盤點全站外部 CDN 資源來源，以 Content-Security-Policy-Report-Only 模式試運行一週，確認白名單無遺漏後轉正式啟用</td>
+        <td>標頭第一波穩定後</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-warn">擴大前必要</span></td>
+        <td>安全層一</td>
+        <td>API 身分驗證、流量限制、敏感欄位存取驗證——使用者範圍擴大前之前置條件</td>
+        <td>試行階段期間規劃</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-warn">擴大前必要</span></td>
+        <td>資料庫遷移（Supabase / PostgreSQL）</td>
+        <td>以 Row Level Security 建立資料庫層級存取控制（補上第二道防線），同時解決 Airtable 請求頻率上限問題</td>
+        <td>與安全層一協同規劃</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-info">暫緩</span></td>
+        <td>主動式滲透測試（OWASP ZAP 等）</td>
+        <td>涉及兩項授權議題：Vercel 服務條款對侵入式掃描之限制、Airtable 為第三方系統非自有資產。待安全層一完成後再評估必要性與授權取得方式</td>
+        <td>安全層一之後</td>
+      </tr>
+    </table>
+
+    <p>治理面向補充：本次網路層掃描由院內其他單位協助執行，掃描時間、範圍與執行單位均已留存紀錄。後續如再執行主動式掃描，將先確認託管平台服務條款容許範圍並比照留痕。</p>
+  </div>
+</div>
+
+<!-- Section 07 -->
+<div class="section">
+  <div class="section-label">Section 07</div>
+  <div class="section-title">結語</div>
+  <div class="section-body">
+    <p>本次檢測建立了平台的三層資安基線：網路層零弱點、TLS 憑證驗證通過、應用回應層於當日完成補強並複驗（D→A、C-→B）。外部可見面向的安全狀態已有量化紀錄可供追蹤。</p>
+    <p>同時，檢測過程也明確了外部掃描的界限——真正的風險重心在應用架構層（API 認證、流量限制、個資防護），該部分與平台既定的分階段開放規劃綁定：先以小規模試行驗證使用情境，於安全層一與資料庫遷移完成後，再開放予完整使用者群組。掃描評分是外層健康度的指標，架構層工程才是資料資產保護的根本。</p>
+  </div>
+</div>
+
+<div class="footer">
+  <div>資策會數位轉型研究院 · 產業策略智庫專案</div>
+  <div>2026-07-13 · v1.0 · 對內文件，請勿對外流通</div>
+</div>
+
+</div>
+</body>
+</html>
