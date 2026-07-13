@@ -125,6 +125,20 @@ body {
 }
 .section-body { font-size: 15px; color: var(--ink); line-height: 1.9; }
 .section-body p + p { margin-top: 14px; }
+.point-list { list-style: none; margin: 16px 0; }
+.point-list li {
+  position: relative;
+  padding: 8px 0 8px 26px;
+  font-size: 14.5px; line-height: 1.8;
+  border-bottom: 1px dashed var(--border);
+}
+.point-list li:last-child { border-bottom: none; }
+.point-list li::before {
+  content: '▸';
+  position: absolute; left: 4px;
+  color: var(--teal); font-weight: 700;
+}
+.point-list li strong { color: var(--navy); }
 
 /* ── Summary box ── */
 .summary-box {
@@ -262,11 +276,21 @@ body {
   <div class="section-label">Section 01</div>
   <div class="section-title">背景與範圍</div>
   <div class="section-body">
-    <p>本報告回應近期會議提出之平台資訊安全議題，針對「產業策略智庫」線上系統（solution-finder-gray.vercel.app）進行外部安全檢測，建立基線紀錄，並完成第一波可立即實施的補強項目。</p>
-    <p>檢測範圍涵蓋三個層面：網路基礎設施層（由院內其他單位以 Tenable Nessus 協助掃描）、TLS 傳輸層（Qualys SSL Labs 憑證驗證），以及應用回應層（Mozilla HTTP Observatory、SecurityHeaders、Google Lighthouse）。所有檢測均為被動式掃描或平台方協助執行，未對系統發送侵入性攻擊請求。</p>
+    <ul class="point-list">
+      <li><strong>目的</strong>：回應近期會議提出之平台資訊安全議題，建立檢測基線並完成第一波補強</li>
+      <li><strong>對象系統</strong>：產業策略智庫線上平台（solution-finder-gray.vercel.app）</li>
+      <li><strong>檢測層面（三層）</strong>：網路基礎設施層（Tenable Nessus，院內其他單位協助）／TLS 傳輸層（Qualys SSL Labs）／應用回應層（Mozilla Observatory、SecurityHeaders、Google Lighthouse）</li>
+      <li><strong>檢測性質</strong>：均為被動式掃描或平台方協助執行，未發送侵入性攻擊請求</li>
+    </ul>
   </div>
   <div class="summary-box">
-    <strong>一頁結論：</strong>網路層與 TLS 層檢測結果乾淨（零弱點、憑證鏈驗證通過）；應用回應層原缺五個 HTTP 安全標頭，已於當日補齊四個並完成部署驗證，評分由 D 提升至 A（SecurityHeaders）、C- 提升至 B（Observatory）。惟外部掃描無法涵蓋應用架構層風險（API 認證、流量限制、個資防護），該部分依既定計畫由「安全層一」與資料庫遷移（Row Level Security）處理，於使用者範圍擴大前完成。
+    <strong>一頁結論</strong>
+    <ul class="point-list" style="margin-bottom:0;">
+      <li><strong>網路層</strong>：零弱點（0 Critical / High / Medium / Low）</li>
+      <li><strong>TLS 層</strong>：憑證鏈驗證全數通過</li>
+      <li><strong>應用回應層</strong>：原缺五個安全標頭，當日補齊四個並部署驗證——SecurityHeaders D→A、Observatory C-→B</li>
+      <li><strong>未涵蓋範圍</strong>：架構層風險（API 認證、流量限制、個資防護）非外部掃描可測，依既定計畫於使用者範圍擴大前處理</li>
+    </ul>
   </div>
 </div>
 
@@ -343,7 +367,11 @@ body {
       <tr><td>Content-Security-Policy</td><td><span class="badge badge-fail">缺失</span></td><td><span class="badge badge-warn">規劃中</span></td><td>限制可載入之外部資源來源；因涉及全站 CDN 白名單盤點，另案以 Report-Only 模式先行試運行後再正式啟用</td></tr>
     </table>
 
-    <p>本次補強僅修改部署設定檔（vercel.json），未變動任何 API 邏輯與前端程式碼，變更風險受控。CSP 為剩餘唯一缺失標頭，因設定錯誤將直接造成頁面外部資源（前端框架、圖表函式庫等 CDN）載入失敗，採「先觀察後啟用」的兩階段方式另案處理。</p>
+    <ul class="point-list">
+      <li><strong>變更範圍</strong>：僅修改部署設定檔（vercel.json），未變動任何 API 邏輯與前端程式碼，風險受控</li>
+      <li><strong>剩餘缺項</strong>：CSP 為唯一未補標頭——設定錯誤會直接造成 CDN 資源載入失敗（頁面白屏）</li>
+      <li><strong>CSP 處理方式</strong>：另案採兩階段——先以 Report-Only 模式觀察一週，白名單確認無遺漏後轉正式啟用</li>
+    </ul>
   </div>
 </div>
 
@@ -352,7 +380,12 @@ body {
   <div class="section-label">Section 04</div>
   <div class="section-title">網路層掃描結果解讀（Tenable Nessus）</div>
   <div class="section-body">
-    <p>本項掃描由院內其他單位主動協助執行（Tenable Nessus 10.11.2，Advanced Scan 原則、Safe Checks 啟用、未含網頁應用測試），掃描時間 2026-07-13 11:26–11:44，歷時約 17 分鐘。結果為 <strong>0 Critical / 0 High / 0 Medium / 0 Low</strong>，21 筆偵測項目均為資訊性（INFO）等級。</p>
+    <ul class="point-list">
+      <li><strong>執行單位</strong>：院內其他單位主動協助執行</li>
+      <li><strong>工具與設定</strong>：Tenable Nessus 10.11.2 · Advanced Scan · Safe Checks 啟用 · 未含網頁應用測試</li>
+      <li><strong>掃描時間</strong>：2026-07-13 11:26–11:44（約 17 分鐘）</li>
+      <li><strong>結果</strong>：0 Critical / 0 High / 0 Medium / 0 Low，21 筆均為資訊性（INFO）項目</li>
+    </ul>
 
     <table class="compare-table">
       <tr><th>掃描發現</th><th>內容</th><th>解讀</th></tr>
@@ -388,7 +421,11 @@ body {
       </tr>
     </table>
 
-    <p>綜合解讀：本系統採無伺服器（Serverless）架構託管，不存在自行維運的主機與服務埠，網路層攻擊面本質上由託管平台管理。本次掃描驗證了此架構特性——無可利用之網路層弱點，且平台自動化防護實際發揮作用。惟同一特性也意味網路層掃描無法觸及應用邏輯與資料層，該範圍的風險評估見次章。</p>
+    <ul class="point-list">
+      <li><strong>架構特性</strong>:系統採無伺服器（Serverless）託管,無自行維運的主機與服務埠,網路層攻擊面由託管平台管理</li>
+      <li><strong>本次驗證</strong>:無可利用之網路層弱點,且平台自動化防護實際發揮作用（掃描遭偵測攔截）</li>
+      <li><strong>界限</strong>:同一架構特性意味網路層掃描無法觸及應用邏輯與資料層,該範圍見次章</li>
+    </ul>
   </div>
 </div>
 
@@ -397,7 +434,11 @@ body {
   <div class="section-label">Section 05</div>
   <div class="section-title">檢測範圍的界限：外部掃描測不到的風險</div>
   <div class="section-body">
-    <p>本次三層掃描的共同性質為「由外部觀察系統回應」。掃描結果良好代表<strong>網路層與回應層沒有低級失誤</strong>，但不代表系統整體安全——應用架構層的既知風險不在任何外部掃描工具的偵測範圍內，需明確區分，避免以掃描評分推論整體安全狀態。</p>
+    <ul class="point-list">
+      <li><strong>三層掃描的共同性質</strong>：由外部觀察系統回應，僅能驗證「網路層與回應層無低級失誤」</li>
+      <li><strong>關鍵區分</strong>：掃描結果良好 ≠ 系統整體安全——應用架構層的既知風險不在任何外部掃描工具的偵測範圍內</li>
+      <li><strong>解讀提醒</strong>：不應以掃描評分推論整體安全狀態</li>
+    </ul>
 
     <div class="layer-grid">
       <div class="layer-card risk">
@@ -467,7 +508,10 @@ body {
       </tr>
     </table>
 
-    <p>治理面向補充：本次網路層掃描由院內其他單位協助執行，掃描時間、範圍與執行單位均已留存紀錄。後續如再執行主動式掃描，將先確認託管平台服務條款容許範圍並比照留痕。</p>
+    <ul class="point-list">
+      <li><strong>掃描留痕</strong>：本次網路層掃描之時間、範圍與執行單位均已留存紀錄</li>
+      <li><strong>後續原則</strong>：如再執行主動式掃描，先確認託管平台服務條款容許範圍，並比照留痕</li>
+    </ul>
   </div>
 </div>
 
@@ -476,8 +520,12 @@ body {
   <div class="section-label">Section 07</div>
   <div class="section-title">結語</div>
   <div class="section-body">
-    <p>本次檢測建立了平台的三層資安基線：網路層零弱點、TLS 憑證驗證通過、應用回應層於當日完成補強並複驗（D→A、C-→B）。外部可見面向的安全狀態已有量化紀錄可供追蹤。</p>
-    <p>同時，檢測過程也明確了外部掃描的界限——真正的風險重心在應用架構層（API 認證、流量限制、個資防護），該部分與平台既定的分階段開放規劃綁定：先以小規模試行驗證使用情境，於安全層一與資料庫遷移完成後，再開放予完整使用者群組。掃描評分是外層健康度的指標，架構層工程才是資料資產保護的根本。</p>
+    <ul class="point-list">
+      <li><strong>已完成</strong>：三層資安基線建立——網路層零弱點、TLS 憑證驗證通過、應用回應層當日補強並複驗（D→A、C-→B），外部可見面向已有量化紀錄可追蹤</li>
+      <li><strong>已明確</strong>：外部掃描的界限——風險重心在應用架構層（API 認證、流量限制、個資防護）</li>
+      <li><strong>處理路徑</strong>：與分階段開放規劃綁定——小規模試行驗證使用情境 → 安全層一與資料庫遷移完成 → 開放完整使用者群組</li>
+      <li><strong>核心觀念</strong>：掃描評分是外層健康度指標，架構層工程才是資料資產保護的根本</li>
+    </ul>
   </div>
 </div>
 
