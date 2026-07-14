@@ -139,6 +139,14 @@ body {
   color: var(--teal); font-weight: 700;
 }
 .point-list li strong { color: var(--navy); }
+.li-doc-group { margin-left: 10px; white-space: nowrap; }
+.li-doc {
+  font-size: 12px; font-weight: 700; color: var(--teal); text-decoration: none;
+  border-bottom: 1px solid var(--teal); padding-bottom: 1px;
+}
+.li-doc + .li-doc { margin-left: 14px; }
+.li-doc:hover { color: var(--amber); border-bottom-color: var(--amber); }
+.li-doc:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
 /* ── Summary box ── */
 .summary-box {
@@ -288,7 +296,7 @@ body {
     <ul class="point-list" style="margin-bottom:0;">
       <li><strong>網路層</strong>：零弱點（0 Critical / High / Medium / Low）</li>
       <li><strong>TLS 層</strong>：憑證鏈驗證全數通過</li>
-      <li><strong>應用回應層</strong>：原缺五個安全標頭，當日補齊四個並部署驗證——SecurityHeaders D→A、Observatory C-→B</li>
+      <li><strong>應用回應層</strong>：原缺五個安全標頭，當日補齊四個並部署驗證——SecurityHeaders D→A、Observatory C-→B<span class="li-doc-group"><a class="li-doc" href="https://securityheaders.com/?q=https%3A%2F%2Fsolution-finder-gray.vercel.app%2F&amp;followRedirects=on" target="_blank" rel="noopener">SecurityHeaders ↗</a><a class="li-doc" href="https://developer.mozilla.org/en-US/observatory/analyze?host=solution-finder-gray.vercel.app" target="_blank" rel="noopener">Observatory ↗</a></span></li>
       <li><strong>未涵蓋範圍</strong>：架構層風險（API 認證、流量限制、個資防護）非外部掃描可測，依既定計畫於使用者範圍擴大前處理</li>
     </ul>
   </div>
