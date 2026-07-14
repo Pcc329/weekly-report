@@ -54,6 +54,10 @@
   ul li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--mute);border-radius:50%}
   ul li strong{color:var(--ink);font-weight:700}
   ul.tight li{margin-bottom:6px}
+  .li-doc{float:right;font-size:12px;font-weight:700;color:var(--steel);text-decoration:none;
+    border-bottom:1px solid var(--steel);padding-bottom:1px;margin-left:12px;white-space:nowrap}
+  .li-doc:hover{color:var(--copper);border-bottom-color:var(--copper)}
+  .li-doc:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
 
   /* Card grid */
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:22px}
@@ -174,7 +178,7 @@
     <div class="callout">
       <h3>資安基線（7/13 完成檢測與第一波補強）</h3>
       <ul class="tight">
-        <li><strong>網路層</strong>：零弱點（Tenable Nessus，院內其他單位協助執行）</li>
+        <li><strong>網路層</strong>：零弱點（Tenable Nessus，院內其他單位協助執行）<a class="li-doc" href="https://pcc329.github.io/weekly-report/%E5%8F%B0%E7%81%A3%E8%B3%87%E6%9C%8D%E6%A5%AD%E8%80%85%E6%96%B9%E6%A1%88%E8%B3%87%E6%96%99%E5%BA%AB_1150713_n.pdf" target="_blank" rel="noopener">檢測報告 ↗</a></li>
         <li><strong>TLS 傳輸層</strong>：憑證鏈驗證全數通過</li>
         <li><strong>應用回應層</strong>：安全標頭補強並複驗——SecurityHeaders D→A、Mozilla Observatory C−→B</li>
         <li>檢測同時確認：<strong>外部掃描無法涵蓋架構層風險</strong>，該部分依 Section 03 計畫處理</li>
