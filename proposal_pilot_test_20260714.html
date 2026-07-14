@@ -57,11 +57,21 @@
 
   /* Card grid */
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:22px}
-  .card{background:var(--white);border:1px solid var(--line);padding:20px 22px}
+  .cards{align-items:stretch}
+  .card{background:var(--white);border:1px solid var(--line);padding:20px 22px;
+    display:flex;flex-direction:column}
+  .card ul{flex:1}
+  .card .card-link{margin-top:auto;align-self:flex-start}
   .card h4{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
   .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;letter-spacing:.04em}
   .tag.done{background:var(--green-lt);color:var(--green)}
   .tag.note{background:var(--copper-lt);color:var(--copper)}
+
+  .card-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 14px;
+    border:1px solid var(--steel);color:var(--steel);text-decoration:none;font-size:13px;font-weight:700;
+    transition:background .15s,color .15s}
+  .card-link:hover{background:var(--steel);color:#fff}
+  .card-link:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
 
   /* Stat */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
@@ -148,14 +158,16 @@
           <li>分類標準化：產業別採<strong>主計總處分類</strong>、痛點場域採<strong>院內 AI 準備度量表</strong>之分類架構</li>
           <li>成效性質明確標示：輔導規劃案例之量化數字為<strong>規劃目標而非驗收數據</strong>，系統以「預期成效」標章區隔，避免引用時誤判</li>
         </ul>
+        <a class="card-link" href="https://solution-finder-gray.vercel.app/dashboard.html#cases" target="_blank" rel="noopener">開啟案例知識庫 →</a>
       </div>
       <div class="card">
-        <h4>診斷驅動的案例推薦 <span class="tag done">已上線</span></h4>
+        <h4>AI 分析的案例推薦 <span class="tag done">已上線</span></h4>
         <ul class="tight">
-          <li>顧問完成診斷後（對話問答或上傳自評表），系統依其<strong>產業別與痛點</strong>自動推薦最相關的 5 筆案例</li>
+          <li>顧問完成 AI 分析後（對話問答或上傳自評表），系統依其<strong>產業別與痛點</strong>自動推薦最相關的 5 筆案例</li>
           <li>非提供全部案例讓顧問自行翻找，<strong>避免查詢發散</strong></li>
           <li>完整案例庫另置於戰情室，供主動查詢</li>
         </ul>
+        <a class="card-link" href="https://solution-finder-gray.vercel.app/manufacturing.html" target="_blank" rel="noopener">開啟方案探索 →</a>
       </div>
     </div>
 
