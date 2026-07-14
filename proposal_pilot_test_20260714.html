@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>產業策略智庫 案例分析功能開放測試提案</title>
+<style>
+  :root{
+    --ink:#1a2733;
+    --slate:#3d5266;
+    --mute:#6d8296;
+    --line:#dde4ea;
+    --paper:#f6f8fa;
+    --white:#fff;
+    --steel:#2f5d7c;
+    --steel-lt:#e8f0f5;
+    --copper:#b1633a;
+    --copper-lt:#faefe8;
+    --green:#2f6a4f;
+    --green-lt:#e9f2ed;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;
+    color:var(--ink);background:var(--paper);
+    line-height:1.75;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:0 24px 96px}
+
+  /* Cover */
+  .cover{background:var(--ink);color:#fff;padding:64px 0 56px;margin-bottom:0}
+  .cover .wrap{padding-bottom:0}
+  .eyebrow{font-size:12px;letter-spacing:.18em;color:#8fa8bd;text-transform:uppercase;margin-bottom:20px}
+  .cover h1{font-size:34px;font-weight:800;line-height:1.35;letter-spacing:-.01em;margin-bottom:14px}
+  .cover .sub{font-size:16px;color:#a9becf;font-weight:400;max-width:640px}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#33465a;margin-top:40px;border:1px solid #33465a}
+  .meta div{background:var(--ink);padding:14px 18px}
+  .meta dt{font-size:11px;color:#8fa8bd;letter-spacing:.08em;margin-bottom:4px}
+  .meta dd{font-size:14px;color:#fff;font-weight:600}
+
+  /* Section */
+  section{margin-top:52px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:26px}
+  .sec-num{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--copper)}
+  .sec-head h2{font-size:21px;font-weight:800;letter-spacing:-.01em}
+
+  /* Callout */
+  .callout{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--steel);padding:22px 26px;margin-bottom:24px}
+  .callout h3{font-size:14px;letter-spacing:.06em;color:var(--steel);margin-bottom:14px;font-weight:700}
+
+  /* Lists */
+  ul{list-style:none}
+  ul li{position:relative;padding-left:18px;margin-bottom:10px;font-size:15px;color:var(--slate)}
+  ul li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--mute);border-radius:50%}
+  ul li strong{color:var(--ink);font-weight:700}
+  ul.tight li{margin-bottom:6px}
+
+  /* Card grid */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:22px}
+  .card{background:var(--white);border:1px solid var(--line);padding:20px 22px}
+  .card h4{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;letter-spacing:.04em}
+  .tag.done{background:var(--green-lt);color:var(--green)}
+  .tag.note{background:var(--copper-lt);color:var(--copper)}
+
+  /* Stat */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+  .stat{background:var(--white);border:1px solid var(--line);padding:20px;text-align:center}
+  .stat .n{font-size:32px;font-weight:800;color:var(--steel);line-height:1.2}
+  .stat .n small{font-size:15px;font-weight:700;color:var(--mute)}
+  .stat .l{font-size:12px;color:var(--mute);margin-top:6px}
+
+  .stats-lead{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+  .stats-lead .stat .n{color:var(--ink)}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);margin-bottom:22px;font-size:14px}
+  th{background:var(--steel-lt);color:var(--ink);text-align:left;padding:11px 16px;font-weight:700;font-size:13px;letter-spacing:.03em;border-bottom:1px solid var(--line)}
+  td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--slate);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td strong{color:var(--ink)}
+
+  /* Stages */
+  .stage{display:flex;align-items:stretch;gap:0;margin-bottom:22px;flex-wrap:wrap}
+  .st{flex:1;min-width:170px;background:var(--white);border:1px solid var(--line);padding:18px 20px;position:relative}
+  .st.active{border-color:var(--steel);border-width:2px;background:var(--steel-lt)}
+  .st .ph{font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:700;margin-bottom:6px}
+  .st .num{font-size:24px;font-weight:800;color:var(--ink);margin-bottom:4px}
+  .st .d{font-size:12px;color:var(--mute);line-height:1.6}
+  .arrow{display:flex;align-items:center;padding:0 10px;color:var(--line);font-size:20px;font-weight:700}
+
+  /* Ask */
+  .ask{background:var(--ink);color:#fff;padding:28px 32px;margin-top:14px}
+  .ask h3{font-size:17px;font-weight:800;margin-bottom:12px}
+  .ask ul li{color:#c3d3e0}
+  .ask ul li::before{background:var(--copper)}
+  .ask ul li strong{color:#fff}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media(max-width:640px){
+    .cover h1{font-size:26px}
+    .arrow{display:none}
+    .st{min-width:100%}
+    .stats-lead{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="wrap">
+    <div class="eyebrow">資策會數位轉型研究院 · 對內提案</div>
+    <h1>案例分析功能<br>開放測試提案</h1>
+    <p class="sub">案例知識庫現況、分階段開放建議，與擴大使用前的架構前置條件</p>
+    <dl class="meta">
+      <div><dt>日期</dt><dd>2026-07-14</dd></div>
+      <div><dt>提出</dt><dd>—</dd></div>
+      <div><dt>送呈</dt><dd>—</dd></div>
+      <div><dt>文件性質</dt><dd>對內提案</dd></div>
+    </dl>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <div class="sec-head"><span class="sec-num">SECTION 01</span><h2>系統現況：已具備開放測試條件</h2></div>
+
+    <div class="stats-lead">
+      <div class="stat"><div class="n">2,340</div><div class="l">總方案數</div></div>
+      <div class="stat"><div class="n">875</div><div class="l">AI 方案數</div></div>
+      <div class="stat"><div class="n">843</div><div class="l">業者總數</div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">29</div><div class="l">真實案例（筆）</div></div>
+      <div class="stat"><div class="n">14</div><div class="l">方案商導入實績</div></div>
+      <div class="stat"><div class="n">15</div><div class="l">企業輔導規劃</div></div>
+      <div class="stat"><div class="n">D<small> → </small>A</div><div class="l">資安標頭評分</div></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>案例知識庫 <span class="tag done">已完成</span></h4>
+        <ul class="tight">
+          <li>7/07 會議素材 <strong>24 筆</strong>已完成整合入庫</li>
+          <li>分類標準化：產業別採<strong>主計總處分類</strong>、痛點場域採<strong>院內 AI 準備度量表</strong>之分類架構</li>
+          <li>成效性質明確標示：輔導規劃案例之量化數字為<strong>規劃目標而非驗收數據</strong>，系統以「預期成效」標章區隔，避免引用時誤判</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>診斷驅動的案例推薦 <span class="tag done">已上線</span></h4>
+        <ul class="tight">
+          <li>顧問完成診斷後（對話問答或上傳自評表），系統依其<strong>產業別與痛點</strong>自動推薦最相關的 5 筆案例</li>
+          <li>非提供全部案例讓顧問自行翻找，<strong>避免查詢發散</strong></li>
+          <li>完整案例庫另置於戰情室，供主動查詢</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h3>資安基線（7/13 完成檢測與第一波補強）</h3>
+      <ul class="tight">
+        <li><strong>網路層</strong>：零弱點（Tenable Nessus，院內其他單位協助執行）</li>
+        <li><strong>TLS 傳輸層</strong>：憑證鏈驗證全數通過</li>
+        <li><strong>應用回應層</strong>：安全標頭補強並複驗——SecurityHeaders D→A、Mozilla Observatory C−→B</li>
+        <li>檢測同時確認：<strong>外部掃描無法涵蓋架構層風險</strong>，該部分依 Section 03 計畫處理</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">SECTION 02</span><h2>建議：先以小規模試行啟動</h2></div>
+
+    <p style="font-size:15px;color:var(--slate);margin-bottom:20px">系統資料層目前架構適合小規模使用。建議先驗證使用情境與系統承載，再依<strong>實測數據</strong>規劃開放節奏。</p>
+
+    <table>
+      <tr><th style="width:120px">項目</th><th>內容</th></tr>
+      <tr><td><strong>人數</strong></td><td><strong>2–3 位</strong>　建議耕偉組、中原組各指定 1 位實際會使用案例查詢的同仁</td></tr>
+      <tr><td><strong>期間</strong></td><td><strong>2 週</strong></td></tr>
+      <tr><td><strong>範圍</strong></td><td>案例分析與查詢功能</td></tr>
+      <tr><td><strong>回饋</strong></td><td>期間以表單收集使用回饋，結束後彙整測試報告</td></tr>
+    </table>
+
+    <div class="callout" style="border-left-color:var(--copper)">
+      <h3 style="color:var(--copper)">觀察指標</h3>
+      <ul class="tight">
+        <li><strong>使用價值（主要）</strong>：案例查詢是否有助顧問實務——推薦案例的相關性、內容深度是否足夠</li>
+        <li><strong>系統承載（守門）</strong>：API 流量與回應狀況，已建置監控機制</li>
+        <li><strong>缺口識別</strong>：測試者的查詢需求與現有案例庫的覆蓋落差，作為後續<strong>案例徵集方向</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">SECTION 03</span><h2>開放節奏與前置條件</h2></div>
+
+    <div class="stage">
+      <div class="st active">
+        <div class="ph">第一階段</div>
+        <div class="num">2–3 人</div>
+        <div class="d">試行 2 週<br>取得使用回饋與負載基準</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="st">
+        <div class="ph">第二階段</div>
+        <div class="num">10 人</div>
+        <div class="d">依第一階段實測數據<br>決定放行</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="st">
+        <div class="ph">第三階段</div>
+        <div class="num">20–30 人</div>
+        <div class="d">須先完成架構升級<br>（見下方）</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h3>擴大至 20–30 人前，需完成一項架構升級</h3>
+      <ul>
+        <li><strong>存取控管</strong>：平台定位為 III 內部顧問使用，但技術上尚未建立身分驗證機制。使用者範圍擴大前，應使<strong>技術現況與使用定位一致</strong></li>
+        <li><strong>資料層瓶頸</strong>：現行資料庫（Airtable）有<strong>每秒 5 次請求的平台硬限制，此限制無法透過方案升級解除</strong>，多人同時使用時為潛在瓶頸</li>
+      </ul>
+      <p style="font-size:14px;color:var(--mute);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">上述評估與時程建議，將於第一階段測試報告中一併提出。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">SECTION 04</span><h2>建議下一步</h2></div>
+    <div class="ask">
+      <h3>請耕偉組、中原組各推薦 1 位測試同仁</h3>
+      <ul class="tight">
+        <li>建議人選：<strong>實際會使用案例查詢的顧問</strong>（非管理職，以取得第一線使用回饋）</li>
+        <li>收到名單後即安排<strong>存取方式與使用說明</strong>，測試隨即啟動</li>
+        <li>兩週後提交測試報告，含使用回饋、系統承載數據與後續開放建議</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>資策會數位轉型研究院 · 產業策略智庫專案</span>
+    <span>2026-07-14 · 附件：資安檢測基線與補強報告（2026-07-13）</span>
+  </footer>
+
+</div>
+</body>
+</html>
