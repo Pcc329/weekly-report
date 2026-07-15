@@ -181,7 +181,7 @@
         <ul class="tight">
           <li>顧問完成 AI 分析後（對話問答或上傳自評表），系統依其<strong>產業別與痛點</strong>自動推薦最相關的 5 筆案例</li>
           <li>非提供全部案例讓顧問自行翻找，<strong>避免查詢發散</strong></li>
-          <li>完整案例庫另置於戰情室，供主動查詢</li>
+          <li>完整案例庫另置於知識庫，供主動查詢</li>
         </ul>
         <a class="card-link" href="https://solution-finder-gray.vercel.app/manufacturing.html" target="_blank" rel="noopener">開啟方案探索 →</a>
       </div>
@@ -207,38 +207,32 @@
       <tr><th style="width:120px">項目</th><th>內容</th></tr>
       <tr><td><strong>人數</strong></td><td><strong>2–3 位</strong>　建議耕偉組、中原組各指定 1 位實際會使用案例查詢的同仁</td></tr>
       <tr><td><strong>期間</strong></td><td><strong>最長 2 週</strong>　第一週結束進行中點檢核，回饋若已飽和且無新問題，可提前收斂</td></tr>
-      <tr><td><strong>範圍</strong></td><td>AI 方案搜尋（首頁）、案例知識庫（戰情室）、AI 分析案例推薦（方案探索）</td></tr>
+      <tr><td><strong>範圍</strong></td><td>AI 方案搜尋（首頁）、案例知識庫（知識庫）、AI 分析案例推薦（方案探索）</td></tr>
       <tr><td><strong>回饋</strong></td><td>期間以表單收集使用回饋，結束後彙整測試報告</td></tr>
     </table>
 
     <div class="callout">
-      <h3>測試任務設計：四個里程碑</h3>
-      <p style="font-size:14px;color:var(--slate);margin-bottom:14px">採階段任務制，測試者依序完成並回報，總負擔約 45 分鐘。動線依序涵蓋平台三個核心入口，等同完整導覽一次。各里程碑完成後至<a href="https://solution-finder-gray.vercel.app/feedback.html" target="_blank" rel="noopener" style="color:var(--steel);font-weight:700">線上回報表單</a>提交，回報隨填隨送、每次約 2–3 分鐘。</p>
+      <h3>測試任務設計：三個任務</h3>
+      <p style="font-size:14px;color:var(--slate);margin-bottom:14px">採階段任務制，測試者依序完成並回報，總負擔約 30 分鐘。動線依序涵蓋平台三個核心入口，等同完整導覽一次。各任務完成後至<a href="https://solution-finder-gray.vercel.app/feedback.html" target="_blank" rel="noopener" style="color:var(--steel);font-weight:700">線上回報表單</a>提交，回報隨填隨送、每次約 2–3 分鐘。</p>
       <table style="margin-bottom:0">
-        <tr><th style="width:150px">里程碑</th><th style="width:90px">時程</th><th>任務</th><th style="width:230px">回報重點</th></tr>
+        <tr><th style="width:190px">任務</th><th style="width:90px">時程</th><th>內容</th><th style="width:230px">回報重點</th></tr>
         <tr>
-          <td><strong>1. AI 語意搜尋</strong><br><span style="font-size:12px;color:var(--mute)">約 10 分鐘</span></td>
-          <td>Day 1–2</td>
-          <td>從首頁以<strong>自己的話</strong>輸入真實需求進行 AI 搜尋（例：「客戶想導入品檢自動化，預算五十萬內，中部優先」），完成 2 次不同需求的搜尋。<br><span style="font-size:13px;color:var(--mute)">提示：不建議使用單一關鍵字，口語化描述才能發揮語意搜尋效果</span></td>
+          <td><strong>M1 AI語意辨識與搜尋精準度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 8 分鐘</span></td>
+          <td>Day 1–3</td>
+          <td>從首頁以<strong>自己的話</strong>輸入真實需求進行 AI 搜尋（例：「客戶想導入品檢自動化，預算五十萬內，中部優先」），完成 1 次不同需求的搜尋。<br><span style="font-size:13px;color:var(--mute)">提示：不建議使用單一關鍵字，口語化描述才能發揮語意搜尋效果</span></td>
           <td>前 5 筆結果中對題的有幾筆？AI 是否理解隱含條件（預算、地區）？</td>
         </tr>
         <tr>
-          <td><strong>2. 案例知識庫上手</strong><br><span style="font-size:12px;color:var(--mute)">約 10 分鐘</span></td>
-          <td>Day 2–4</td>
-          <td>進入戰情室案例知識庫，產業別與痛點篩選各操作一次，找一筆自己熟悉領域的案例讀完。</td>
+          <td><strong>M2 案例知識庫功能完整度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 10 分鐘</span></td>
+          <td>Day 3–7</td>
+          <td>進入知識庫的案例知識庫分頁，產業別與痛點篩選各操作一次，找一筆自己熟悉領域的案例讀完。<br><span style="font-size:13px;color:var(--copper);font-weight:700">← 第一週結束＝中點檢核</span></td>
           <td>資訊完整度足以向客戶說明嗎？（1–5 分）＋ 所讀案例為實績或規劃？</td>
         </tr>
         <tr>
-          <td><strong>3. 情境實戰</strong><br><span style="font-size:12px;color:var(--mute)">約 15 分鐘</span></td>
-          <td>Day 4–7</td>
-          <td>以指定情境「<strong>食品製造業 × 庫存物流</strong>」至方案探索完成 AI 分析，檢視系統推薦的 5 筆案例。<br><span style="font-size:13px;color:var(--copper);font-weight:700">← 第一週結束＝中點檢核</span></td>
-          <td>5 筆中真正相關的有幾筆？最不相關的是哪筆、為什麼？</td>
-        </tr>
-        <tr>
-          <td><strong>4. 真實應用</strong></td>
+          <td><strong>M3 AI分析與案例推薦精準度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 12 分鐘</span></td>
           <td>Day 8–14</td>
-          <td>以手上真實客戶（或最熟悉的過往輔導對象）條件，<strong>自選路徑</strong>（AI 搜尋或 AI 分析皆可）跑一次完整查找。</td>
-          <td>①選了哪條路徑、為什麼？②若下週見此客戶，會引用查到的方案或案例嗎？會／不會＋原因</td>
+          <td>以手上真實客戶（或最熟悉的過往輔導對象）條件，<strong>自選路徑</strong>（AI 搜尋、AI 分析或兩者都用）跑一次完整查找，檢視系統推薦的案例。</td>
+          <td>①推薦案例中真正相關的有幾筆？②選了哪條路徑、為什麼？③若下週見此客戶，會引用查到的方案或案例嗎？會／不會＋原因</td>
         </tr>
       </table>
     </div>
