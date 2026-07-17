@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="從工作紀錄到專案看板：結構化週報製作方法與團隊導入建議">
+  <title>從工作紀錄到專案看板｜結構化週報製作方法</title>
+  <style>
+    :root{
+      --ink:#1a2733;
+      --slate:#3d5266;
+      --mute:#6d8296;
+      --line:#dde4ea;
+      --paper:#f6f8fa;
+      --white:#fff;
+      --steel:#2f5d7c;
+      --steel-lt:#e8f0f5;
+      --copper:#b1633a;
+      --copper-lt:#faefe8;
+      --green:#2f6a4f;
+      --green-lt:#e9f2ed;
+      --amber:#8a641e;
+      --amber-lt:#fbf4df;
+      --shadow:0 10px 28px rgba(25,39,51,.07);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:var(--paper);
+      line-height:1.75;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit}
+    .wrap{max-width:980px;margin:0 auto;padding:0 24px 96px}
+
+    .back-btn{
+      position:fixed;top:15px;left:15px;z-index:9999;
+      padding:9px 16px;border-radius:999px;
+      background:rgba(26,39,51,.93);color:#fff;text-decoration:none;
+      font-size:13px;font-weight:700;letter-spacing:.02em;
+      box-shadow:0 6px 18px rgba(0,0,0,.16);
+      transition:transform .18s,background .18s;
+    }
+    .back-btn:hover{transform:translateY(-1px);background:var(--copper)}
+    .back-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+    .cover{background:var(--ink);color:#fff;padding:72px 0 58px}
+    .cover .wrap{padding-bottom:0}
+    .eyebrow{font-size:12px;letter-spacing:.18em;color:#8fa8bd;text-transform:uppercase;margin-bottom:20px}
+    .cover h1{font-size:38px;font-weight:850;line-height:1.3;letter-spacing:-.025em;margin-bottom:14px}
+    .cover h1 span{display:block;color:#dce8f1}
+    .cover .sub{font-size:16px;color:#a9becf;max-width:720px}
+    .cover .core{
+      margin-top:26px;padding:17px 20px;border-left:4px solid var(--copper);
+      background:rgba(255,255,255,.055);color:#dce8f1;font-size:15px;max-width:760px;
+    }
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#33465a;margin-top:40px;border:1px solid #33465a}
+    .meta div{background:var(--ink);padding:14px 18px}
+    .meta dt{font-size:11px;color:#8fa8bd;letter-spacing:.08em;margin-bottom:4px}
+    .meta dd{font-size:14px;color:#fff;font-weight:700}
+
+    .jump{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+    .jump .inner{max-width:980px;margin:auto;padding:12px 24px;display:flex;gap:8px;overflow:auto;scrollbar-width:thin}
+    .jump a{flex:0 0 auto;text-decoration:none;font-size:12px;font-weight:700;color:var(--slate);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .jump a:hover{border-color:var(--steel);color:var(--steel);background:var(--steel-lt)}
+
+    section{margin-top:54px;scroll-margin-top:72px}
+    .sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:26px}
+    .sec-num{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--copper)}
+    .sec-head h2{font-size:22px;font-weight:850;letter-spacing:-.015em}
+    .lead{font-size:15px;color:var(--slate);margin:-8px 0 24px;max-width:820px}
+
+    .callout{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--steel);padding:22px 26px;margin-bottom:24px;box-shadow:var(--shadow)}
+    .callout h3{font-size:14px;letter-spacing:.06em;color:var(--steel);margin-bottom:10px;font-weight:800}
+    .callout p{font-size:15px;color:var(--slate)}
+    .callout.emphasis{border-left-color:var(--copper);background:linear-gradient(90deg,var(--copper-lt),#fff 42%)}
+    .callout.emphasis h3{color:var(--copper)}
+
+    ul{list-style:none}
+    ul li{position:relative;padding-left:18px;margin-bottom:9px;font-size:15px;color:var(--slate)}
+    ul li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--mute);border-radius:50%}
+    ul li strong{color:var(--ink);font-weight:750}
+    ul.tight li{margin-bottom:5px}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+    .stat{background:var(--white);border:1px solid var(--line);padding:20px;text-align:center;box-shadow:var(--shadow)}
+    .stat .n{font-size:31px;font-weight:850;color:var(--steel);line-height:1.2}
+    .stat .n small{font-size:14px;font-weight:750;color:var(--mute)}
+    .stat .l{font-size:12px;color:var(--mute);margin-top:6px}
+
+    .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:22px;align-items:stretch}
+    .card{background:var(--white);border:1px solid var(--line);padding:21px 22px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+    .card h3,.card h4{font-size:16px;font-weight:800;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+    .card .index{font-size:11px;letter-spacing:.09em;color:var(--copper);font-weight:850}
+    .card p{font-size:14px;color:var(--slate);margin-bottom:10px}
+    .tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:2px;letter-spacing:.04em}
+    .tag.done{background:var(--green-lt);color:var(--green)}
+    .tag.note{background:var(--copper-lt);color:var(--copper)}
+    .tag.base{background:var(--steel-lt);color:var(--steel)}
+    .tag.warn{background:var(--amber-lt);color:var(--amber)}
+
+    .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+    .compare .side{background:#fff;border:1px solid var(--line);padding:22px;box-shadow:var(--shadow)}
+    .compare .side.before{border-top:4px solid var(--mute)}
+    .compare .side.after{border-top:4px solid var(--green)}
+    .compare h3{font-size:16px;margin-bottom:12px}
+
+    table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);margin-bottom:22px;font-size:14px;box-shadow:var(--shadow)}
+    th{background:var(--steel-lt);color:var(--ink);text-align:left;padding:11px 15px;font-weight:800;font-size:13px;letter-spacing:.02em;border-bottom:1px solid var(--line)}
+    td{padding:12px 15px;border-bottom:1px solid var(--line);color:var(--slate);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    td strong{color:var(--ink)}
+
+    .flow{display:flex;align-items:stretch;gap:0;margin-bottom:24px;flex-wrap:wrap}
+    .flow .step{flex:1;min-width:120px;background:var(--white);border:1px solid var(--line);padding:17px 15px;position:relative;box-shadow:var(--shadow)}
+    .flow .step.highlight{border:2px solid var(--steel);background:var(--steel-lt)}
+    .flow .ph{font-size:10px;letter-spacing:.1em;color:var(--mute);font-weight:800;margin-bottom:5px}
+    .flow .title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:5px}
+    .flow .desc{font-size:12px;color:var(--mute);line-height:1.55}
+    .arrow{display:flex;align-items:center;padding:0 8px;color:#bec9d2;font-size:19px;font-weight:800}
+
+    .stage{display:flex;align-items:stretch;gap:0;margin-bottom:22px;flex-wrap:wrap}
+    .st{flex:1;min-width:190px;background:var(--white);border:1px solid var(--line);padding:20px;position:relative;box-shadow:var(--shadow)}
+    .st.active{border:2px solid var(--steel);background:var(--steel-lt)}
+    .st .ph{font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:800;margin-bottom:6px}
+    .st .num{font-size:24px;font-weight:850;color:var(--ink);margin-bottom:4px}
+    .st .d{font-size:12px;color:var(--mute);line-height:1.6}
+
+    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+    .principle{background:#fff;border:1px solid var(--line);padding:20px 18px;box-shadow:var(--shadow)}
+    .principle .icon{font-size:23px;margin-bottom:8px}
+    .principle h3{font-size:15px;margin-bottom:7px}
+    .principle p{font-size:13px;color:var(--slate)}
+
+    details{background:#fff;border:1px solid var(--line);margin-bottom:22px;box-shadow:var(--shadow)}
+    summary{cursor:pointer;padding:17px 20px;font-size:14px;font-weight:800;color:var(--steel);list-style:none}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"＋";float:right;color:var(--copper)}
+    details[open] summary::after{content:"－"}
+    pre{white-space:pre-wrap;word-break:break-word;padding:20px;background:#17232e;color:#dce8f1;font-size:13px;line-height:1.7;overflow:auto}
+
+    .guardrails{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+    .guard{background:#fff;border:1px solid var(--line);padding:20px;box-shadow:var(--shadow)}
+    .guard h3{font-size:15px;margin-bottom:10px;color:var(--copper)}
+    .guard p{font-size:13px;color:var(--slate)}
+
+    .ask{background:var(--ink);color:#fff;padding:30px 32px;margin-top:18px;box-shadow:var(--shadow)}
+    .ask h3{font-size:18px;font-weight:850;margin-bottom:12px}
+    .ask p{color:#c3d3e0;font-size:14px;margin-bottom:14px}
+    .ask ul li{color:#c3d3e0}
+    .ask ul li::before{background:var(--copper)}
+    .ask ul li strong{color:#fff}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border:1px solid #8fa8bd;color:#fff;text-decoration:none;font-size:13px;font-weight:800;transition:.18s}
+    .btn:hover{background:#fff;color:var(--ink)}
+    .btn.primary{background:var(--copper);border-color:var(--copper)}
+    .btn.primary:hover{background:#fff;color:var(--copper)}
+
+    footer{margin-top:58px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+    @media(max-width:820px){
+      .stats,.principles{grid-template-columns:repeat(2,1fr)}
+      .guardrails{grid-template-columns:1fr}
+      .cover h1{font-size:32px}
+    }
+    @media(max-width:640px){
+      .wrap{padding-left:18px;padding-right:18px;padding-bottom:72px}
+      .cover{padding-top:78px}
+      .cover h1{font-size:27px}
+      .cover .sub{font-size:15px}
+      .cards,.compare,.stats,.principles{grid-template-columns:1fr}
+      .arrow{display:none}
+      .flow .step,.st{min-width:100%}
+      .sec-head{align-items:flex-start}
+      .sec-head h2{font-size:20px}
+      table{display:block;overflow-x:auto;white-space:normal}
+      .back-btn{font-size:12px;padding:8px 13px}
+    }
+    @media print{
+      .back-btn,.jump{display:none}
+      body{background:#fff}
+      .wrap{max-width:none;padding-bottom:20px}
+      .card,.stat,.callout,.principle,.guard,.side,.step,.st,table,details,.ask{box-shadow:none;break-inside:avoid}
+      section{break-inside:auto}
+    }
+  </style>
+</head>
+<body>
+  <a class="back-btn" href="https://pcc329.github.io/weekly-report/">← 回到報告首頁</a>
+
+  <header class="cover">
+    <div class="wrap">
+      <div class="eyebrow">資策會數位轉型研究院 · 內部經驗分享</div>
+      <h1>從工作紀錄到專案看板<span>結構化週報製作方法</span></h1>
+      <p class="sub">分享如何用固定資訊架構、AI 協作、GitHub Pages 與歷史封存，建立可閱讀、可追蹤、可持續維護的週報入口。</p>
+      <div class="core"><strong>核心觀念：</strong>這不是單純把 Word 搬到網頁，而是把「每週回報」升級成團隊可持續使用的專案資訊系統。</div>
+      <dl class="meta">
+        <div><dt>日期</dt><dd>2026-07-16</dd></div>
+        <div><dt>分享形式</dt><dd>15–20 分鐘</dd></div>
+        <div><dt>適用對象</dt><dd>專案成員／一般同仁</dd></div>
+        <div><dt>文件性質</dt><dd>內部方法分享</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <nav class="jump" aria-label="頁面章節">
+    <div class="inner">
+      <a href="#s1">01 為何改造</a>
+      <a href="#s2">02 設計原則</a>
+      <a href="#s3">03 四層架構</a>
+      <a href="#s4">04 每週流程</a>
+      <a href="#s5">05 週報模板</a>
+      <a href="#s6">06 分享流程</a>
+      <a href="#s7">07 導入層級</a>
+      <a href="#s8">08 治理原則</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="s1">
+      <div class="sec-head"><span class="sec-num">SECTION 01</span><h2>為什麼要改造週報</h2></div>
+      <p class="lead">先解決資訊管理問題，再選擇工具。週報真正的成本，往往不是撰寫文字，而是每週重排、重找、重複確認與無法延續。</p>
+
+      <div class="compare">
+        <div class="side before">
+          <h3>傳統週報常見情況</h3>
+          <ul>
+            <li>每週重新排版，時間花在格式而非內容</li>
+            <li>Word、郵件與簡報散落，歷史資料難追蹤</li>
+            <li>主管只能看到當週，缺乏長期脈絡</li>
+            <li>數字靠人工更新，容易前後不一致</li>
+            <li>工作項目很多，卻看不出成果、風險與下一步</li>
+          </ul>
+        </div>
+        <div class="side after">
+          <h3>改造後希望達成</h3>
+          <ul>
+            <li><strong>單一入口：</strong>以永久網址查看最新進度</li>
+            <li><strong>固定骨架：</strong>每週只更新內容，不重做版面</li>
+            <li><strong>狀態透明：</strong>成果、問題、數據、決策需求並列</li>
+            <li><strong>歷史可查：</strong>每期封存，形成專案時間軸</li>
+            <li><strong>持續累積：</strong>週報成為專案知識庫的一部分</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout emphasis">
+        <h3>一句話定位</h3>
+        <p><strong>讓週報從「交作業」轉型為「專案單一資訊入口（Single Source of Truth）」。</strong></p>
+      </div>
+    </section>
+
+    <section id="s2">
+      <div class="sec-head"><span class="sec-num">SECTION 02</span><h2>四個設計原則</h2></div>
+      <div class="principles">
+        <div class="principle"><div class="icon">▦</div><h3>固定結構</h3><p>每週沿用相同章節，閱讀者能快速定位資訊。</p></div>
+        <div class="principle"><div class="icon">↔</div><h3>內容與版面分離</h3><p>內容檔持續更新，展示頁面只需建立一次。</p></div>
+        <div class="principle"><div class="icon">↻</div><h3>數據可自動化</h3><p>能由系統取得的 KPI，不再重複人工輸入。</p></div>
+        <div class="principle"><div class="icon">⌛</div><h3>歷史可追蹤</h3><p>每期封存並保留時間標記，形成決策脈絡。</p></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="n">1</div><div class="l">永久分享連結</div></div>
+        <div class="stat"><div class="n">1</div><div class="l">固定週報模板</div></div>
+        <div class="stat"><div class="n">每週</div><div class="l">更新內容即可</div></div>
+        <div class="stat"><div class="n">3<small> 級</small></div><div class="l">團隊導入成熟度</div></div>
+      </div>
+    </section>
+
+    <section id="s3">
+      <div class="sec-head"><span class="sec-num">SECTION 03</span><h2>週報系統的四層架構</h2></div>
+      <p class="lead">把內容、呈現、數據與歷史拆開管理，才能降低每週維護成本，也避免所有資訊綁死在單一文件裡。</p>
+
+      <div class="cards">
+        <article class="card">
+          <h3><span class="index">LAYER 01</span>內容層 <span class="tag base">Markdown</span></h3>
+          <ul>
+            <li>以 <strong>report.md</strong> 集中維護當週內容</li>
+            <li>章節固定：摘要、完成事項、數據、風險、下週規劃</li>
+            <li>不需在 HTML 中逐段修改文字</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="index">LAYER 02</span>展示層 <span class="tag done">一次建置</span></h3>
+          <ul>
+            <li>由固定網頁框架呈現週報內容</li>
+            <li>支援桌機與手機閱讀</li>
+            <li>統一字級、表格、標籤與視覺層次</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="index">LAYER 03</span>數據層 <span class="tag note">可選配</span></h3>
+          <ul>
+            <li>KPI 可由系統 API 即時取得</li>
+            <li>降低人工複製數字與版本落差</li>
+            <li>僅將適合公開或內部呈現的數據放入頁面</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="index">LAYER 04</span>歷史層 <span class="tag done">可追蹤</span></h3>
+          <ul>
+            <li>過去週報依日期封存</li>
+            <li>首頁集中顯示歷史紀錄</li>
+            <li>可回查專案變化、決策與工作累積</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="callout">
+        <h3>維護邏輯</h3>
+        <p><strong>一次建立展示框架，每週只更新結構化內容；能自動取得的數據由系統提供，舊週報則持續封存。</strong></p>
+      </div>
+    </section>
+
+    <section id="s4">
+      <div class="sec-head"><span class="sec-num">SECTION 04</span><h2>每週實際操作流程</h2></div>
+      <div class="flow" aria-label="每週週報製作流程">
+        <div class="step"><div class="ph">STEP 01</div><div class="title">平日記錄</div><div class="desc">收集完成事項、數據、問題與決策</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 02</div><div class="title">週末彙整</div><div class="desc">判斷哪些資訊值得主管與團隊關注</div></div>
+        <div class="arrow">→</div>
+        <div class="step highlight"><div class="ph">STEP 03</div><div class="title">套用模板</div><div class="desc">依固定章節寫入 report.md</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 04</div><div class="title">AI 協作</div><div class="desc">分類、濃縮、調整表達與校對</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 05</div><div class="title">人工確認</div><div class="desc">核對日期、數字、狀態與風險</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 06</div><div class="title">發布</div><div class="desc">更新 GitHub，網頁自動呈現</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 07</div><div class="title">封存</div><div class="desc">保留本期版本，建立歷史時間軸</div></div>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <h3>AI 適合負責 <span class="tag done">助理角色</span></h3>
+          <ul>
+            <li>把零散筆記整理成固定章節</li>
+            <li>濃縮冗長敘述，突出成果與影響</li>
+            <li>協助統一用詞、語氣與格式</li>
+            <li>檢查是否缺少風險、下一步或待決策事項</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>專案負責人必須確認 <span class="tag warn">不可外包</span></h3>
+          <ul>
+            <li>任務是否真的完成，以及完成定義</li>
+            <li>數據、日期、成本與引用來源是否正確</li>
+            <li>問題優先度及對專案的實際影響</li>
+            <li>哪些內容適合對內分享或公開展示</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="s5">
+      <div class="sec-head"><span class="sec-num">SECTION 05</span><h2>可複製的週報內容骨架</h2></div>
+      <p class="lead">其他同仁不必先學 GitHub。第一步是先採用一致的資訊骨架，讓主管能快速回答：本週完成了什麼、數字如何、卡在哪裡、下週要做什麼。</p>
+
+      <div class="cards">
+        <article class="card"><h3>01 本週摘要</h3><p>以 3–5 句說明最重要的成果、變化與風險。</p></article>
+        <article class="card"><h3>02 本週完成事項</h3><p>以任務、狀態及具體成果呈現，不只寫「已處理」。</p></article>
+        <article class="card"><h3>03 關鍵數據</h3><p>列出本週、上週與差異，讓趨勢一眼可見。</p></article>
+        <article class="card"><h3>04 問題與風險</h3><p>標示影響、處理方式與優先度，避免只描述現象。</p></article>
+        <article class="card"><h3>05 待協助／待決策</h3><p>明確寫出需要誰協助、需要決定什麼及期待時點。</p></article>
+        <article class="card"><h3>06 下週規劃</h3><p>聚焦 3–5 項可驗證的下一步，與本週風險相互對應。</p></article>
+      </div>
+
+      <details>
+        <summary>展開：可直接複製的 Markdown 週報模板</summary>
+        <pre># 專案週報 YYYY-MM-DD
+
+週期：
+撰寫日期：
+專案連結：
+
+## 一、本週摘要
+用 3～5 句說明本週最重要的成果、變化與風險。
+
+## 二、本週完成事項
+| 任務 | 狀態 | 成果或說明 |
+|---|---|---|
+| 任務名稱 | 完成／進行中 | 具體成果與數字 |
+
+## 三、關鍵數據
+| 指標 | 本週 | 上週 | 變化 |
+|---|---:|---:|---:|
+| 指標名稱 |  |  |  |
+
+## 四、問題與風險
+| 項目 | 影響 | 處理方式 | 優先度 |
+|---|---|---|---|
+| 問題名稱 |  |  | 高／中／低 |
+
+## 五、待協助或待決策事項
+| 項目 | 需要誰協助 | 希望完成時間 |
+|---|---|---|
+|  |  |  |
+
+## 六、下週規劃
+1.
+2.
+3.</pre>
+      </details>
+    </section>
+
+    <section id="s6">
+      <div class="sec-head"><span class="sec-num">SECTION 06</span><h2>建議的 15–20 分鐘分享流程</h2></div>
+      <table>
+        <thead><tr><th>段落</th><th>時間</th><th>分享重點</th><th>現場展示</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. 為什麼改造</strong></td><td>3 分鐘</td><td>傳統週報的重工、資訊分散與追蹤困難</td><td>從主管閱讀需求切入</td></tr>
+          <tr><td><strong>2. 設計原則</strong></td><td>3 分鐘</td><td>固定結構、內容與版面分離、數據自動化、歷史追蹤</td><td>四層架構圖</td></tr>
+          <tr><td><strong>3. 每週操作</strong></td><td>5 分鐘</td><td>從平日記錄到發布與封存，以及 AI 的角色</td><td>report.md 與網頁對照</td></tr>
+          <tr><td><strong>4. 成果展示</strong></td><td>3 分鐘</td><td>KPI、完成事項、風險、歷史週報及手機版</td><td>實際 weekly.html</td></tr>
+          <tr><td><strong>5. 團隊採用</strong></td><td>3–5 分鐘</td><td>依工具熟悉度分級導入，不要求所有人一次到位</td><td>Level 1–3 路徑</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <h3>分享時的主軸</h3>
+        <p>不要把分享變成 HTML 語法教學。先說明<strong>資訊怎麼被結構化、怎麼降低每週維護成本、怎麼讓主管更快掌握專案</strong>，技術只是支撐方法的工具。</p>
+      </div>
+    </section>
+
+    <section id="s7">
+      <div class="sec-head"><span class="sec-num">SECTION 07</span><h2>團隊導入可分三個層級</h2></div>
+      <p class="lead">組織推廣不應假設所有人都熟悉程式。先建立共同模板，再逐步增加網頁呈現與自動化能力。</p>
+      <div class="stage">
+        <div class="st active">
+          <div class="ph">LEVEL 01 · 基礎</div>
+          <div class="num">模板版</div>
+          <div class="d">適合一般同仁<br>使用 Word、Google 文件或 Markdown 固定模板<br><strong>先建立共同資訊語言</strong></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="st">
+          <div class="ph">LEVEL 02 · 進階</div>
+          <div class="num">網頁版</div>
+          <div class="d">適合熟悉數位工具者<br>固定網頁讀取週報內容<br><strong>建立永久入口與歷史查詢</strong></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="st">
+          <div class="ph">LEVEL 03 · 自動化</div>
+          <div class="num">系統版</div>
+          <div class="d">適合已有資料來源的專案<br>串接 API、KPI 與自動封存<br><strong>降低重複輸入與版本落差</strong></div>
+        </div>
+      </div>
+
+      <div class="callout emphasis">
+        <h3>建議導入順序</h3>
+        <p><strong>先統一「寫什麼」，再決定「用什麼工具寫」；先驗證閱讀價值，再投入自動化。</strong></p>
+      </div>
+    </section>
+
+    <section id="s8">
+      <div class="sec-head"><span class="sec-num">SECTION 08</span><h2>品質治理與注意事項</h2></div>
+      <div class="guardrails">
+        <div class="guard"><h3>事實責任</h3><p>AI 可以協助寫得清楚，但完成狀態、數字與風險判斷仍由專案負責人背書。</p></div>
+        <div class="guard"><h3>內容分級</h3><p>公開頁面、內部頁面與敏感資訊應分開管理，避免把聯絡資料、內部成本或未定案內容誤公開。</p></div>
+        <div class="guard"><h3>文件同步</h3><p>架構變更時，README、操作說明與範例也要同步更新，否則工具可用但知識無法交接。</p></div>
+      </div>
+
+      <div class="ask">
+        <h3>建議下一步：先以一個小組進行模板試行</h3>
+        <p>不急著要求每位同仁建立網站，可先用相同模板完成 2–3 週週報，再觀察主管閱讀效率與同仁維護負擔。</p>
+        <ul>
+          <li><strong>第一步：</strong>確認組內共用的週報章節與欄位</li>
+          <li><strong>第二步：</strong>選擇 1–2 個專案試用固定模板</li>
+          <li><strong>第三步：</strong>收集主管最常追問的資訊，調整模板</li>
+          <li><strong>第四步：</strong>有明確需求後，再評估網頁化與 API 自動化</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="https://pcc329.github.io/weekly-report/weekly.html" target="_blank" rel="noopener noreferrer">開啟目前週報 →</a>
+          <a class="btn" href="https://github.com/Pcc329/weekly-report/blob/main/report.md" target="_blank" rel="noopener noreferrer">查看 report.md 原始檔 ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>資策會數位轉型研究院 · 結構化週報方法分享</span>
+      <span>2026-07-16 · weekly-report</span>
+    </footer>
+  </main>
+</body>
+</html>
