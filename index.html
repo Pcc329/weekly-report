@@ -5,392 +5,383 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>III 產業資料庫 — 專案報告中心</title>
 <style>
-  :root {
-    --primary: #2c3e50;
-    --teal: #1D9E75;
-    --bg: #f0f2f5;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-    background: var(--bg); min-height: 100vh; padding-bottom: 48px;
-  }
-  header {
-    background: var(--primary); color: white;
-    padding: 40px 20px 32px; text-align: center;
-  }
-  header h1 { font-size: 1.8rem; margin-bottom: 6px; }
-  header p { opacity: 0.6; font-size: 0.9rem; }
-
-  .container { max-width: 780px; margin: 0 auto; padding: 32px 20px 0; }
-
-  .section-title {
-    font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: #999;
-    margin: 36px 0 12px; padding-left: 4px;
-  }
-  .section-title:first-child { margin-top: 0; }
-
-  /* 最新週報按鈕 */
-  .nav-card {
-    display: flex; align-items: center; gap: 16px;
-    background: white; border-radius: 12px; padding: 20px 24px;
-    text-decoration: none; color: inherit;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    margin-bottom: 12px;
-    border-left: 5px solid var(--teal);
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .nav-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
-  .nav-card .card-icon { font-size: 1.8rem; flex-shrink: 0; }
-  .nav-card .card-body { flex: 1; }
-  .nav-card .card-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
-  .nav-card .card-desc  { font-size: 0.82rem; color: #888; }
-  .nav-card .card-badge {
-    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
-    border-radius: 20px; background: #e8f8f2; color: var(--teal); flex-shrink: 0;
-  }
-
-  /* 歷程區塊 */
-  .log-section {
-    background: white; border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .log-header {
-    background: var(--primary); color: white;
-    padding: 14px 24px; display: flex; align-items: center; gap: 10px;
-  }
-  .log-header span { font-size: 1rem; font-weight: 700; }
-  .log-header small { opacity: 0.6; font-size: 0.78rem; margin-left: auto; }
-
-  .log-list { padding: 8px 0; }
-  .log-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 24px; border-bottom: 1px solid #f0f0f0;
-    text-decoration: none; color: inherit;
-    transition: background 0.15s;
-  }
-  .log-item:last-child { border-bottom: none; }
-  .log-item:hover { background: #f8fffe; }
-  .log-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
-
-  .log-dot {
-    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
-  }
-  .log-dot.done    { background: var(--teal); }
-  .log-dot.pending { background: #ddd; }
-
-  .log-body { flex: 1; }
-  .log-title { font-size: 0.92rem; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
-  .log-meta  { font-size: 0.78rem; color: #aaa; }
-
-  .log-tag {
-    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
-    border-radius: 20px; flex-shrink: 0;
-  }
-  .log-tag.done    { background: #e8f8f2; color: var(--teal); }
-  .log-tag.pending { background: #f5f5f5; color: #bbb; }
-  .log-tag.warn    { background: #fef9e7; color: #d68910; }
-
-  .log-hint {
-    font-size: 0.78rem; color: #bbb; padding: 12px 24px 16px;
-    border-top: 1px dashed #eee;
-  }
-
-  /* 載入中 / 空狀態 */
-  .log-loading {
-    padding: 24px; text-align: center; color: #ccc; font-size: 0.85rem;
-  }
-  .log-loading .spinner {
-    display: inline-block; width: 16px; height: 16px;
-    border: 2px solid #eee; border-top-color: var(--teal);
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-    margin-right: 8px; vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  footer { text-align: center; padding: 32px 20px 0; color: #bbb; font-size: 0.78rem; }
-
-  @media (max-width: 480px) {
-    header h1 { font-size: 1.4rem; }
-    .nav-card { padding: 16px 18px; gap: 12px; }
-    .log-item { padding: 12px 18px; }
-  }
+ :root {
+  --primary: #2c3e50;
+  --teal: #1D9E75;
+  --bg: #f0f2f5;
+ }
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body {
+  font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg); min-height: 100vh; padding-bottom: 48px;
+ }
+ header {
+  background: var(--primary); color: white;
+  padding: 40px 20px 32px; text-align: center;
+ }
+ header h1 { font-size: 1.8rem; margin-bottom: 6px; }
+ header p { opacity: 0.6; font-size: 0.9rem; }
+ .container { max-width: 780px; margin: 0 auto; padding: 32px 20px 0; }
+ .section-title {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: #999;
+  margin: 36px 0 12px; padding-left: 4px;
+ }
+ .section-title:first-child { margin-top: 0; }
+ /* 最新週報按鈕 */
+ .nav-card {
+  display: flex; align-items: center; gap: 16px;
+  background: white; border-radius: 12px; padding: 20px 24px;
+  text-decoration: none; color: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin-bottom: 12px;
+  border-left: 5px solid var(--teal);
+  transition: transform 0.15s, box-shadow 0.15s;
+ }
+ .nav-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
+ .nav-card .card-icon { font-size: 1.8rem; flex-shrink: 0; }
+ .nav-card .card-body { flex: 1; }
+ .nav-card .card-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
+ .nav-card .card-desc { font-size: 0.82rem; color: #888; }
+ .nav-card .card-badge {
+  font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; background: #e8f8f2; color: var(--teal); flex-shrink: 0;
+ }
+ /* 歷程區塊 */
+ .log-section {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
+  margin-bottom: 12px;
+ }
+ .log-header {
+  background: var(--primary); color: white;
+  padding: 14px 24px; display: flex; align-items: center; gap: 10px;
+ }
+ .log-header span { font-size: 1rem; font-weight: 700; }
+ .log-header small { opacity: 0.6; font-size: 0.78rem; margin-left: auto; }
+ .log-list { padding: 8px 0; }
+ .log-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 24px; border-bottom: 1px solid #f0f0f0;
+  text-decoration: none; color: inherit;
+  transition: background 0.15s;
+ }
+ .log-item:last-child { border-bottom: none; }
+ .log-item:hover { background: #f8fffe; }
+ .log-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+ .log-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+ }
+ .log-dot.done { background: var(--teal); }
+ .log-dot.pending { background: #ddd; }
+ .log-body { flex: 1; }
+ .log-title { font-size: 0.92rem; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
+ .log-meta { font-size: 0.78rem; color: #aaa; }
+ .log-tag {
+  font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; flex-shrink: 0;
+ }
+ .log-tag.done { background: #e8f8f2; color: var(--teal); }
+ .log-tag.pending { background: #f5f5f5; color: #bbb; }
+ .log-tag.warn { background: #fef9e7; color: #d68910; }
+ .log-hint {
+  font-size: 0.78rem; color: #bbb; padding: 12px 24px 16px;
+  border-top: 1px dashed #eee;
+ }
+ /* 載入中 / 空狀態 */
+ .log-loading {
+  padding: 24px; text-align: center; color: #ccc; font-size: 0.85rem;
+ }
+ .log-loading .spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid #eee; border-top-color: var(--teal);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+  margin-right: 8px; vertical-align: middle;
+ }
+ @keyframes spin { to { transform: rotate(360deg); } }
+ footer { text-align: center; padding: 32px 20px 0; color: #bbb; font-size: 0.78rem; }
+ @media (max-width: 480px) {
+  header h1 { font-size: 1.4rem; }
+  .nav-card { padding: 16px 18px; gap: 12px; }
+  .log-item { padding: 12px 18px; }
+ }
 </style>
 </head>
 <body>
-
 <header>
-  <h1>📊 III 產業資料庫</h1>
-  <p>專案報告中心 · 數位轉型研究院</p>
+ <h1>III 產業資料庫</h1>
+ <p>專案報告中心 · 數位轉型研究院</p>
 </header>
 
 <div class="container">
-
-  <!-- 最新週報 -->
-  <div class="section-title">最新週報</div>
-  <a href="weekly.html" class="nav-card">
-    <span class="card-icon">📅</span>
-    <div class="card-body">
-      <div class="card-title">本週週報</div>
-      <div class="card-desc">本週進度、資料更新、待辦事項 · 每週五更新</div>
-    </div>
-    <span class="card-badge">最新版本</span>
-  </a>
-
-  <!-- 臨時重大事項 -->
-  <div class="section-title">臨時重大事項</div>
-  <a href="statusUpdate.html" class="nav-card" style="border-left-color: #e74c3c;">
-    <span class="card-icon">⚡</span>
-    <div class="card-body">
-      <div class="card-title">重大事項更新</div>
-      <div class="card-desc">系統異常、緊急進度、臨時公告 · 有事才更新</div>
-    </div>
-    <span class="card-badge" style="background:#fdecea; color:#c0392b;">隨時更新</span>
-  </a>
-
-  <!-- 資訊安全 -->
-  <div class="section-title">資訊安全</div>
-  <a href="./report_security_baseline_20260713.html" class="nav-card" style="border-left-color: #3d6b99;">
-    <span class="card-icon">🛡️</span>
-    <div class="card-body">
-      <div class="card-title">資安檢測基線與補強報告</div>
-      <div class="card-desc">三層外部掃描 · 網路層零弱點 · 標頭補強 D→A · 架構層處理計畫</div>
-    </div>
-    <span class="card-badge" style="background:#e9f0f7; color:#3d6b99;">2026-07-13</span>
-  </a>
-
-
-<!-- 開放測試 -->
-  <div class="section-title">開放測試</div>
-  <a href="./proposal_pilot_test_20260714.html" class="nav-card" style="border-left-color: #b1633a;">
-    <span class="card-icon">🚀</span>
-    <div class="card-body">
-      <div class="card-title">案例分析功能開放測試提案</div>
-      <div class="card-desc">29 筆真實案例 · 診斷驅動推薦 · 分階段開放與架構前置條件</div>
-    </div>
-    <span class="card-badge" style="background:#faefe8; color:#b1633a;">2026-07-14</span>
-  </a>
-
-  <a href="https://solution-finder-gray.vercel.app/feedback.html" class="nav-card" style="border-left-color: #0BA08C;">
-    <span class="card-icon">📝</span>
-    <div class="card-body">
-      <div class="card-title">測試回報表單</div>
-      <div class="card-desc">四里程碑任務制 · 隨填隨送 · 每次約 2–3 分鐘</div>
-    </div>
-    <span class="card-badge" style="background:#e1f5ee; color:#0BA08C;">試行中</span>
-  </a>
-
-  
-  <!-- 目前開發進度 -->
-  <div class="section-title">目前開發進度</div>
-  <a href="Systemboard.html" class="nav-card" style="border-left-color: #8b5cf6;">
-    <span class="card-icon">🧭</span>
-    <div class="card-body">
-      <div class="card-title">系統全盤點</div>
-      <div class="card-desc">功能狀態 · 里程碑甘特圖 · ETL 軌跡 · 發展路線圖</div>
-    </div>
-    <span class="card-badge" style="background:#ede9fe; color:#7c3aed;">查看 →</span>
-  </a>
-  <a href="./report_case_integration_20260624.html" class="nav-card" style="border-left-color: #d4820a;">
-    <span class="card-icon">🧩</span>
-    <div class="card-body">
-      <div class="card-title">智庫 × 案例庫整合評估</div>
-      <div class="card-desc">AI顧問知識助理 · 商用化路徑 · 資安合規評估</div>
-    </div>
-    <span class="card-badge" style="background:#fdf3e3; color:#d4820a;">策略評估</span>
-  </a>
-  
-  <!-- 週報歷史（自動從 GitHub API 抓） -->
-  <div class="section-title">週報歷史版本</div>
-  <div class="log-section">
-    <div class="log-header">
-      <span>📋 歷史週報</span>
-      <small>最新版本請看上方 · 每週五封存</small>
-    </div>
-    <div class="log-list" id="report-history">
-      <div class="log-loading">
-        <span class="spinner"></span>載入歷史紀錄中...
-      </div>
-    </div>
-    <div class="log-hint">
-      💡 每週五：將 report.md 另存為 report-YYYY-MM-DD.md 上傳，此處自動出現。
-    </div>
+ <!-- 最新週報 -->
+ <div class="section-title">最新週報</div>
+ <a href="weekly.html" class="nav-card">
+  <span class="card-icon">📰</span>
+  <div class="card-body">
+   <div class="card-title">本週週報</div>
+   <div class="card-desc">本週進度、資料更新、待辦事項 · 每週五更新</div>
   </div>
+  <span class="card-badge">最新版本</span>
+ </a>
 
-  <!-- ETL 歷程（自動從 GitHub API 抓） -->
-  <div class="section-title">資料 ETL 歷程</div>
-  <div class="log-section">
-    <div class="log-header">
-      <span>🔬 資料來源檢查紀錄</span>
-      <small>每次收到新資料來源後產出</small>
-    </div>
-    <div class="log-list" id="etl-history">
-      <div class="log-loading">
-        <span class="spinner"></span>載入 ETL 紀錄中...
-      </div>
-    </div>
-    <div class="log-hint">
-      💡 每次完成 ETL 分析，將報告存為 etl-report-YYYY-MM-DD.html 上傳，此處自動出現。
-    </div>
+ <!-- 臨時重大事項 -->
+ <div class="section-title">臨時重大事項</div>
+ <a href="statusUpdate.html" class="nav-card" style="border-left-color: #e74c3c;">
+  <span class="card-icon">⚡</span>
+  <div class="card-body">
+   <div class="card-title">重大事項更新</div>
+   <div class="card-desc">系統異常、緊急進度、臨時公告 · 有事才更新</div>
   </div>
+  <span class="card-badge" style="background:#fdecea; color:#c0392b;">隨時更新</span>
+ </a>
 
+ <!-- 資訊安全 -->
+ <div class="section-title">資訊安全</div>
+ <a href="./report_security_baseline_20260713.html" class="nav-card" style="border-left-color: #3d6b99;">
+  <span class="card-icon">🛡️</span>
+  <div class="card-body">
+   <div class="card-title">資安檢測基線與補強報告</div>
+   <div class="card-desc">三層外部掃描 · 網路層零弱點 · 標頭補強 D→A · 架構層處理計畫</div>
+  </div>
+  <span class="card-badge" style="background:#e9f0f7; color:#3d6b99;">2026-07-13</span>
+ </a>
+
+ <!-- 開放測試 -->
+ <div class="section-title">開放測試</div>
+ <a href="./proposal_pilot_test_20260714.html" class="nav-card" style="border-left-color: #b1633a;">
+  <span class="card-icon">🧪</span>
+  <div class="card-body">
+   <div class="card-title">案例分析功能開放測試提案</div>
+   <div class="card-desc">29 筆真實案例 · 診斷驅動推薦 · 分階段開放與架構前置條件</div>
+  </div>
+  <span class="card-badge" style="background:#faefe8; color:#b1633a;">2026-07-14</span>
+ </a>
+
+ <a href="https://solution-finder-gray.vercel.app/feedback.html" class="nav-card" style="border-left-color: #0BA08C;">
+  <span class="card-icon">📝</span>
+  <div class="card-body">
+   <div class="card-title">測試回報表單</div>
+   <div class="card-desc">四里程碑任務制 · 隨填隨送 · 每次約 2–3 分鐘</div>
+  </div>
+  <span class="card-badge" style="background:#e1f5ee; color:#0BA08C;">試行中</span>
+ </a>
+
+ <!-- 目前開發進度 -->
+ <div class="section-title">目前開發進度</div>
+ <a href="Systemboard.html" class="nav-card" style="border-left-color: #8b5cf6;">
+  <span class="card-icon">🗺️</span>
+  <div class="card-body">
+   <div class="card-title">系統全盤點</div>
+   <div class="card-desc">功能狀態 · 里程碑甘特圖 · ETL 軌跡 · 發展路線圖</div>
+  </div>
+  <span class="card-badge" style="background:#ede9fe; color:#7c3aed;">查看 →</span>
+ </a>
+
+ <a href="./report_case_integration_20260624.html" class="nav-card" style="border-left-color: #d4820a;">
+  <span class="card-icon">🔗</span>
+  <div class="card-body">
+   <div class="card-title">智庫 × 案例庫整合評估</div>
+   <div class="card-desc">AI顧問知識助理 · 商用化路徑 · 資安合規評估</div>
+  </div>
+  <span class="card-badge" style="background:#fdf3e3; color:#d4820a;">策略評估</span>
+ </a>
+
+ <!-- 新增：方法分享 -->
+ <div class="section-title">方法分享</div>
+ <a href="./weekly_report_method_sharing_20260716.html" class="nav-card" style="border-left-color: #2f5d7c;">
+  <span class="card-icon">🧭</span>
+  <div class="card-body">
+   <div class="card-title">結構化週報製作方法</div>
+   <div class="card-desc">從工作紀錄到專案看板 · 固定模板 · AI 協作 · GitHub Pages</div>
+  </div>
+  <span class="card-badge" style="background:#e8f0f5; color:#2f5d7c;">2026-07-16</span>
+ </a>
+
+ <!-- 週報歷史（自動從 GitHub API 抓） -->
+ <div class="section-title">週報歷史版本</div>
+ <div class="log-section">
+  <div class="log-header">
+   <span>歷史週報</span>
+   <small>最新版本請看上方 · 每週五封存</small>
+  </div>
+  <div class="log-list" id="report-history">
+   <div class="log-loading">
+    <span class="spinner"></span>載入歷史紀錄中...
+   </div>
+  </div>
+  <div class="log-hint">
+   每週五：將 report.md 另存為 report-YYYY-MM-DD.md 上傳，此處自動出現。
+  </div>
+ </div>
+
+ <!-- ETL 歷程（自動從 GitHub API 抓） -->
+ <div class="section-title">資料 ETL 歷程</div>
+ <div class="log-section">
+  <div class="log-header">
+   <span>資料來源檢查紀錄</span>
+   <small>每次收到新資料來源後產出</small>
+  </div>
+  <div class="log-list" id="etl-history">
+   <div class="log-loading">
+    <span class="spinner"></span>載入 ETL 紀錄中...
+   </div>
+  </div>
+  <div class="log-hint">
+   每次完成 ETL 分析，將報告存為 etl-report-YYYY-MM-DD.html 上傳，此處自動出現。
+  </div>
+ </div>
 </div>
-  
+
 <footer>III 產業資料庫專案 · 數位轉型研究院 · 2026</footer>
 
 <script>
 const REPO = 'Pcc329/weekly-report';
-const API  = `https://api.github.com/repos/${REPO}/contents/`;
-const RAW  = `https://raw.githubusercontent.com/${REPO}/main/`;
+const API = `https://api.github.com/repos/${REPO}/contents/`;
+const RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
 
 // 從 md 檔案前幾行抽摘要
 function extractSummary(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  // 跳過 h1 標題，找第一段有意義的文字
-  for (const line of lines.slice(1, 10)) {
-    const clean = line.replace(/^#+\s*/, '').replace(/[*_`]/g, '').trim();
-    if (clean.length > 10 && !clean.startsWith('|') && !clean.startsWith('-')) {
-      return clean.length > 60 ? clean.slice(0, 60) + '...' : clean;
-    }
+ const lines = text.split('\n').filter(l => l.trim());
+ // 跳過 h1 標題，找第一段有意義的文字
+ for (const line of lines.slice(1, 10)) {
+  const clean = line.replace(/^#+\s*/, '').replace(/[*_`]/g, '').trim();
+  if (clean.length > 10 && !clean.startsWith('|') && !clean.startsWith('-')) {
+   return clean.length > 60 ? clean.slice(0, 60) + '...' : clean;
   }
-  return '點擊查看完整內容';
+ }
+ return '點擊查看完整內容';
 }
 
 // 從檔名解析日期顯示
 function parseDate(filename) {
-  // 支援 report-2026-05-29.md 或 report-2026-W22.md
-  const m = filename.match(/(\d{4}-\d{2}-\d{2})/);
-  if (m) return m[1];
-  const w = filename.match(/(\d{4}-W\d+)/);
-  if (w) return w[1];
-  return filename.replace(/^report-/, '').replace(/\.md$/, '');
+ // 支援 report-2026-05-29.md 或 report-2026-W22.md
+ const m = filename.match(/(\d{4}-\d{2}-\d{2})/);
+ if (m) return m[1];
+ const w = filename.match(/(\d{4}-W\d+)/);
+ if (w) return w[1];
+ return filename.replace(/^report-/, '').replace(/\.md$/, '');
 }
 
 // 渲染週報歷史
 async function loadReportHistory() {
-  const container = document.getElementById('report-history');
-  try {
-    const res  = await fetch(API);
-    const files = await res.json();
+ const container = document.getElementById('report-history');
+ try {
+  const res = await fetch(API);
+  const files = await res.json();
+  // 過濾 report-*.md（排除 report.md 本身）
+  const reports = files
+   .filter(f => /^report-.+\.md$/.test(f.name))
+   .sort((a, b) => b.name.localeCompare(a.name)); // 新到舊
 
-    // 過濾 report-*.md（排除 report.md 本身）
-    const reports = files
-      .filter(f => /^report-.+\.md$/.test(f.name))
-      .sort((a, b) => b.name.localeCompare(a.name)); // 新到舊
-
-    if (reports.length === 0) {
-      container.innerHTML = '<div class="log-loading">尚無歷史週報，每週五封存後自動出現。</div>';
-      return;
-    }
-
-    // 抓每份內容取摘要
-    const items = await Promise.all(reports.map(async (f) => {
-      try {
-        const r    = await fetch(RAW + f.name);
-        const text = await r.text();
-        return { name: f.name, summary: extractSummary(text) };
-      } catch {
-        return { name: f.name, summary: '點擊查看完整內容' };
-      }
-    }));
-
-    container.innerHTML = items.map(item => `
-     <a href="reader.html?file=${item.name}" class="log-item">
-        <div class="log-dot done"></div>
-        <div class="log-body">
-          <div class="log-title">${parseDate(item.name)}</div>
-          <div class="log-meta">${item.summary}</div>
-        </div>
-        <span class="log-tag done">已封存</span>
-      </a>
-    `).join('');
-
-  } catch (e) {
-    container.innerHTML = '<div class="log-loading">載入失敗，請稍後再試。</div>';
+  if (reports.length === 0) {
+   container.innerHTML = '<div class="log-loading">尚無歷史週報，每週五封存後自動出現。</div>';
+   return;
   }
+
+  // 抓每份內容取摘要
+  const items = await Promise.all(reports.map(async (f) => {
+   try {
+    const r = await fetch(RAW + f.name);
+    const text = await r.text();
+    return { name: f.name, summary: extractSummary(text) };
+   } catch {
+    return { name: f.name, summary: '點擊查看完整內容' };
+   }
+  }));
+
+  container.innerHTML = items.map(item => `
+   <a href="reader.html?file=${item.name}" class="log-item">
+    <div class="log-dot done"></div>
+    <div class="log-body">
+     <div class="log-title">${parseDate(item.name)}</div>
+     <div class="log-meta">${item.summary}</div>
+    </div>
+    <span class="log-tag done">已封存</span>
+   </a>
+  `).join('');
+ } catch (e) {
+  container.innerHTML = '<div class="log-loading">載入失敗，請稍後再試。</div>';
+ }
 }
 
 // 渲染 ETL 歷程
 async function loadEtlHistory() {
-  const container = document.getElementById('etl-history');
-  try {
-    const res   = await fetch(API);
-    const files = await res.json();
+ const container = document.getElementById('etl-history');
+ try {
+  const res = await fetch(API);
+  const files = await res.json();
+  // 過濾 etl-report*.html（排除 etl-report.html 本身）
+  const etls = files
+   .filter(f => /^etl-report-.+\.html$/.test(f.name))
+   .sort((a, b) => b.name.localeCompare(a.name));
 
-    // 過濾 etl-report*.html（排除 etl-report.html 本身）
-    const etls = files
-      .filter(f => /^etl-report-.+\.html$/.test(f.name))
-      .sort((a, b) => b.name.localeCompare(a.name));
+  // 永遠把 etl-report.html 放第一筆（最新）
+  const latest = files.find(f => f.name === 'etl-report.html');
+  const allEtl = latest ? [latest, ...etls] : etls;
 
-    // 永遠把 etl-report.html 放第一筆（最新）
-    const latest = files.find(f => f.name === 'etl-report.html');
-    const allEtl = latest ? [latest, ...etls] : etls;
-
-    if (allEtl.length === 0) {
-      container.innerHTML = '<div class="log-loading">尚無 ETL 紀錄。</div>';
-      return;
-    }
-
-    // 固定標籤對照（用檔名關鍵字判斷狀態）
-    const tagMap = {
-      '軟採': { label: '⏳ 等待年份', cls: 'warn' },
-      'default': { label: '已完成', cls: 'done' },
-    };
-
-    container.innerHTML = allEtl.map((f, i) => {
-      const isLatest = f.name === 'etl-report.html';
-      const label    = isLatest ? '最新' : f.name.replace('etl-report-', '').replace('.html', '');
-      const tag      = Object.entries(tagMap).find(([k]) => f.name.includes(k))?.[1] || tagMap.default;
-      const title    = isLatest
-        ? '共構平台組(軟採網) — 最新分析'
-        : `ETL 報告 · ${label}`;
-      const meta     = isLatest
-        ? '原始 27,092 筆 → 去重後 21,948 筆 · 315 家業者'
-        : '點擊查看詳細報告';
-
-      return `
-        <a href="${f.name}" class="log-item">
-          <div class="log-dot done"></div>
-          <div class="log-body">
-            <div class="log-title">${title}</div>
-            <div class="log-meta">${meta}</div>
-          </div>
-          <span class="log-tag ${tag.cls}">${tag.label}</span>
-        </a>
-      `;
-    }).join('');
-
-    // 加入佔位的待執行項目
-    container.innerHTML += `
-      <div class="log-item disabled">
-        <div class="log-dot pending"></div>
-        <div class="log-body">
-          <div class="log-title">新創嚴選網 — 爬蟲資料</div>
-          <div class="log-meta">預計 2026-06 · 開發中</div>
-        </div>
-        <span class="log-tag pending">尚未執行</span>
-      </div>
-      <div class="log-item disabled">
-        <div class="log-dot pending"></div>
-        <div class="log-body">
-          <div class="log-title">共構平台組(軟採網) — 補充年份版</div>
-          <div class="log-meta">等待對方回信後執行</div>
-        </div>
-        <span class="log-tag pending">待索取</span>
-      </div>
-    `;
-
-  } catch (e) {
-    container.innerHTML = '<div class="log-loading">載入失敗，請稍後再試。</div>';
+  if (allEtl.length === 0) {
+   container.innerHTML = '<div class="log-loading">尚無 ETL 紀錄。</div>';
+   return;
   }
+
+  // 固定標籤對照（用檔名關鍵字判斷狀態）
+  const tagMap = {
+   '軟採': { label: '⏳ 等待年份', cls: 'warn' },
+   'default': { label: '已完成', cls: 'done' },
+  };
+
+  container.innerHTML = allEtl.map((f, i) => {
+   const isLatest = f.name === 'etl-report.html';
+   const label = isLatest ? '最新' : f.name.replace('etl-report-', '').replace('.html', '');
+   const tag = Object.entries(tagMap).find(([k]) => f.name.includes(k))?.[1] || tagMap.default;
+   const title = isLatest
+    ? '共構平台組(軟採網) — 最新分析'
+    : `ETL 報告 · ${label}`;
+   const meta = isLatest
+    ? '原始 27,092 筆 → 去重後 21,948 筆 · 315 家業者'
+    : '點擊查看詳細報告';
+
+   return `
+    <a href="${f.name}" class="log-item">
+     <div class="log-dot done"></div>
+     <div class="log-body">
+      <div class="log-title">${title}</div>
+      <div class="log-meta">${meta}</div>
+     </div>
+     <span class="log-tag ${tag.cls}">${tag.label}</span>
+    </a>
+   `;
+  }).join('');
+
+  // 加入佔位的待執行項目
+  container.innerHTML += `
+   <div class="log-item disabled">
+    <div class="log-dot pending"></div>
+    <div class="log-body">
+     <div class="log-title">新創嚴選網 — 爬蟲資料</div>
+     <div class="log-meta">預計 2026-06 · 開發中</div>
+    </div>
+    <span class="log-tag pending">尚未執行</span>
+   </div>
+
+   <div class="log-item disabled">
+    <div class="log-dot pending"></div>
+    <div class="log-body">
+     <div class="log-title">共構平台組(軟採網) — 補充年份版</div>
+     <div class="log-meta">等待對方回信後執行</div>
+    </div>
+    <span class="log-tag pending">待索取</span>
+   </div>
+  `;
+ } catch (e) {
+  container.innerHTML = '<div class="log-loading">載入失敗，請稍後再試。</div>';
+ }
 }
 
 // 啟動
 loadReportHistory();
 loadEtlHistory();
 </script>
-
 </body>
 </html>
