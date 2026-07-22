@@ -305,7 +305,7 @@ async function loadReportHistory() {
  }
 }
 
-// 渲染 ETL 歷程
+// 渲染 ETL 歷程（改版：從報告內文抽取 <title> 與副標，取代單純用檔名日期當標題）
 async function loadEtlHistory() {
  const container = document.getElementById('etl-history');
  try {
@@ -316,14 +316,8 @@ async function loadEtlHistory() {
    .filter(f => /^etl-report-.+\.html$/.test(f.name))
    .sort((a, b) => b.name.localeCompare(a.name));
 
-  // 永遠把 etl-report.html 放第一筆（最新）
+  // 永遠把 etl-report.html 放第一筆（最新，維持原有寫死的共構平台組摘要，不變動）
   const latest = files.find(f => f.name === 'etl-report.html');
-  const allEtl = latest ? [latest, ...etls] : etls;
-
-  if (allEtl.length === 0) {
-   container.innerHTML = '<div class="log-loading">尚無 ETL 紀錄。</div>';
-   return;
-  }
 
   // 固定標籤對照（用檔名關鍵字判斷狀態）
   const tagMap = {
@@ -331,30 +325,68 @@ async function loadEtlHistory() {
    'default': { label: '已完成', cls: 'done' },
   };
 
-  container.innerHTML = allEtl.map((f, i) => {
-   const isLatest = f.name === 'etl-report.html';
-   const label = isLatest ? '最新' : f.name.replace('etl-report-', '').replace('.html', '');
-   const tag = Object.entries(tagMap).find(([k]) => f.name.includes(k))?.[1] || tagMap.default;
-   const title = isLatest
-    ? '共構平台組(軟採網) — 最新分析'
-    : `ETL 報告 · ${label}`;
-   const meta = isLatest
-    ? '原始 27,092 筆 → 去重後 21,948 筆 · 315 家業者'
-    : '點擊查看詳細報告';
+  // 從報告 HTML 內文抽取 <title> 與 <div class="sub">…</div> 當顯示文字
+  // 抓不到就退回用檔名日期組字串，不會整筆壞掉
+  async function extractDisplay(filename) {
+   const dateLabel = parseDate(filename);
+   try {
+    const r = await fetch(RAW + filename);
+    const html = await r.text();
+    const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
+    const subMatch = html.match(/<div class="sub">([^<]*)<\/div>/i);
+    return {
+     title: titleMatch ? titleMatch[1].trim() : `ETL 報告 · ${dateLabel}`,
+     meta: subMatch ? subMatch[1].trim() : '點擊查看詳細報告',
+     dateLabel,
+    };
+   } catch {
+    return { title: `ETL 報告 · ${dateLabel}`, meta: '點擊查看詳細報告', dateLabel };
+   }
+  }
 
-   return `
-    <a href="${f.name}" class="log-item">
+  const datedItems = await Promise.all(
+   etls.map(async (f) => ({ file: f, ...(await extractDisplay(f.name)) }))
+  );
+
+  if (datedItems.length === 0 && !latest) {
+   container.innerHTML = '<div class="log-loading">尚無 ETL 紀錄。</div>';
+   return;
+  }
+
+  let html = '';
+
+  // 最新（共構平台組軟採網）維持原樣，不受這次改版影響
+  if (latest) {
+   html += `
+    <a href="${latest.name}" class="log-item">
      <div class="log-dot done"></div>
      <div class="log-body">
-      <div class="log-title">${title}</div>
-      <div class="log-meta">${meta}</div>
+      <div class="log-title">共構平台組(軟採網) — 最新分析</div>
+      <div class="log-meta">原始 27,092 筆 → 去重後 21,948 筆 · 315 家業者</div>
+     </div>
+     <span class="log-tag done">已完成</span>
+    </a>
+   `;
+  }
+
+  // 其餘依日期新到舊，標題／副標改用報告內文抓到的內容
+  html += datedItems.map(item => {
+   const tag = Object.entries(tagMap).find(([k]) => item.file.name.includes(k))?.[1] || tagMap.default;
+   return `
+    <a href="${item.file.name}" class="log-item">
+     <div class="log-dot done"></div>
+     <div class="log-body">
+      <div class="log-title">${item.title}</div>
+      <div class="log-meta">${item.meta}${item.meta.includes(item.dateLabel) ? '' : ' · ' + item.dateLabel}</div>
      </div>
      <span class="log-tag ${tag.cls}">${tag.label}</span>
     </a>
    `;
   }).join('');
 
-  // 加入佔位的待執行項目
+  container.innerHTML = html;
+
+  // 加入佔位的待執行項目（維持不變）
   container.innerHTML += `
    <div class="log-item disabled">
     <div class="log-dot pending"></div>
