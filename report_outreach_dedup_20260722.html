@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>外部參展名單 × 產業資料庫比對整理報告</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --paper:#F7F3EC;
+    --ink:#1F2421;
+    --ink-soft:#4B5350;
+    --rule:#D9D2C2;
+    --accent:#2F5D62;
+    --accent-soft:#E4EDEC;
+    --flag:#B3492B;
+    --flag-soft:#F5E4DE;
+    --ok:#3C6E47;
+    --ok-soft:#E5EEE3;
+    --gold:#9C7A2E;
+    --gold-soft:#F1E9D6;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:860px;
+    margin:0 auto;
+    padding:64px 40px 96px;
+  }
+
+  .masthead{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:28px;
+    margin-bottom:44px;
+  }
+  .masthead .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .masthead h1{
+    font-family:'Noto Serif TC', serif;
+    font-weight:700;
+    font-size:30px;
+    line-height:1.4;
+    margin:0 0 10px;
+  }
+  .masthead .sub{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+  }
+  .meta-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    font-size:12.5px;
+  }
+  .meta-grid div span{
+    display:block;
+    color:var(--ink-soft);
+    font-size:11px;
+    letter-spacing:.06em;
+    margin-bottom:3px;
+  }
+  .meta-grid div b{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+  }
+
+  section{ margin-bottom:46px; }
+  .sec-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .sec-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--accent);
+    border:1px solid var(--accent);
+    border-radius:3px;
+    padding:2px 8px;
+    letter-spacing:.05em;
+  }
+  .sec-head h2{
+    font-family:'Noto Serif TC', serif;
+    font-size:20px;
+    font-weight:600;
+    margin:0;
+  }
+  p{ margin:0 0 14px; font-size:14.5px; }
+  .lede{ font-size:15.5px; color:var(--ink-soft); }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    margin:18px 0 8px;
+  }
+  th,td{
+    border-top:1px solid var(--rule);
+    padding:10px 12px;
+    text-align:left;
+    vertical-align:top;
+  }
+  thead th{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    border-top:none;
+    border-bottom:1px solid var(--ink);
+  }
+  td.num, th.num{ font-family:'JetBrains Mono', monospace; text-align:right; }
+  tr.total td{ border-top:2px solid var(--ink); font-weight:700; }
+
+  .callout{
+    border-left:3px solid var(--accent);
+    background:var(--accent-soft);
+    padding:16px 18px;
+    font-size:13.8px;
+    margin:18px 0;
+    border-radius:0 4px 4px 0;
+  }
+  .callout.flag{ border-color:var(--flag); background:var(--flag-soft); }
+  .callout.ok{ border-color:var(--ok); background:var(--ok-soft); }
+  .callout.gold{ border-color:var(--gold); background:var(--gold-soft); }
+  .callout b{ display:block; margin-bottom:4px; font-family:'Noto Serif TC',serif; }
+
+  .bug{
+    display:grid;
+    grid-template-columns:34px 1fr;
+    gap:14px;
+    padding:16px 0;
+    border-top:1px solid var(--rule);
+  }
+  .bug:first-of-type{ border-top:none; }
+  .bug .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--flag);
+    border:1px solid var(--flag);
+    border-radius:50%;
+    width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .bug h3{ font-size:14.5px; margin:0 0 6px; font-family:'Noto Serif TC',serif; }
+  .bug p{ font-size:13.5px; margin:0 0 6px; color:var(--ink-soft); }
+  .bug code{
+    font-family:'JetBrains Mono', monospace;
+    background:#EAE4D6;
+    padding:1px 6px;
+    border-radius:3px;
+    font-size:12.5px;
+  }
+
+  .funnel{
+    display:flex;
+    align-items:stretch;
+    gap:0;
+    margin:22px 0 10px;
+  }
+  .funnel .stage{
+    flex:1;
+    text-align:center;
+    padding:16px 8px;
+    border-top:1px solid var(--ink);
+    border-bottom:1px solid var(--ink);
+    position:relative;
+  }
+  .funnel .stage + .stage{ border-left:1px solid var(--rule); }
+  .funnel .stage .n{
+    font-family:'JetBrains Mono', monospace;
+    font-size:22px;
+    font-weight:700;
+  }
+  .funnel .stage .l{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .funnel .stage.drop .n{ color:var(--flag); }
+  .funnel .stage.final .n{ color:var(--accent); }
+
+  .tier-row{
+    display:grid;
+    grid-template-columns:150px 1fr 50px;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+    font-size:13px;
+  }
+  .tier-row .bar-bg{
+    background:#EAE4D6;
+    border-radius:2px;
+    height:10px;
+    overflow:hidden;
+  }
+  .tier-row .bar-fill{
+    height:100%;
+    border-radius:2px;
+  }
+  .tier-row .num{ font-family:'JetBrains Mono', monospace; text-align:right; }
+
+  .src-row{
+    display:grid;
+    grid-template-columns:120px 1fr 40px;
+    align-items:center;
+    gap:12px;
+    margin-bottom:9px;
+    font-size:12.8px;
+  }
+  .src-row .bar-bg{
+    background:#EAE4D6;
+    border-radius:2px;
+    height:9px;
+    overflow:hidden;
+  }
+  .src-row .bar-fill{ height:100%; border-radius:2px; background:var(--accent); }
+  .src-row.verified .bar-fill{ background:var(--gold); }
+  .src-row .num{ font-family:'JetBrains Mono', monospace; text-align:right; }
+
+  .wording{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin:18px 0;
+  }
+  .wording .col{
+    padding:16px 18px;
+    border-radius:6px;
+    font-size:13.5px;
+  }
+  .wording .col.no{ background:var(--flag-soft); border:1px solid #E0B7A8; }
+  .wording .col.yes{ background:var(--ok-soft); border:1px solid #B7D2B0; }
+  .wording .col .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.05em;
+    margin-bottom:10px;
+    display:block;
+  }
+  .wording .col.no .label{ color:var(--flag); }
+  .wording .col.yes .label{ color:var(--ok); }
+  .wording .col p{ margin:0 0 8px; font-size:13.3px; }
+  .wording .col p:last-child{ margin-bottom:0; }
+  @media (max-width:600px){ .wording{ grid-template-columns:1fr; } }
+
+  footer{
+    margin-top:60px;
+    padding-top:20px;
+    border-top:1px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:600px){
+    .meta-grid{ grid-template-columns:repeat(2,1fr); }
+    .funnel{ flex-direction:column; }
+    .funnel .stage + .stage{ border-left:none; border-top:1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="eyebrow">資策會數位轉型研究院 · 對內工作紀錄</div>
+    <h1>外部參展名單 × 產業資料庫<br>比對整理報告</h1>
+    <div class="sub">資料庫去重與ETL作業</div>
+    <div class="meta-grid">
+      <div><span>日期</span><b>2026-07-22</b></div>
+      <div><span>資料來源</span><b>同事提供・網路爬蟲</b></div>
+      <div><span>處理方式</span><b>唯讀比對</b></div>
+      <div><span>Schema 異動</span><b>無</b></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>背景與目的</h2></div>
+    <p class="lede">07/21 取得一份台灣廠商參展名單，來源為網路爬蟲，涵蓋 2026 年多場產業展會。</p>
+    <p>由於這份名單與「產業策略智庫」現有的 Companies 資料庫（852 筆）在業務性質上高度相關，本次工作目的是釐清兩件事：</p>
+    <p>1. 這份名單裡有多少公司本院已經掌握、掌握到什麼程度。<br>2. 以及是否有必要將名單匯入現有資料庫。</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>資料範圍</h2></div>
+    <p>原始檔案為 Google 試算表匯出的 xlsx，共 13 個分頁，扣除 1 個工具用途分頁，實際涵蓋 12 場活動／名單來源：</p>
+    <table>
+      <thead><tr><th>活動 / 名單</th><th class="num">列數</th></tr></thead>
+      <tbody>
+        <tr><td>2026.06.04 Digitimes 第一場論壇 EDM 不重覆</td><td class="num">809</td></tr>
+        <tr><td>2026.06.04 Digitimes 第一場論壇報名名單</td><td class="num">583</td></tr>
+        <tr><td>2026.06.04 Digitimes 第一場論壇 EDM 總名單</td><td class="num">278</td></tr>
+        <tr><td>2026.06.26 未來商務展</td><td class="num">90</td></tr>
+        <tr><td>2026.08.20 臺灣機器人與智慧自動化展</td><td class="num">68</td></tr>
+        <tr><td>2026.07.30 AI WAVE</td><td class="num">29</td></tr>
+        <tr><td>其餘 6 場活動（各 &lt;20 筆）</td><td class="num">92</td></tr>
+        <tr class="total"><td>合計</td><td class="num">1,949</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>資料清洗結果</h2></div>
+
+    <div class="callout flag">
+      <b>整理後結果</b>
+      <ul style="margin:6px 0 0; padding-left:18px;">
+        <li>原始名單經過清洗、去除重複與無效資料後，確認為 <b>929 家不重複公司</b></li>
+        <li>資料已核對無誤，可用於後續與現有資料庫比對</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>比對結果</h2></div>
+    <p>929 家不重複公司中，與現有 Companies 資料庫比對後分流如下：</p>
+
+    <div class="funnel">
+      <div class="stage">
+        <div class="n">929</div>
+        <div class="l">名單不重複公司數</div>
+      </div>
+      <div class="stage drop">
+        <div class="n">872</div>
+        <div class="l">全新，資料庫未收錄</div>
+      </div>
+      <div class="stage final">
+        <div class="n">57</div>
+        <div class="l">與現有資料庫重疊</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;">重疊的 57 家，依現有資料庫的三層分級拆分：</p>
+
+    <div class="tier-row">
+      <div>有案例（第三層）</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:0%;background:var(--accent);"></div></div>
+      <div class="num">0</div>
+    </div>
+    <div class="tier-row">
+      <div>有方案（第二層）</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:84%;background:var(--accent);"></div></div>
+      <div class="num">48</div>
+    </div>
+    <div class="tier-row">
+      <div>只有公司資料（第一層）</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:16%;background:var(--ink-soft);"></div></div>
+      <div class="num">9</div>
+    </div>
+
+    <div class="callout">
+      <b>值得留意的訊號</b>
+      零重疊發生在「有案例」層級，代表這份邀約名單目前完全沒有觸及本院既有的實戰案例客戶。而 48 家「有方案」層級的重疊，若同事後續邀約成功並產生輔導紀錄，是案例庫可能的成長來源，值得進一步查證這批方案資料本身的可信度。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><h2>方案來源查證</h2></div>
+    <p class="lede">「有方案」不代表資料含金量都一樣——反查這 48 家公司連結的 186 筆方案記錄，確認資料來源，藉此判斷是批次爬蟲進來的低信度資料，還是有實際盤點依據的來源。</p>
+
+    <p><b>結論：186 筆方案連結中，沒有任何一筆來自農業部／農業雲市集這類批次爬蟲來源。</b>主力集中在雲市集（工業館＋臺灣雲市集）與政府計畫登錄資料。</p>
+
+    <div class="src-row"><div>臺灣雲市集</div><div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div><div class="num">80</div></div>
+    <div class="src-row"><div>SME AI平台</div><div class="bar-bg"><div class="bar-fill" style="width:44%;"></div></div><div class="num">35</div></div>
+    <div class="src-row verified"><div>新創嚴選網</div><div class="bar-bg"><div class="bar-fill" style="width:28%;"></div></div><div class="num">22</div></div>
+    <div class="src-row"><div>政府軟體採購網</div><div class="bar-bg"><div class="bar-fill" style="width:25%;"></div></div><div class="num">20</div></div>
+    <div class="src-row"><div>雲市集工業館</div><div class="bar-bg"><div class="bar-fill" style="width:20%;"></div></div><div class="num">16</div></div>
+    <div class="src-row"><div>商業服務業專區</div><div class="bar-bg"><div class="bar-fill" style="width:11%;"></div></div><div class="num">9</div></div>
+    <div class="src-row"><div>領域型調查<span style="font-size:11px;color:var(--ink-soft);">(人工搜查)</span></div><div class="bar-bg"><div class="bar-fill" style="width:5%;"></div></div><div class="num">4</div></div>
+
+    <div class="callout gold">
+      <b>新創嚴選網來源（金色標示）是含金量最高的一段</b>
+      program_type 為「新創嚴選網」的 22 筆、以及 data_source 明確標記「新創嚴選」的 3 筆，對應到聚典資訊、思偉達創新科技、律果科技、日峰科技、數位轉型科技、數據立諮詢顧問等公司——這是本院真正比較深入盤點過的管道，而非單純收錄廠商自報的公開資訊。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">06</span><h2>治理決策</h2></div>
+    <p class="lede">是否將 872 家全新公司匯入 Companies 資料庫，經評估後決定：<b>不匯入。</b></p>
+    <p>理由：這批資料是外部團隊的業務開發名單（leads），非本平台驗證過的產業資料，性質上屬於「爬蟲來的粗資料」。本院資料庫的價值主張建立在「有方案／有案例」的驗證含金量，而非收錄筆數；貿然併入只會膨脹 Companies 表筆數、稀釋方案與案例的覆蓋率指標，且需要長期維護對應的資料治理成本。</p>
+
+    <div class="callout ok">
+      <b>本次處理原則：零 Schema 異動</b>
+      全程僅以唯讀方式呼叫 Airtable API 取得 Companies／Solutions／Cases 三表資料進行比對，未新增任何欄位、未寫入任何記錄。所有產出皆為本機 CSV，不影響現有資料庫結構或內容。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">07</span><h2>回饋同事：建議用詞對照</h2></div>
+    <p class="lede">57 家重疊公司的資訊值得參考，作為顧問邀約時的切入點與誘因。但用詞注意須基於事實，避免在第一線被廠商反問時站不住腳。</p>
+
+    <div class="wording">
+      <div class="col no">
+        <span class="label">✕ 不建議</span>
+        <p>「我們跟這家公司合作過」</p>
+        <p>「我們跟新創嚴選 XX 合作過」</p>
+      </div>
+      <div class="col yes">
+        <span class="label">✓ 建議（基於事實）</span>
+        <p>「我們對貴公司在雲市集／政府計畫上登記的方案有掌握」</p>
+        <p>「貴公司是新創嚴選網入選的優質方案商」</p>
+      </div>
+    </div>
+
+    <p>「新創嚴選」是中小企業處主辦的公開平台，不是本院自營的合作計畫，「合作過」一詞容易讓廠商誤以為與本院有直接業務往來，一旦被追問對接窗口反而會傷害顧問的可信度。同理，雲市集／政府計畫來源的方案資訊也只是廠商自報的公開資料，本院並未與其有實際互動，用「掌握資訊」而非「合作過」更站得住腳。</p>
+
+    <div class="callout gold">
+      <b>兩層邀約切入點</b>
+      對雲市集／政府計畫來源的 44 家：以「我們對貴公司方案有掌握，想聊聊實際導入成效」切入。對新創嚴選網來源、含金量較高的幾家（聚典資訊、思偉達創新科技、律果科技、日峰科技、數位轉型科技等）：以「入選新創嚴選網優質方案商」作為背書性質的邀約誘因。
+    </div>
+
+    <div class="callout" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <b>完整資料下載</b>
+        57 家重疊公司完整清單，含現有層級與方案來源明細（CSV）。
+      </div>
+      <a href="重疊公司報告_含方案來源.csv" download
+         style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#fff;background:var(--accent);
+                padding:8px 16px;border-radius:4px;text-decoration:none;white-space:nowrap;">
+        ↓ 下載 CSV
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">08</span><h2>後續建議</h2></div>
+    <table>
+      <thead><tr><th>項目</th><th>建議處理方式</th></tr></thead>
+      <tbody>
+        <tr><td>57 家重疊公司清單（含層級與方案來源）</td><td>回饋給同事，附上第 07 節的用詞建議，供顧問邀約時參考</td></tr>
+        <tr><td>872 家全新公司清單</td><td>本身即為同事原始名單的子集合，無需另外回饋；自行歸檔即可</td></tr>
+        <tr><td>48 家「有方案」重疊公司後續邀約結果</td><td>觀察是否成功轉化為輔導案例；若有，屆時手動補入案例庫</td></tr>
+        <tr><td>類似爬蟲資料未來再次出現</td><td>沿用本次的「非數字統編防呆」與「表頭逐格轉字串」處理邏輯，避免重踩相同地雷</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <div>產業策略智庫專案 · 資料治理工作紀錄</div>
+    <div>2026-07-22 · v1.1 · 對內文件</div>
+  </footer>
+
+</div>
+</body>
+</html>
