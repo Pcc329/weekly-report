@@ -110,7 +110,7 @@
 
 | 項目 | 說明 | 優先度 |
 |---|---|---|
-| `sources.html` 尚未新增農業部來源 | 已延宕兩週，屬短工時收尾項目 | 🔴 高 |
+| `sources.html` 尚未新增農業部來源 | 屬短工時收尾項目 | 🔴 高 |
 | companies API 遷移前欄位健檢 | 本週 cases API 因欄位缺漏三度返工，須於規格書撰寫前先執行欄位對照健檢 | 🔴 高 |
 | 其餘資料表可能同樣存在缺欄 | cases 表發現 5 個欄位缺漏，solutions、contacts 等表尚未複查 | 🔴 高 |
 | `manufacturing.html` 前端欄位讀取異常 | 農業部 93 筆之 `solution_category`、來源 badge、價格顯示與 Airtable 不符 | 🟡 中 |
