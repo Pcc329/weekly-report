@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solution Finder 架構三視圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132e28;
+    --teal:#0b6e5c;
+    --teal-deep:#084c40;
+    --mint:#e9f5f0;
+    --mint-line:#bfe0d5;
+    --paper:#fbfdfc;
+    --plan:#9a6a12;       /* 規劃中：琥珀 */
+    --plan-bg:#fdf6e8;
+    --plan-line:#d9a53f;
+    --ext:#475569;        /* 外部服務：石板灰 */
+    --ext-bg:#f1f5f9;
+    --danger:#c2410c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans TC',sans-serif;color:var(--ink);background:#e6ece9}
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  .slide{
+    width:1240px;min-height:880px;margin:28px auto;background:var(--paper);
+    padding:52px 64px 44px;position:relative;
+    box-shadow:0 2px 24px rgba(19,46,40,.10);
+    display:flex;flex-direction:column;
+  }
+  @media print{
+    body{background:#fff}
+    .slide{margin:0;box-shadow:none;page-break-after:always;width:100%;min-height:100vh}
+  }
+
+  /* ---------- 標頭 ---------- */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+  .eyebrow{font-size:13px;letter-spacing:.35em;color:var(--teal);font-weight:700;text-transform:uppercase}
+  h1{font-size:34px;font-weight:900;letter-spacing:.02em;margin-top:6px}
+  h1 .q{font-size:17px;font-weight:500;color:#4b6660;display:block;margin-top:6px;letter-spacing:.05em}
+  .ref{font-size:12.5px;color:#64827b;border:1px solid var(--mint-line);background:var(--mint);
+       padding:7px 14px;border-radius:999px;white-space:nowrap;margin-top:8px}
+
+  /* ---------- 圖例 ---------- */
+  .legend{display:flex;gap:26px;align-items:center;margin:14px 0 26px;font-size:13.5px;color:#3d5a53}
+  .legend .key{display:flex;align-items:center;gap:8px}
+  .swatch{width:34px;height:0;border-top:3px solid var(--teal);border-radius:2px}
+  .swatch.dash{border-top-style:dashed;border-top-color:var(--plan-line)}
+  .chip{width:15px;height:15px;border-radius:4px;border:1.5px solid}
+  .chip.live{background:#fff;border-color:var(--teal)}
+  .chip.plan{background:var(--plan-bg);border-color:var(--plan-line)}
+  .chip.ext{background:var(--ext-bg);border-color:#94a3b8}
+
+  /* ---------- 通用方塊 ---------- */
+  .band{border:1.5px solid var(--mint-line);border-radius:14px;background:#fff;padding:16px 22px;position:relative}
+  .band-label{position:absolute;top:-11px;left:20px;background:var(--paper);padding:0 10px;
+              font-size:12.5px;font-weight:700;letter-spacing:.18em;color:var(--teal)}
+  .node{border:1.5px solid var(--teal);border-radius:10px;background:#fff;padding:12px 16px;text-align:center}
+  .node b{display:block;font-size:15.5px;font-weight:700}
+  .node span{display:block;font-size:12px;color:#5d7a73;margin-top:3px;line-height:1.5}
+  .node.plan{border:1.5px dashed var(--plan-line);background:var(--plan-bg)}
+  .node.plan b{color:var(--plan)}
+  .node.ext{border-color:#94a3b8;background:var(--ext-bg)}
+  .node.ext b{color:var(--ext)}
+  .arrow{display:flex;justify-content:center;align-items:center;height:30px;position:relative}
+  .arrow::before{content:"";width:0;height:22px;border-left:2.5px solid var(--teal)}
+  .arrow::after{content:"";position:absolute;bottom:2px;border:6px solid transparent;border-top:8px solid var(--teal)}
+  .arrow .tag{position:absolute;left:calc(50% + 16px);font-size:12px;color:#5d7a73;background:var(--paper);padding:0 6px}
+
+  .foot{margin-top:auto;padding-top:18px;border-top:1px solid var(--mint-line);
+        display:flex;justify-content:space-between;font-size:12px;color:#7a938d}
+
+  /* ---------- 圖A 專用 ---------- */
+  .row{display:grid;gap:14px}
+  .stack{display:flex;flex-direction:column;gap:0}
+
+  /* ---------- 圖B 專用 ---------- */
+  .flowB{display:grid;grid-template-columns:180px 56px 250px 56px 250px 56px 240px;
+         align-items:center;justify-content:center}
+  .harrow{position:relative;height:2.5px;background:var(--teal)}
+  .harrow::after{content:"";position:absolute;right:-2px;top:-6.5px;border:6px solid transparent;border-left:9px solid var(--teal)}
+  .harrow .tag{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:11.5px;color:#5d7a73;white-space:nowrap}
+  .branch{display:flex;flex-direction:column;gap:16px}
+  .etl{margin-top:34px;border:1.5px dashed #94a3b8;border-radius:14px;padding:18px 22px;
+       display:grid;grid-template-columns:250px 56px 250px;align-items:center;justify-content:center;position:relative;background:#fafcfb}
+  .etl .band-label{color:var(--ext);background:#fafcfb}
+  .harrow.ext{background:var(--ext)}
+  .harrow.ext::after{border-left-color:var(--ext)}
+
+  /* ---------- 圖C 專用 ---------- */
+  .gateway{border:2px solid var(--teal-deep);border-radius:16px;background:linear-gradient(180deg,#f2faf7, #e9f5f0);
+           padding:20px 24px;position:relative}
+  .gateway h3{text-align:center;font-size:18px;font-weight:900;color:var(--teal-deep);letter-spacing:.08em}
+  .gateway .sub{text-align:center;font-size:12.5px;color:#41615a;margin:4px 0 14px}
+  .gw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .gw-item{border-radius:8px;padding:9px 8px;text-align:center;font-size:13px;font-weight:500;
+           background:#fff;border:1.5px solid var(--teal)}
+  .gw-item.plan{border:1.5px dashed var(--plan-line);background:var(--plan-bg);color:var(--plan)}
+  .noline{margin:26px auto 0;max-width:760px;border-top:2.5px dashed var(--danger);position:relative;height:0}
+  .noline .x{position:absolute;left:50%;top:-15px;transform:translateX(-50%);
+             color:var(--danger);font-weight:900;font-size:22px;background:var(--paper);padding:0 12px}
+  .noline .cap{position:absolute;left:50%;top:14px;transform:translateX(-50%);
+               color:var(--danger);font-size:13.5px;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- ════════════ 圖 A｜軟體運行架構 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖 A</div>
+      <h1>軟體運行架構<span class="q">這個系統是用什麼技術做的？</span></h1>
+    </div>
+    <div class="ref">對照：服務建議書 圖 80</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="chip live"></span>已上線</div>
+    <div class="key"><span class="chip plan"></span>規劃中</div>
+    <div class="key"><span class="chip ext"></span>外部服務</div>
+  </div>
+
+  <div class="stack">
+    <div class="band">
+      <div class="band-label">使用者層</div>
+      <div class="row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="node"><b>Edge / Chrome / Safari</b><span>桌面與行動瀏覽器</span></div>
+        <div class="node"><b>響應式設計 RWD</b><span>HTML5 · UTF-8</span></div>
+        <div class="node"><b>內部顧問使用者</b><span>耕偉組 · 中原組（試辦）</span></div>
+      </div>
+    </div>
+    <div class="arrow"><span class="tag">HTTPS</span></div>
+    <div class="band">
+      <div class="band-label">前端層</div>
+      <div class="row" style="grid-template-columns:1.4fr 1fr">
+        <div class="node"><b>純 HTML ＋ Vanilla JS</b><span class="mono">index · dashboard · manufacturing · sources · feedback</span></div>
+        <div class="node"><b>零框架依賴</b><span>無建置流程，改版即部署，維護門檻最低</span></div>
+      </div>
+    </div>
+    <div class="arrow"><span class="tag">fetch /api/*</span></div>
+    <div class="band">
+      <div class="band-label">後端層</div>
+      <div class="row" style="grid-template-columns:1.4fr 1fr">
+        <div class="node"><b>Vercel Serverless Functions</b><span>Node.js · 無伺服器，用多少算多少</span></div>
+        <div class="node"><b>API 金鑰集中管理</b><span>環境變數存放，前端不落地</span></div>
+      </div>
+    </div>
+    <div class="arrow"></div>
+    <div class="band">
+      <div class="band-label">資料層 ＆ 外部服務</div>
+      <div class="row" style="grid-template-columns:1.3fr 1fr 1fr">
+        <div class="node"><b>Airtable 資料庫</b><span>方案 2,433 · 公司 834 · 案例 · 聯絡資訊</span></div>
+        <div class="node ext"><b>Claude API</b><span>語意分析引擎（Anthropic）</span></div>
+        <div class="node plan"><b>Supabase / PostgreSQL</b><span>規劃中：關聯式資料庫遷移</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">A / E</span></div>
+</section>
+
+<!-- ════════════ 圖 B｜雲端部署架構 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖 B</div>
+      <h1>雲端部署架構<span class="q">系統跑在哪裡？流量怎麼走？</span></h1>
+    </div>
+    <div class="ref">對照：服務建議書 圖 79</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="swatch"></span>已上線流量</div>
+    <div class="key"><span class="chip plan"></span>規劃中</div>
+    <div class="key"><span class="chip ext"></span>外部 / 人工作業</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;justify-content:center;flex:1">
+    <div class="flowB">
+      <div class="node"><b>User</b><span>瀏覽器</span></div>
+      <div class="harrow"><span class="tag">HTTPS</span></div>
+      <div class="node"><b>Vercel Edge / CDN</b><span>全球節點 · Security Headers<br>（SecurityHeaders 評級 A）</span></div>
+      <div class="harrow"><span class="tag">route</span></div>
+      <div class="node"><b>Serverless Functions</b><span class="mono">/api/*</span><span>Node.js 執行環境</span></div>
+      <div class="harrow"><span class="tag">API</span></div>
+      <div class="branch">
+        <div class="node"><b>Airtable API</b><span>資料讀寫（欄位白名單）</span></div>
+        <div class="node ext"><b>Anthropic API</b><span>Claude 語意分析</span></div>
+      </div>
+    </div>
+
+    <div class="etl">
+      <div class="band-label">資料工程側通道（不經過線上系統）</div>
+      <div class="node ext"><b>Google Colab ETL</b><span>人工分段執行 · DRY_RUN 驗證後寫入</span></div>
+      <div class="harrow ext"><span class="tag">batch</span></div>
+      <div class="node"><b>Airtable</b><span>七個資料來源匯整</span></div>
+    </div>
+
+    <div style="margin-top:30px" class="band">
+      <div class="band-label">安全強化路線圖（規劃中）</div>
+      <div class="row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="node plan"><b>使用者認證層</b><span>擴大至 20–30 人前的前置條件</span></div>
+        <div class="node plan"><b>Rate Limiting</b><span>流量頻率控制</span></div>
+        <div class="node plan"><b>Supabase 遷移 ＋ RLS</b><span>資料列級權限控管</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">B / E</span></div>
+</section>
+
+<!-- ════════════ 圖 C｜AI 整合架構 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖 C</div>
+      <h1>AI 整合架構<span class="q">AI 呼叫如何被管控？</span></h1>
+    </div>
+    <div class="ref">對照：服務建議書 圖 73</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="chip live"></span>已上線</div>
+    <div class="key"><span class="chip plan"></span>規劃中</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;justify-content:center;flex:1">
+    <div class="row" style="grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto;width:100%">
+      <div class="node"><b>AI 語意搜尋</b><span>首頁 · 2,433 筆方案精選路徑</span></div>
+      <div class="node"><b>儀表板 / 探索頁</b><span>資料瀏覽（不觸發 AI）</span></div>
+    </div>
+    <div class="arrow"><span class="tag">唯一入口</span></div>
+
+    <div class="gateway">
+      <h3>★ AI 整合閘道（Serverless 層） ★</h3>
+      <div class="sub">所有 AI 流量的唯一通道 · 金鑰與管控集中於此層</div>
+      <div class="gw-grid">
+        <div class="gw-item">HTTPS 加密</div>
+        <div class="gw-item">金鑰不出後端</div>
+        <div class="gw-item">欄位白名單</div>
+        <div class="gw-item">手動觸發<br><small>成本控制</small></div>
+        <div class="gw-item">模型分級<br><small>依任務配置模型</small></div>
+        <div class="gw-item plan">軌跡紀錄<br><small>Logs 建置中</small></div>
+        <div class="gw-item plan">呼叫頻率限制</div>
+        <div class="gw-item plan">細粒度存取控制<br><small>Supabase RLS</small></div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="tag">Outbound</span></div>
+    <div class="row" style="grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto;width:100%">
+      <div class="node ext"><b>Claude API（Anthropic）</b><span>雲端商用模型 · 唯一 AI 成本來源</span></div>
+      <div class="node"><b>Airtable 資料層</b><span>AI 分析所需的方案資料</span></div>
+    </div>
+
+    <div class="noline">
+      <span class="x">✕</span>
+      <span class="cap">前端不得繞過閘道直接呼叫 AI API（金鑰永不出現在瀏覽器端）</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">C / E</span></div>
+</section>
+
+<!-- ════════════ 圖 D｜AI 協作開發流程 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖＋方法論 D</div>
+      <h1>AI 協作開發流程<span class="q">一個 PM 怎麼帶兩個 AI 完成開發？</span></h1>
+    </div>
+    <div class="ref">對照：Kit / ai-collaboration-roles.md</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="chip live"></span>AI 執行</div>
+    <div class="key"><span class="chip ext"></span>人（PM）把關</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;justify-content:center;flex:1;gap:0">
+
+    <div class="band">
+      <div class="band-label">角色分工 · 三方各司其職</div>
+      <div class="row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="node ext"><b>PM（人）</b><span>需求定義 · 範圍決策 · 最終驗收<br>唯一有拍板權的角色</span></div>
+        <div class="node"><b>Claude — 規劃與 QC</b><span>把需求轉成規格書 · 審查完成報告<br>對照驗收標準逐項核對</span></div>
+        <div class="node"><b>Codex — 執行</b><span>依規格書寫程式 · push 分支<br>只依規格行動，不參與範圍決策</span></div>
+      </div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="band">
+      <div class="band-label">單一任務生命週期（每個功能都走一輪）</div>
+      <div class="row" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+        <div class="node ext"><b>1｜描述需求</b><span>PM 用白話說明要做什麼、不動什麼</span></div>
+        <div class="node"><b>2｜產出規格書</b><span>Claude 依固定範本：目標、範圍、禁區、驗收標準</span></div>
+        <div class="node"><b>3｜實作＋推分支</b><span>Codex 依規格 coding，每功能一個 branch</span></div>
+        <div class="node"><b>4｜回傳 SYNC 報告</b><span>改動清單＋驗證範例＋<u>commit hash</u></span></div>
+      </div>
+      <div class="row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="node"><b>5｜檢查一：合規審查</b><span>Claude＋PM 對照規格逐項核對「做的對不對」</span></div>
+        <div class="node"><b>6｜檢查二：獨立審查</b><span>換一家模型（GPT）不給結論盲測「規格本身對不對」</span></div>
+        <div class="node ext"><b>7｜PR ＋ Preview 驗收</b><span>PM 在 Vercel 預覽環境實測</span></div>
+        <div class="node ext"><b>8｜Merge 上線</b><span>PM 按下合併——人是最後一關</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px" class="band">
+      <div class="band-label">GitHub 協作紀律（缺一步就會出事的那幾條）</div>
+      <div class="row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="node"><b>一功能一分支</b><span>永不混入未審查的其他改動</span></div>
+        <div class="node"><b>一律走 PR</b><span>不直接 push main，緊急微修需明確核准</span></div>
+        <div class="node"><b>SYNC 必附 commit hash</b><span>沒有它，審查對不到實際程式碼</span></div>
+        <div class="node"><b>規格書必列禁區</b><span>「不要動的東西」白紙黑字，執行者越界即退回</span></div>
+      </div>
+    </div>
+
+    <div class="noline" style="margin-top:30px">
+      <span class="x">✕</span>
+      <span class="cap">同一個 AI 不得從頭做到尾——規劃、執行、審查共用盲點，等於沒有審查</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">D / E</span></div>
+</section>
+
+<!-- ════════════ 圖 E｜方法論 Kit 上手指南 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖＋方法論 E</div>
+      <h1>方法論 Kit 上手指南<span class="q">新同事怎麼依樣畫葫蘆開一個專案？</span></h1>
+    </div>
+    <div class="ref mono">github.com/Pcc329/pm-ai-workflow-kit</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="chip live"></span>通用層（core）</div>
+    <div class="key"><span class="chip ext"></span>專案層（instances）</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;justify-content:center;flex:1">
+
+    <div class="band" style="margin-bottom:26px">
+      <div class="band-label">Kit 結構 · 兩層分離</div>
+      <div class="row" style="grid-template-columns:1.15fr 1fr">
+        <div class="node" style="text-align:left">
+          <b>core/ — 可攜帶的通用方法論（8 份）</b>
+          <span class="mono" style="text-align:left;margin-top:8px;line-height:1.9">
+          ① project-kickoff-interview　啟動訪談（入口）<br>
+          ② ai-collaboration-roles　　AI 角色分工（＝圖 D）<br>
+          ③ workflow-pipeline　　　　流程關卡<br>
+          ④ codex_spec_template　　　規格書範本<br>
+          ⑤ handover_template　　　　交接清冊範本<br>
+          ⑥ data-cleaning-patterns　 資料清理陷阱<br>
+          ⑦ governance-checklist　　 該不該做的判斷<br>
+          ⑧ config-categories　　　　環境設定盤點</span>
+        </div>
+        <div class="node ext" style="text-align:left">
+          <b>instances/ — 各專案的具體事實</b>
+          <span style="text-align:left;margin-top:8px;line-height:1.8">每個專案一個資料夾，存放自己的 SETUP、地雷紀錄、判斷案例。<br><br>已附一份用虛構專案<b>填好的示範</b>（example-project），解決「不知道填到什麼程度算夠」的問題。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-label">新專案上手 · 三步驟</div>
+      <div style="display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center">
+        <div class="node"><b>1｜跑啟動訪談</b><span>把 kickoff-interview 提示詞貼給任何 AI，照五輪問題回答——<b>不用先讀完整套 Kit</b>，答「不知道」也是有效資訊</span></div>
+        <div class="harrow"></div>
+        <div class="node ext"><b>2｜存放專案設定</b><span>訪談產出的 SETUP 初稿存進 instances/&lt;專案名&gt;/，之後每個中斷點回來更新——它是活文件不是報告</span></div>
+        <div class="harrow"></div>
+        <div class="node"><b>3｜開始開發循環</b><span>依圖 D 的八步流程跑任務；踩到「換個專案也會遇到」的坑，就把它從專案層搬進通用層</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px" class="band">
+      <div class="band-label">這套方法論的自我演化機制</div>
+      <div class="row" style="grid-template-columns:1fr">
+        <div class="node" style="text-align:left;border-style:solid"><b>「這個坑是專案獨有，還是換個專案也會踩？」</b><span style="text-align:left">每次做這個判斷並把通用的坑搬進 core，Kit 就準一分——方法論不是寫完的文件，是用出來的紀律。任何人接任何新專案，從第 1 步開始即可，30 分鐘產出自己的專案說明書。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">E / E</span></div>
+</section>
+
+</body>
+</html>
