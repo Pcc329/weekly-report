@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>從想法到上線 · 完整流程教學</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132e28; --teal:#0b6e5c; --teal-deep:#084c40;
+    --mint:#e9f5f0; --mint-line:#bfe0d5; --paper:#fbfdfc;
+    --plan:#9a6a12; --plan-bg:#fdf6e8; --plan-line:#d9a53f;
+    --danger:#c2410c; --danger-bg:#fef2ec;
+    --step:#0b6e5c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans TC',sans-serif;color:var(--ink);background:#e6ece9;line-height:1.85}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:920px;margin:0 auto;background:var(--paper);
+        box-shadow:0 2px 30px rgba(19,46,40,.12)}
+  @media print{body{background:#fff}.wrap{box-shadow:none;max-width:100%}.stage{page-break-inside:avoid}}
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,var(--teal-deep),var(--teal));color:#eafaf4;
+        padding:60px 64px 54px}
+  .hero .eyebrow{font-size:13px;letter-spacing:.34em;font-weight:700;opacity:.8;text-transform:uppercase}
+  .hero h1{font-size:38px;font-weight:900;margin:12px 0 8px;letter-spacing:.01em;color:#fff}
+  .hero p{font-size:16px;opacity:.92;max-width:640px}
+
+  /* 總流程條 */
+  .pipeline{display:flex;align-items:stretch;gap:0;padding:30px 64px;background:var(--mint);
+            border-bottom:1px solid var(--mint-line)}
+  .pl-step{flex:1;text-align:center;position:relative;padding:0 10px}
+  .pl-step .n{width:38px;height:38px;border-radius:50%;background:var(--teal);color:#fff;
+              font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+  .pl-step b{display:block;font-size:15px;color:var(--teal-deep)}
+  .pl-step span{font-size:12px;color:#5d7a73}
+  .pl-step:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:6px;color:var(--teal);font-size:22px;font-weight:700}
+
+  .body{padding:20px 64px 56px}
+
+  /* 階段大區塊 */
+  .stage{margin-top:44px}
+  .stage-head{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+  .stage-num{width:52px;height:52px;border-radius:14px;background:var(--teal-deep);color:#fff;
+             font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .stage-head h2{font-size:25px;font-weight:900;color:var(--teal-deep)}
+  .stage-head .sub{font-size:13.5px;color:#5d7a73;margin-top:2px}
+  .stage-intro{font-size:15px;color:#33514a;margin:12px 0 20px;padding-left:68px}
+
+  /* 步驟卡 */
+  .steps{display:flex;flex-direction:column;gap:14px;padding-left:68px}
+  .card{border:1.5px solid var(--mint-line);border-radius:14px;background:#fff;padding:16px 20px;position:relative}
+  .card .tag{position:absolute;top:-10px;left:18px;background:var(--paper);padding:0 9px;
+             font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--teal)}
+  .card h3{font-size:16.5px;font-weight:700;margin-bottom:5px}
+  .card p{font-size:14px;color:#3a564f;margin:6px 0}
+  .card code{background:#eef4f1;border:1px solid var(--mint-line);border-radius:5px;
+             padding:1px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85em;color:var(--teal-deep)}
+
+  .why{border-left:4px solid var(--plan-line);background:var(--plan-bg);border-radius:0 8px 8px 0;
+       padding:10px 15px;margin:10px 0 4px;font-size:13px;color:#6b4e14}
+  .why b{color:var(--plan)}
+
+  .arrow-down{text-align:center;color:var(--teal);font-size:26px;margin:6px 0;padding-left:68px}
+
+  /* 產出物標記 */
+  .output{display:inline-block;background:var(--mint);border:1px solid var(--mint-line);
+          border-radius:8px;padding:4px 12px;font-size:13px;color:var(--teal-deep);font-weight:700;margin-top:8px}
+  .output::before{content:"📄 產出　";font-weight:400}
+
+  /* 收束 */
+  .closer{margin:52px 64px 0;padding:28px 32px;background:linear-gradient(135deg,#f2faf7,#e9f5f0);
+          border:1.5px solid var(--mint-line);border-radius:16px}
+  .closer h2{font-size:20px;color:var(--teal-deep);font-weight:900;margin-bottom:8px}
+  .closer p{font-size:14.5px;color:#33514a}
+  .one-thing{margin-top:16px;background:var(--teal-deep);color:#eafaf4;border-radius:12px;padding:18px 22px;font-size:15px}
+  .one-thing b{color:#fff;font-size:16px}
+
+  .foot{padding:26px 64px;border-top:1px solid var(--mint-line);font-size:12px;color:#7a938d;
+        display:flex;justify-content:space-between}
+
+  /* 指揮台開場(給發起人) */
+  .pitwall{background:#0a1f1a;color:#dcefe8;padding:56px 64px 50px}
+  .pitwall .eyebrow{font-size:12.5px;letter-spacing:.34em;font-weight:700;color:#5fd0af;text-transform:uppercase}
+  .pitwall h1{font-size:33px;font-weight:900;color:#fff;margin:12px 0 10px;line-height:1.35}
+  .pitwall .intro{font-size:15.5px;color:#b9d6cc;max-width:720px;margin-bottom:26px}
+  .pitwall .intro b{color:#7fe0bf}
+  .dash{background:#0f2a23;border:1px solid #1d3d34;border-radius:16px;padding:24px;margin:8px 0 26px;
+        display:grid;grid-template-columns:minmax(300px,1fr) minmax(300px,1fr);gap:26px;align-items:center}
+  @media(max-width:780px){.dash{grid-template-columns:1fr}}
+  .dash-title{font-size:12.5px;letter-spacing:.2em;color:#5fd0af;font-weight:700;margin-bottom:12px;text-transform:uppercase}
+  .statlist{display:flex;flex-direction:column;gap:9px}
+  .statrow{display:grid;grid-template-columns:16px 1fr auto;gap:11px;align-items:center;
+           background:#0a1f1a;border:1px solid #1d3d34;border-radius:9px;padding:9px 13px;font-size:13.5px}
+  .statrow .dot{width:11px;height:11px;border-radius:50%}
+  .dot.go{background:#3fd28a}.dot.stuck{background:#e8b53f}.dot.idle{background:#3a5850}
+  .statrow .nm{color:#dcefe8;font-weight:500}
+  .statrow .nm small{display:block;color:#7fa599;font-size:11px;font-weight:400}
+  .statrow .st{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .st.go{background:#123528;color:#5fe0a5}.st.stuck{background:#3a2f10;color:#f0c862}.st.idle{background:#16302a;color:#6f9488}
+  .pitpoints{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  @media(max-width:780px){.pitpoints{grid-template-columns:1fr}}
+  .pitpoint{background:#0f2a23;border:1px solid #1d3d34;border-radius:12px;padding:16px 18px}
+  .pitpoint .k{font-size:22px}
+  .pitpoint b{display:block;color:#7fe0bf;font-size:15px;margin:6px 0 4px}
+  .pitpoint span{font-size:12.5px;color:#a9cabf;line-height:1.7}
+  .winwin{margin-top:22px;display:flex;gap:14px;flex-wrap:wrap}
+  .winwin div{flex:1;min-width:240px;background:#0f2a23;border-left:3px solid #5fd0af;border-radius:0 10px 10px 0;padding:13px 17px;font-size:13.5px;color:#c3ddd3}
+  .winwin b{color:#7fe0bf}
+  .handoff{margin-top:24px;text-align:center;font-size:13px;color:#7fa599;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═══ 指揮台開場:給專案發起人 ═══ -->
+  <div class="pitwall">
+    <div class="eyebrow">給專案發起人 · 組長的視角</div>
+    <h1>你是車隊總教練,這是你的指揮台</h1>
+    <p class="intro">賽車場上,總教練不用坐進每一台車,卻能從螢幕一側的小地圖掌握全局:每台車跑到第幾圈、誰領先、<b>誰卡住了</b>。這套方法論給團隊的,就是這樣一塊指揮台——讓你不必盯著每個人埋頭做什麼,卻能在任何一台車停下來時,<b>第一時間看見、了解狀況、把它接回賽道</b>。</p>
+
+    <div class="dash">
+      <!-- 賽道小地圖 -->
+      <div>
+        <div class="dash-title">賽道全景 · 上帝視角</div>
+        <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+          <!-- 賽道 -->
+          <ellipse cx="200" cy="150" rx="150" ry="100" fill="none" stroke="#1d3d34" stroke-width="26"/>
+          <ellipse cx="200" cy="150" rx="150" ry="100" fill="none" stroke="#123528" stroke-width="22" stroke-dasharray="4 6"/>
+          <!-- 三階段標籤 -->
+          <text x="200" y="38" fill="#5fd0af" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="700">① 需求訪談</text>
+          <text x="360" y="200" fill="#5fd0af" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="700">② AI協作</text>
+          <text x="60" y="200" fill="#5fd0af" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="700">③ 部署</text>
+          <!-- 教練台 -->
+          <circle cx="200" cy="150" r="26" fill="#0f2a23" stroke="#5fd0af" stroke-width="1.5"/>
+          <text x="200" y="148" font-size="18" text-anchor="middle">🎧</text>
+          <text x="200" y="166" fill="#7fa599" font-size="8.5" text-anchor="middle" font-family="sans-serif">總教練</text>
+          <!-- 順行車(綠) -->
+          <g font-family="sans-serif" font-size="10" font-weight="700" text-anchor="middle">
+            <circle cx="200" cy="50" r="12" fill="#3fd28a"/><text x="200" y="54" fill="#0a1f1a">A</text>
+            <circle cx="338" cy="118" r="12" fill="#3fd28a"/><text x="338" y="122" fill="#0a1f1a">B</text>
+            <circle cx="318" cy="222" r="12" fill="#3fd28a"/><text x="318" y="226" fill="#0a1f1a">C</text>
+            <!-- 卡住車(琥珀,偏離賽道外側) -->
+            <circle cx="70" cy="255" r="13" fill="#e8b53f"/><text x="70" y="259" fill="#0a1f1a">D</text>
+          </g>
+          <!-- 教練接住卡住車的光束 -->
+          <path d="M182 163 L86 246" stroke="#e8b53f" stroke-width="1.6" stroke-dasharray="3 4" fill="none"/>
+          <text x="110" y="285" fill="#f0c862" font-size="11" font-family="sans-serif" font-weight="700">⚑ 卡住 → 教練介入</text>
+        </svg>
+      </div>
+      <!-- 狀態列表 -->
+      <div>
+        <div class="dash-title">車隊即時狀態</div>
+        <div class="statlist">
+          <div class="statrow"><span class="dot go"></span><span class="nm">專案 A<small>第 2 階段 · AI 協作開發</small></span><span class="st go">順行</span></div>
+          <div class="statrow"><span class="dot go"></span><span class="nm">專案 B<small>第 2 階段 · 審查中</small></span><span class="st go">順行</span></div>
+          <div class="statrow"><span class="dot go"></span><span class="nm">專案 C<small>第 3 階段 · 部署驗收</small></span><span class="st go">順行</span></div>
+          <div class="statrow" style="border-color:#5a4318"><span class="dot stuck"></span><span class="nm">專案 D<small>卡在資料清理,3 天無進展</small></span><span class="st stuck">需介入</span></div>
+          <div class="statrow"><span class="dot idle"></span><span class="nm">專案 E<small>尚未啟動訪談</small></span><span class="st idle">待發車</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pitpoints">
+      <div class="pitpoint"><span class="k">🗺️</span><b>看得到</b><span>每個專案都有一份 SETUP 說明書,現在跑到哪一階段、卡在哪,一翻就懂——不用開會問進度。</span></div>
+      <div class="pitpoint"><span class="k">🤝</span><b>接得住</b><span>卡住的專案有固定的交接格式,你(或任何人)10 分鐘就能了解狀況,不必從頭聽一遍。</span></div>
+      <div class="pitpoint"><span class="k">🏁</span><b>回賽道</b><span>了解後給資源、給判斷、或換手——協助它繼續跑,而不是等它自己撞牆或默默停擺。</span></div>
+    </div>
+
+    <div class="winwin">
+      <div><b>對你(組長)是掌控感</b>:看得到全局、能主動協助,不必事必躬親也不會被蒙在鼓裡。</div>
+      <div><b>對團隊成員是安全感</b>:卡住有人接、不是孤軍死撐——這塊指揮台是支援網,不是監視器。</div>
+    </div>
+
+    <div class="handoff">↓ 以下是每一台車在賽道上的實際跑法 —— 團隊怎麼把一個念頭開到上線</div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">PM 工作流方法論 Kit · 完整流程教學</div>
+    <h1>從想法到上線</h1>
+    <p>一個非工程師,如何靠一套方法論加上 AI 協作,把一個模糊的念頭,變成真正跑在網路上、而且別人接得住的東西。這是那條完整路徑。</p>
+  </div>
+
+  <div class="pipeline">
+    <div class="pl-step"><div class="n">1</div><b>需求訪談</b><span>想清楚要做什麼</span></div>
+    <div class="pl-step"><div class="n">2</div><b>AI 協作開發</b><span>規劃→執行→雙審查</span></div>
+    <div class="pl-step"><div class="n">3</div><b>工具實作部署</b><span>搭環境、上線</span></div>
+  </div>
+
+  <div class="body">
+
+    <!-- ═══ 階段 1 ═══ -->
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-num">1</div>
+        <div><h2>需求訪談</h2><div class="sub">core/ · 想清楚要做什麼(與工具無關)</div></div>
+      </div>
+      <p class="stage-intro">最大的失敗不是做錯,是<b>還沒想清楚就開始做</b>。這階段用一場 AI 訪談,把腦中模糊的念頭逼成一份可執行的說明書。不用先讀完整套方法論,訪談會帶著你走。</p>
+      <div class="steps">
+        <div class="card">
+          <span class="tag">STEP 1</span>
+          <h3>跑啟動訪談</h3>
+          <p>打開 <code>core/project-kickoff-interview.md</code>,把提示詞整份複製,貼給任何一個 AI。它會分五輪問你:目標與成敗、利害關係人、系統現況、環境設定、限制與禁區。</p>
+          <div class="why"><b>為什麼答「不知道」也可以?</b> 新手最大的焦慮是「不知道自己不知道什麼」。訪談把未知變成一張清單,焦慮就變成了待辦——這比假裝都懂安全得多。</div>
+          <span class="output">你這個專案的 <b>SETUP.md</b> 初稿</span>
+        </div>
+        <div class="card">
+          <span class="tag">STEP 2</span>
+          <h3>存放並持續維護</h3>
+          <p>把 SETUP 初稿存進 <code>instances/&lt;你的專案&gt;/</code>。之後每次工作告一段落就回來更新它——它是<b>活文件,不是一次寫完的報告</b>。不確定填到什麼程度?看 <code>example-project</code> 的示範。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓ 想清楚了,開始做</div>
+
+    <!-- ═══ 階段 2 ═══ -->
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-num">2</div>
+        <div><h2>AI 協作開發</h2><div class="sub">core/ · 一個 PM 帶兩個 AI,規劃→執行→雙審查</div></div>
+      </div>
+      <p class="stage-intro">關鍵原則:<b>同一個 AI 不能從頭做到尾</b>——規劃、執行、審查共用同一套盲點,等於沒有審查。所以把角色拆開,即使工具只有一個,也開不同對話分別扮演。</p>
+      <div class="steps">
+        <div class="card">
+          <span class="tag">角色</span>
+          <h3>三方各司其職</h3>
+          <p><b>你(PM)</b>=需求定義、範圍決策、最終驗收,唯一有拍板權。<b>規劃 AI</b>=把需求轉成規格書、當第一道審查。<b>執行 AI</b>=依規格寫程式,不參與範圍決策。</p>
+          <div class="why"><b>工具可換,角色不可換。</b> 只有一個 AI 工具時,開三個獨立對話分別扮演即可;重點是規劃、執行、審查別讓同一個腦袋球員兼裁判。</div>
+        </div>
+        <div class="card">
+          <span class="tag">STEP 3</span>
+          <h3>寫規格書 → 執行 → 推分支</h3>
+          <p>規劃 AI 依固定範本產出規格書(目標、範圍、<b>禁區</b>、驗收標準),執行 AI 照著做、每個功能開一條分支,回傳完成報告時<b>必附 commit hash</b>。</p>
+          <div class="why"><b>為什麼一功能一分支?</b> 分支是主線的安全副本,改壞了不影響正在跑的版本;而 commit hash 是審查對照實際程式碼的唯一依據,沒有它審查是空的。</div>
+          <span class="output">一條分支 + 完成報告(含 commit hash)</span>
+        </div>
+        <div class="card">
+          <span class="tag">STEP 4</span>
+          <h3>兩道檢查,問不同的問題</h3>
+          <p><b>檢查一(規劃 AI＋你)</b>:對照規格逐項核對——「做出來的<b>符合規格</b>嗎?」<b>檢查二(換一家廠牌的 AI)</b>:不給它結論,盲測——「<b>規格本身</b>有沒有更好的做法?」</p>
+          <div class="why"><b>為什麼檢查二要換一家?</b> 不同廠牌模型的盲點不同。換一家取得的是「異質視角」——你買的不是算力,是另一組會問「為什麼要這樣做」的眼睛。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓ 東西做好、審查過了,推上線</div>
+
+    <!-- ═══ 階段 3 ═══ -->
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-num">3</div>
+        <div><h2>工具實作部署</h2><div class="sub">tools/ · GitHub + Vercel,把東西真正搭起來、跑在網路上</div></div>
+      </div>
+      <p class="stage-intro">前兩階段與工具無關,這階段才碰具體工具。目標不是「學會 GitHub」,是「照著點就能把東西部署上線」的最短路徑。全程在瀏覽器,不裝任何軟體。</p>
+      <div class="steps">
+        <div class="card">
+          <span class="tag">STEP 5</span>
+          <h3>GitHub:把東西放上去</h3>
+          <p><b>Fork</b> 一份現成的當起點,或開自己的 repo。網頁三招就夠用:鉛筆改檔、<code>資料夾名/</code> 建資料夾、改檔名欄搬移。</p>
+          <div class="why"><b>為什麼放 GitHub 不存電腦?</b> 交接時給一個網址就好,而且它自動記錄每次改動,誰何時改了什麼、出錯能還原。個人專案是保險,交接專案是必需。</div>
+        </div>
+        <div class="card">
+          <span class="tag">STEP 6</span>
+          <h3>分支與 PR:合併是人的最後一關</h3>
+          <p>改動走一條分支 → 開 PR(合併申請)→ <b>先在預覽環境驗收</b> → 由你親手按 Merge 上線。兩個 AI 說 OK 不等於 OK。</p>
+          <div class="why"><b>為什麼 Merge 一定人來按?</b> Merge = 上線,責任在人。你按下去那一刻,是在說「我看過、我負責」——這是拍板權,不可委派給任何 AI。</div>
+        </div>
+        <div class="card">
+          <span class="tag">STEP 7</span>
+          <h3>Vercel:改完自動上線</h3>
+          <p>GitHub 連上 Vercel,從此 push 即自動部署。金鑰放<b>環境變數</b>(絕不寫進程式碼);開分支時 Vercel 自動生<b>Preview 網址</b>,驗收就看它。</p>
+          <div class="why"><b>為什麼金鑰放環境變數?</b> 程式碼在 GitHub 上是公開的,金鑰寫進去等於公開。放環境變數,程式碼裡只有代號,別人看到原始碼也拿不到金鑰。</div>
+          <span class="output">一個 <code>xxx.vercel.app</code> · 真正跑在網路上的東西</span>
+        </div>
+        <div class="card">
+          <span class="tag">卡住時</span>
+          <h3>踩雷排除</h3>
+          <p><code>tools/04-troubleshooting.md</code> 是一張「症狀→原因→解法」對照表,卡住時 Ctrl+F 查。<code>core/core/</code> 巢狀、Preview 打不開、環境變數沒生效……常見的坑都在裡面。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 收束 -->
+  <div class="closer">
+    <h2>這條路徑會越走越順的原因</h2>
+    <p>每次踩到「這個坑不是這個專案獨有,換個專案也會遇到」的時候,就把它從專案層(instances)搬進通用層(core / tools)。方法論不是寫完的文件,是<b>用出來的紀律</b>——你走得越多,它對下一個人越有用。</p>
+    <div class="one-thing">
+      <b>如果today只記得一件事:</b><br>
+      打開 <span class="mono">core/project-kickoff-interview.md</span>,把整份內容貼給 AI,請它帶你跑一遍。30 分鐘後,你會拿到自己專案的說明書,這條路就啟動了。
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>PM 工作流方法論 Kit · 從想法到上線</span>
+    <span class="mono">github.com/Pcc329/pm-ai-workflow-kit</span>
+  </div>
+
+</div>
+</body>
+</html>
