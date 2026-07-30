@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產業策略智庫|資料庫升級路線圖 v3(2026-07-30)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16233B;
+  --ink-soft:#4A5A74;
+  --paper:#FBFCFE;
+  --card:#FFFFFF;
+  --line:#DCE3EE;
+  --s1:#C97A2B;  --s1-bg:#FBF3E8;
+  --s2:#0F7B6C;  --s2-bg:#EAF5F2;
+  --s3:#35509E;  --s3-bg:#EDF1FA;
+  --s4:#16233B;  --s4-bg:#EDEFF4;
+  --gold:#B08D3E;
+  --warn-bg:#FBF4E8;
+  --warn-line:#E3CFA6;
+  /* 費用四類色 */
+  --c-dev:#17A08F;
+  --c-db:#2F5C8A;
+  --c-ai:#E0A63C;
+  --c-src:#9C6B4A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:16px}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+
+/* ===== Header ===== */
+header{border-bottom:3px solid var(--ink);padding:52px 0 34px;background:linear-gradient(180deg,#F3F6FB 0%,var(--paper) 100%)}
+.eyebrow{font-size:13px;letter-spacing:.35em;color:var(--ink-soft);font-weight:700;margin-bottom:14px}
+h1{font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(28px,4.5vw,42px);line-height:1.35;margin-bottom:18px}
+.lede{max-width:740px;color:var(--ink-soft);font-size:17px}
+.lede strong{color:var(--ink)}
+.meta{margin-top:20px;font-size:13px;color:var(--ink-soft);display:flex;gap:24px;flex-wrap:wrap}
+
+/* ===== 路線一覽 ===== */
+.route{margin:40px 0 6px}
+.route-track{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.route-track::before{content:"";position:absolute;top:13px;left:12%;right:12%;height:3px;background:var(--line)}
+.station{position:relative;padding:0 10px;text-align:center}
+.dot{width:26px;height:26px;border-radius:50%;margin:0 auto 10px;border:3px solid var(--card);box-shadow:0 0 0 2px currentColor;position:relative;z-index:1;background:currentColor}
+.station.c1{color:var(--s1)}.station.c2{color:var(--s2)}.station.c3{color:var(--s3)}.station.c4{color:var(--s4)}
+.st-name{font-family:'Noto Serif TC',serif;font-weight:900;font-size:17px;color:var(--ink)}
+.st-time{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+.st-tag{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:99px;background:currentColor}
+.st-tag span{color:#fff}
+.st-when{margin-top:9px;font-size:12px;line-height:1.5;color:var(--ink-soft);padding:0 4px}
+.st-when b{color:var(--ink);font-weight:700}
+
+/* ===== 通用 ===== */
+section{padding:42px 0}
+h2{font-family:'Noto Serif TC',serif;font-weight:900;font-size:24px;margin-bottom:6px}
+.sub{color:var(--ink-soft);font-size:14.5px;margin-bottom:22px}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+thead th{background:#EEF2F9;font-weight:700;white-space:nowrap}
+tbody th{background:#F6F8FC;font-weight:700;white-space:nowrap;width:104px}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.table-scroll table{min-width:780px;border:none}
+td ul{padding-left:16px;margin:0}
+td li{margin-bottom:2px}
+.money{font-weight:700}
+.b1{color:var(--s1)}.b2{color:var(--s2)}.b3{color:var(--s3)}.b4{color:var(--s4)}
+
+/* ===== 甘特圖 ===== */
+.gantt{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 22px 14px;overflow-x:auto}
+.gantt-inner{min-width:720px}
+.g-row{display:grid;grid-template-columns:150px 1fr;align-items:center;margin-bottom:14px}
+.g-label{font-weight:700;font-size:14px;padding-right:14px}
+.g-label small{display:block;font-weight:400;font-size:12px;color:var(--ink-soft)}
+.g-track{position:relative;height:44px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/18 - 1px),var(--line) calc(100%/18 - 1px),var(--line) calc(100%/18));border-left:1px solid var(--line);border-radius:4px}
+.g-bar{position:absolute;top:6px;bottom:6px;border-radius:6px;color:#fff;font-size:12.5px;font-weight:700;display:flex;align-items:center;padding:0 12px;white-space:nowrap;overflow:visible}
+.g-bar.b-1{background:var(--s1)}
+.g-bar.b-2{background:var(--s2)}
+.g-bar.b-3{background:var(--s3)}
+.g-bar.b-4{background:var(--s4)}
+.g-bar .tail{position:absolute;left:calc(100% + 10px);color:var(--ink-soft);font-weight:500;font-size:12px}
+.g-scale{display:grid;grid-template-columns:150px 1fr;margin-top:2px}
+.g-scale .ticks{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-soft);border-left:1px solid transparent}
+.g-note{font-size:12.5px;color:var(--ink-soft);margin-top:10px}
+
+/* 大局觀速覽表 */
+.bigpic thead th{font-size:13.5px}
+.bigpic td{font-size:13.5px}
+.bigpic tbody td:first-child{font-weight:700;white-space:nowrap}
+
+/* ===== MCP ===== */
+.mcp{background:#F1F4FA;border-top:3px solid var(--s3);border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.card h4{font-size:13px;letter-spacing:.12em;font-weight:700;color:var(--ink-soft);margin-bottom:8px}
+.card p,.card li{font-size:14.5px}
+.card ul,.card ol{padding-left:18px}
+.card li{margin-bottom:4px}
+.plug{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.trigger{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14.5px}
+.trigger b{color:var(--s3)}
+
+/* ===== 結論 ===== */
+.advice{padding-left:20px}
+.advice li{margin-bottom:12px;font-size:15.5px}
+
+/* ===== 附錄:底色細節區塊 ===== */
+.detail{border-radius:12px;padding:26px 28px;margin-bottom:26px;border:1px solid var(--line)}
+.detail.d1{background:var(--s1-bg);border-left:6px solid var(--s1)}
+.detail.d2{background:var(--s2-bg);border-left:6px solid var(--s2)}
+.detail.d3{background:var(--s3-bg);border-left:6px solid var(--s3)}
+.detail.d4{background:var(--s4-bg);border-left:6px solid var(--s4)}
+.detail h3{font-family:'Noto Serif TC',serif;font-weight:900;font-size:20px;margin-bottom:2px}
+.detail .period{font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:14px}
+.detail h4{font-size:13.5px;font-weight:700;letter-spacing:.08em;margin:14px 0 4px}
+.detail ul{padding-left:18px}
+.detail li{font-size:14.5px;margin-bottom:3px}
+.detail .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.gate{margin-top:16px;background:var(--warn-bg);border:1px solid var(--warn-line);border-left:4px solid var(--gold);border-radius:6px;padding:11px 15px;font-size:14px}
+.gate strong{color:var(--gold)}
+
+/* ===== 費用結構 ===== */
+.cost-h3{font-family:'Noto Serif TC',serif;font-weight:900;font-size:18px;margin:26px 0 14px;color:var(--ink)}
+.cost-split{display:grid;grid-template-columns:1fr 1.05fr;gap:26px;align-items:start}
+.cbar-row{display:grid;grid-template-columns:118px 1fr;align-items:center;margin-bottom:10px;gap:10px}
+.cbar-label{font-size:13px;font-weight:700;text-align:right;line-height:1.25}
+.cbar-label small{display:block;font-weight:400;font-size:11px;color:var(--ink-soft)}
+.cbar-wrap{position:relative;height:30px;background:#EEF2F7;border-radius:5px}
+.cbar{height:100%;border-radius:5px;display:flex;align-items:center;padding:0 10px;color:#fff;font-size:12.5px;font-weight:700;min-width:66px}
+.cbar .pct{margin-left:auto;font-weight:500;font-size:11.5px;opacity:.92}
+.cbar.dev{background:var(--c-dev)}.cbar.db{background:var(--c-db)}.cbar.ai{background:var(--c-ai)}.cbar.src{background:var(--c-src)}
+.cbar-total{margin-top:6px;background:var(--ink);color:#fff;border-radius:5px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:14.5px}
+.cbar-total small{font-weight:400;font-size:11px;opacity:.8}
+.ctable{width:100%;border-collapse:collapse;font-size:13px}
+.ctable th,.ctable td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+.ctable thead th{background:var(--ink);color:#fff;border-bottom:none;font-size:12.5px}
+.ctable td:first-child{font-weight:700;white-space:nowrap}
+.ctable .amt{text-align:right;white-space:nowrap;font-weight:700}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.tr-up{color:#C0791C;font-weight:700}.tr-down{color:var(--c-dev);font-weight:700}.tr-flat{color:var(--ink-soft);font-weight:700}
+.ctable .row-total td{background:#EEF2F7;font-weight:900;border-bottom:none}
+/* 四類 × 四階段矩陣 */
+.matrix{width:100%;border-collapse:collapse;font-size:13px;background:var(--card)}
+.matrix th,.matrix td{border:1px solid var(--line);padding:9px 10px;text-align:center;vertical-align:middle}
+.matrix thead th{color:#fff;font-weight:700;font-size:13px}
+.matrix thead th.h1c{background:var(--s1)}.matrix thead th.h2c{background:var(--s2)}
+.matrix thead th.h3c{background:var(--s3)}.matrix thead th.h4c{background:var(--s4)}
+.matrix thead th.hcat{background:#EEF2F9;color:var(--ink)}
+.matrix tbody th{text-align:left;background:#F6F8FC;font-weight:700;white-space:nowrap}
+.matrix .lvl{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:99px}
+.lvl.lo{background:#EEF2F7;color:var(--ink-soft)}
+.lvl.mid{background:#FBF3E8;color:#B57A24}
+.lvl.hi{background:#FCE9E4;color:#B4472C}
+.lvl.dn{background:#E7F3EF;color:var(--c-dev)}
+.matrix-legend{font-size:12.5px;color:var(--ink-soft);margin-top:10px;display:flex;gap:18px;flex-wrap:wrap}
+@media(max-width:640px){.cost-split{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color:var(--ink-soft)}
+
+@media(max-width:640px){
+  .grid,.plug,.detail .cols{grid-template-columns:1fr}
+  .route-track{grid-template-columns:repeat(2,1fr);row-gap:26px}
+  .route-track::before{display:none}
+}
+@media print{
+  body{font-size:12.5px}
+  .detail,.gantt{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">產業策略智庫 SOLUTION FINDER|內部規劃文件</div>
+    <h1>資料庫升級評估:<br>從內部工具到跨院服務的四階段路線圖</h1>
+    <p class="lede">一句話結論:<strong>系統不需要一次到位,而是隨著「服務對象擴大」分四階段升級</strong>——每一階段的費用、人力與資安投入,都由使用對象的改變所觸發,避免提前投資、也避免臨時補課。目前正處於階段一往階段二的過渡期(資料庫遷移進度約四成)。</p>
+    <div class="meta">
+      <span>版本:v4(加入階段情境)</span>
+      <span>日期:2026-07-30</span>
+      <span>資料規模:方案約 2,400 筆.公司約 850 家</span>
+      <span>撰寫:Jojo(數位轉型研究院)</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="route">
+    <div class="route-track">
+      <div class="station c1"><div class="dot"></div><div class="st-name">階段一.餐車</div><div class="st-time">現況(進行中)</div><div class="st-tag"><span>試營運 ≤5 人</span></div><div class="st-when">當:<b>功能還在調整</b>,只想先讓少數顧問試用、確認方向</div></div>
+      <div class="station c2"><div class="dot"></div><div class="st-name">階段二.固定店面</div><div class="st-time">短期 0–3 個月</div><div class="st-tag"><span>院內組級 10–30 人</span></div><div class="st-when">當:試測顧問<b>已固定在用</b>,你開始想讓其他組別也能用</div></div>
+      <div class="station c3"><div class="dot"></div><div class="st-name">階段三.旗艦店</div><div class="st-time">中期 3–9 個月</div><div class="st-tag"><span>院級服務 50–100 人</span></div><div class="st-when">當:<b>其他組別主動來問</b>能不能用,或主管要你對外簡報成果</div></div>
+      <div class="station c4"><div class="dot"></div><div class="st-name">階段四.中央廚房</div><div class="st-time">長期 9–18 個月</div><div class="st-tag"><span>跨院/對外 B2B</span></div><div class="st-when">當:<b>其他院所明確想採用</b>,需要正式帳號與服務保證</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 時程總覽(甘特圖) ===== -->
+<section>
+  <div class="wrap">
+    <h2>時程總覽:18 個月大局觀</h2>
+    <p class="sub">上圖看「什麼時候做什麼」,下表看「每階段的人.事.時.地.物」。細節說明見文末底色區塊。</p>
+
+    <div class="gantt">
+      <div class="gantt-inner">
+        <div class="g-row">
+          <div class="g-label">階段一.餐車<small>試營運(進行中)</small></div>
+          <div class="g-track"><div class="g-bar b-1" style="left:0;width:8.3%">現況<span class="tail">1 人.月費近乎 0</span></div></div>
+        </div>
+        <div class="g-row">
+          <div class="g-label">階段二.固定店面<small>資料庫遷移+分權</small></div>
+          <div class="g-track"><div class="g-bar b-2" style="left:0;width:16.6%">3 個月<span class="tail">1+0.2 人.約 NT$2 千/月</span></div></div>
+        </div>
+        <div class="g-row">
+          <div class="g-label">階段三.旗艦店<small>院級服務+MCP評估</small></div>
+          <div class="g-track"><div class="g-bar b-3" style="left:16.6%;width:33.4%">6 個月<span class="tail">2–3 人.約 NT$3–6 千/月</span></div></div>
+        </div>
+        <div class="g-row">
+          <div class="g-label">階段四.中央廚房<small>跨院 B2B(需求觸發)</small></div>
+          <div class="g-track"><div class="g-bar b-4" style="left:50%;width:50%">9 個月.3–5 人.約 NT$1.5–5 萬/月</div></div>
+        </div>
+        <div class="g-scale">
+          <div></div>
+          <div class="ticks"><span>0</span><span>3</span><span>6</span><span>9</span><span>12</span><span>15</span><span>18 個月</span></div>
+        </div>
+      </div>
+      <p class="g-note">※ 階段四為「需求觸發制」:須先有確定的跨院使用方才啟動,時間軸僅為預留位置,非承諾時程。</p>
+    </div>
+
+    <div class="table-scroll" style="margin-top:18px">
+      <table class="bigpic">
+        <thead>
+          <tr><th>階段</th><th>時程</th><th>人(人力配置)</th><th>物(資訊建設)</th><th>資安重點</th><th>錢(月費估算)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="b1">① 餐車</td><td>現況</td>
+            <td>1 人(PM 兼 AI 協作)</td>
+            <td>Airtable + Vercel 免費方案</td>
+            <td>金鑰保管.部署保護</td>
+            <td class="money">近乎 0 + AI 用量數百元</td>
+          </tr>
+          <tr>
+            <td class="b2">② 固定店面</td><td>0–3 個月</td>
+            <td>1 人專責 + 0.2 兼任</td>
+            <td>Supabase Pro + Vercel Pro</td>
+            <td>金鑰分權.RLS.個資遮罩</td>
+            <td class="money">約 1,500–2,500</td>
+          </tr>
+          <tr>
+            <td class="b3">③ 旗艦店</td><td>3–9 個月</td>
+            <td>2–3 人(PM+資料+維運)</td>
+            <td>登入機制.稽核紀錄.自訂網域.PITR 備份</td>
+            <td>SSO.稽核 log.備份演練</td>
+            <td class="money">約 3,000–6,000</td>
+          </tr>
+          <tr>
+            <td class="b4">④ 中央廚房</td><td>9–18 個月</td>
+            <td>3–5 人(含維運工程+資安窗口)</td>
+            <td>正式主機三選項擇一.API/MCP 介接</td>
+            <td>資安法遵.弱掃/滲透測試.SLA</td>
+            <td class="money">約 15,000–50,000 + 一次性檢測費</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 四階段一覽 ===== -->
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>四階段一覽:對象與架構</h2>
+    <p class="sub">白話比喻:現在是一台餐車(輕巧、成本低、隨時能改菜單);目標是供應其他分店的中央廚房(穩定、有規範、經得起稽核)。中間不跳級。</p>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>評估項目</th><th class="b1">① 餐車(現況)</th><th class="b2">② 固定店面(短期)</th><th class="b3">③ 旗艦店(中期)</th><th class="b4">④ 中央廚房(長期)</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>使用人數</th><td>≤5 人</td><td>10–30 人</td><td>50–100 人</td><td>100 人以上</td></tr>
+        <tr><th>使用對象</th>
+          <td><ul><li>本組</li><li>耕偉組/中原組試測顧問</li></ul></td>
+          <td><ul><li>院內相關組別顧問</li><li>純內部使用</li></ul></td>
+          <td><ul><li>數轉院正式內部服務</li><li>可對主管與標案展示</li></ul></td>
+          <td><ul><li>其他院所/合作單位</li><li>B2B,非一般大眾</li></ul></td>
+        </tr>
+        <tr><th>人力配置</th>
+          <td><ul><li>1 人(PM 兼 AI 協作)</li></ul></td>
+          <td><ul><li>1 人專責</li><li>+0.2 兼任(資料/窗口)</li></ul></td>
+          <td><ul><li>PM 1 人</li><li>資料治理 0.5–1 人</li><li>技術維運 0.5 人</li></ul></td>
+          <td><ul><li>PM 1 人</li><li>維運工程 1 人</li><li>資安窗口 0.5 人</li><li>導入支援 0.5–1 人</li></ul></td>
+        </tr>
+        <tr><th>資料庫</th><td>Airtable(遷移中)</td><td>Supabase 免費 → Pro</td><td>Supabase Pro + PITR</td><td>雲端 / 院內機房 / 政府雲 三選一</td></tr>
+        <tr><th>伺服器</th><td>Vercel 免費方案</td><td>Vercel Pro</td><td>Vercel Pro + 自訂網域</td><td>依資料庫選項配套</td></tr>
+        <tr><th>月費估算<br>(NT$)</th><td class="money">近乎 0 + AI 用量數百元</td><td class="money">約 1,500–2,500</td><td class="money">約 3,000–6,000</td><td class="money">約 15,000–50,000<br>+ 一次性資安檢測費</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 人力評估 ===== -->
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>人力評估:從單人 AI 協作到小型團隊</h2>
+    <p class="sub">目前全案由 1 人以「人機協作」模式推進(Claude 規劃/Codex 開發/GPT 覆核)。AI 協作可放大單人產能,但無法取代維運值班、資料治理與跨單位窗口——這是各階段增員的原因。</p>
+    <div class="grid">
+      <div class="card">
+        <h4>現況模式的優勢</h4>
+        <ul>
+          <li>開發成本極低:規格→開發→覆核全流程 AI 協作,單人可維持正式團隊的產出節奏</li>
+          <li>決策快:無跨人溝通成本,適合功能仍在快速調整的試營運期</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>現況模式的風險(需向上揭露)</h4>
+        <ul>
+          <li><b>單點風險</b>:全案知識集中在 1 人,人員異動即斷線</li>
+          <li>無備援值班:系統異常只有 1 人能處理</li>
+          <li>建議:階段二起培養第 2 位熟悉流程的同仁(0.2 兼任即可起步)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>AI 協作「能抵」的人力</h4>
+        <ul>
+          <li>程式開發與修改(Codex 執行)</li>
+          <li>規格書、測試計畫、文件撰寫</li>
+          <li>批次資料標註與清理(AI 批次作業)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>AI 協作「不能抵」的人力</h4>
+        <ul>
+          <li>系統維運與異常值班(階段三起需 0.5 人)</li>
+          <li>案例知識庫的內容把關(需領域判斷)</li>
+          <li>跨院窗口、合約與資安法遵溝通(階段四)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 費用結構 ===== -->
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>費用結構:依用途分四類</h2>
+    <p class="sub">把費用依「用途」而非「廠商」歸類,才看得出哪一類會隨規模成長、哪一類正在被優化。關鍵原則:同一家 Claude 會拆成兩筆——訂閱屬「開發」、API 用量屬「營運」,因為兩者成長曲線相反。</p>
+
+    <div class="cost-h3">目前累計支出:NT$ 20,748(補正至 2026-07-30)</div>
+    <div class="cost-split">
+      <!-- 左:佔比橫條 -->
+      <div>
+        <div class="cbar-row">
+          <div class="cbar-label">資料庫基礎設施<small>Airtable</small></div>
+          <div class="cbar-wrap"><div class="cbar db" style="width:100%">NT$ 11,289<span class="pct">54.4%</span></div></div>
+        </div>
+        <div class="cbar-row">
+          <div class="cbar-label">開發費用<small>Codex + Claude 訂閱</small></div>
+          <div class="cbar-wrap"><div class="cbar dev" style="width:42%">NT$ 4,750<span class="pct">22.9%</span></div></div>
+        </div>
+        <div class="cbar-row">
+          <div class="cbar-label">資料來源採購<small>Crunchbase</small></div>
+          <div class="cbar-wrap"><div class="cbar src" style="width:28%">NT$ 3,150<span class="pct">15.2%</span></div></div>
+        </div>
+        <div class="cbar-row">
+          <div class="cbar-label">AI 推論(營運)<small>Claude API</small></div>
+          <div class="cbar-wrap"><div class="cbar ai" style="width:14%">NT$ 1,559<span class="pct">7.5%</span></div></div>
+        </div>
+        <div class="cbar-total"><span>累計合計(至 7 月)</span><span>NT$ 20,748 <small>已補正</small></span></div>
+      </div>
+      <!-- 右:明細與趨勢 -->
+      <div>
+        <table class="ctable">
+          <thead>
+            <tr><th>類別</th><th>包含項目</th><th class="amt">金額</th><th>性質</th><th>未來趨勢</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cdot" style="background:var(--c-dev)"></span>開發</td>
+              <td>Codex 月費、Claude 訂閱</td>
+              <td class="amt">4,750</td><td>建置期月費</td>
+              <td class="tr-flat">成熟後可調降</td>
+            </tr>
+            <tr>
+              <td><span class="cdot" style="background:var(--c-db)"></span>資料庫</td>
+              <td>Airtable<br><span style="color:var(--ink-soft);font-size:11px">未來:Supabase / CDN / Vercel</span></td>
+              <td class="amt">11,289</td><td>月費</td>
+              <td class="tr-down">▼ 遷移後可望下降</td>
+            </tr>
+            <tr>
+              <td><span class="cdot" style="background:var(--c-ai)"></span>AI 推論</td>
+              <td>Claude API Credit</td>
+              <td class="amt">1,559</td><td>用量計費</td>
+              <td class="tr-up">▲ 隨使用人數成長</td>
+            </tr>
+            <tr>
+              <td><span class="cdot" style="background:var(--c-src)"></span>資料來源</td>
+              <td>Crunchbase</td>
+              <td class="amt">3,150</td><td>一次性</td>
+              <td class="tr-flat">視需求,非經常</td>
+            </tr>
+            <tr class="row-total"><td colspan="2">合計</td><td class="amt">20,748</td><td colspan="2"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cost-h3">四類費用在各階段的走勢</div>
+    <p class="sub" style="margin-top:-4px">用同一套四類口徑對照時程,一眼看出:資料庫在遷移後先降、對外時再升;AI 推論則一路隨使用人數往上,是唯一要持續盯的成本。</p>
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th class="hcat">費用類別</th>
+            <th class="h1c">① 餐車</th>
+            <th class="h2c">② 固定店面</th>
+            <th class="h3c">③ 旗艦店</th>
+            <th class="h4c">④ 中央廚房</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><span class="cdot" style="background:var(--c-dev)"></span>開發</th>
+            <td><span class="lvl mid">中.建置</span></td>
+            <td><span class="lvl mid">中</span></td>
+            <td><span class="lvl lo">中偏低</span></td>
+            <td><span class="lvl dn">低 ▼ 轉維護</span></td>
+          </tr>
+          <tr>
+            <th><span class="cdot" style="background:var(--c-db)"></span>資料庫</th>
+            <td><span class="lvl hi">高</span></td>
+            <td><span class="lvl dn">中 ▼ 遷移降</span></td>
+            <td><span class="lvl mid">中</span></td>
+            <td><span class="lvl hi">高 ▲ 對外主機</span></td>
+          </tr>
+          <tr>
+            <th><span class="cdot" style="background:var(--c-ai)"></span>AI 推論</th>
+            <td><span class="lvl lo">低</span></td>
+            <td><span class="lvl lo">低 ▲</span></td>
+            <td><span class="lvl mid">中 ▲</span></td>
+            <td><span class="lvl hi">高 ▲ 可分攤</span></td>
+          </tr>
+          <tr>
+            <th><span class="cdot" style="background:var(--c-src)"></span>資料來源</th>
+            <td><span class="lvl lo">一次性</span></td>
+            <td><span class="lvl lo">視需要</span></td>
+            <td><span class="lvl lo">視需要</span></td>
+            <td><span class="lvl mid">視採購</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="matrix-legend">
+      <span><span class="lvl lo" style="padding:1px 8px">低</span> 佔比小/穩定</span>
+      <span><span class="lvl mid" style="padding:1px 8px">中</span> 中等</span>
+      <span><span class="lvl hi" style="padding:1px 8px">高</span> 佔比大</span>
+      <span>▲ 隨規模成長　▼ 下降</span>
+    </div>
+
+    <div class="gate" style="margin-top:18px">
+      <strong>費用面重點:</strong>①資料庫目前是最大宗(54%),Airtable→Supabase 遷移直接優化此項,是「技術升級順便省錢」的雙重效益 ②AI 推論雖僅 7.5%,卻是唯一隨使用人數成長的成本,擴大到跨院服務前,應先設計計量分攤機制。
+    </div>
+  </div>
+</section>
+
+<!-- ===== MCP ===== -->
+<section class="mcp">
+  <div class="wrap">
+    <h2>關於 MCP:讓其他 AI 系統直接取用智庫的「標準插座」</h2>
+    <p class="sub">MCP(Model Context Protocol)是 AI 業界的開放標準。白話說:現在別的單位要用我們的資料,得「走進我們的店裡」(開網頁操作);裝上 MCP 之後,他們自己的 AI 助理可以直接插線到我們的智庫,即問即答——這正是階段四「中央廚房供應分店」的技術基礎。</p>
+    <div class="grid">
+      <div class="card">
+        <h4>為什麼現在不做</h4>
+        <ul>
+          <li>MCP 本身不難,難的是被接取的資料庫要先夠穩</li>
+          <li>遷移完成前接 MCP = 在未定案的地基上拉管線,之後要重做</li>
+          <li>因此採「條件觸發制」,不排固定時程</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>做了以後的價值</h4>
+        <ul>
+          <li>他院顧問在自己的 AI 工具內即可查詢本智庫方案與案例</li>
+          <li>政府標案簡報中「AI 原生智庫」的差異化亮點</li>
+          <li>一次介接、多方可用,取代逐案客製 API 的開發成本</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plug">
+      <div class="trigger"><b>觸發條件 1</b><br>案例知識庫成形,出現「跨多資料源的 AI 查詢」需求</div>
+      <div class="trigger"><b>觸發條件 2</b><br>Supabase 遷移全數完成並穩定運行(階段二完成)</div>
+      <div class="trigger" style="grid-column:1/-1"><b>觸發條件 3</b><br>有合作單位正式提出跨系統整合需求(通常出現在階段三後期至階段四)</div>
+    </div>
+    <ul style="margin-top:16px;font-size:14.5px;padding-left:18px">
+      <li>任一條件成立即啟動評估</li>
+      <li>導入工作量估:2–4 週開發 + 1 個月試運行</li>
+      <li>主要成本為人力;MCP 為開放標準,無授權費用</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 結論三點建議 ===== -->
+<section>
+  <div class="wrap">
+    <h2>結論三點建議</h2>
+    <ol class="advice">
+      <li><strong>近三個月只需核可階段二的小額經費</strong>(月費約 NT$1,500–2,500):完成資料庫遷移與資安分權,是後續一切的地基;同時建議指派 1 位 0.2 兼任同仁,開始分散單人風險。</li>
+      <li><strong>階段三啟動前,先確認「案例知識庫」的內部結案報告來源</strong>:這是本平台的長期護城河(獨有資料),比任何硬體升級都更決定智庫的價值;人力上需預留 0.5–1 名資料治理角色。</li>
+      <li><strong>階段四採需求觸發制,不預先編列大額預算</strong>:待有明確的跨院使用方後,再啟動主機選型與資安檢測詢價;屆時可將部分成本設計為使用院所分攤。</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== 附錄:各階段細節(底色區塊) ===== -->
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>附錄:各階段細節說明</h2>
+    <p class="sub">前面看大局,這裡看細節。每階段末尾附「升級判斷點」:條件未達成就停留在本階段,不提前花錢。</p>
+
+    <!-- 階段一 -->
+    <div class="detail d1">
+      <h3>階段一.餐車:內部試營運</h3>
+      <div class="period">現況(2026 Q3 進行中)|目標:用最低成本驗證「顧問真的會用、用了真的省時間」</div>
+      <div class="cols">
+        <div>
+          <h4>使用對象與人力</h4>
+          <ul>
+            <li>本組 + 耕偉組/中原組 ≤5 位試測顧問</li>
+            <li>每兩天檢查一次後台回饋</li>
+            <li>人力:1 人(PM 兼 AI 協作)</li>
+          </ul>
+          <h4>資料庫與伺服器</h4>
+          <ul>
+            <li>Airtable(免費/低階方案)+ Vercel 免費方案</li>
+            <li>Supabase 遷移同步進行:Cases 已完成、Companies 驗證中、Solutions 為最大宗</li>
+          </ul>
+        </div>
+        <div>
+          <h4>資安現況</h4>
+          <ul>
+            <li>API 金鑰僅存於平台環境變數,不進版本庫</li>
+            <li>預覽環境有部署保護(需登入)</li>
+            <li>聯絡人個資僅內部可見</li>
+          </ul>
+          <h4>費用</h4>
+          <ul>
+            <li>近乎 NT$0/月</li>
+            <li>唯一變動成本為 AI 用量,試測規模下每月數百元</li>
+          </ul>
+        </div>
+      </div>
+      <div class="gate"><strong>升級判斷點:</strong>①試測顧問回饋正向、有明確省時案例 ②Supabase 遷移完成並通過逐筆比對驗證。兩者達成才進入階段二。</div>
+    </div>
+
+    <!-- 階段二 -->
+    <div class="detail d2">
+      <h3>階段二.固定店面:院內組級推廣</h3>
+      <div class="period">短期 0–3 個月|目標:完成資料庫「換心臟」,服務擴大到 10–30 人;重點投資是資安分權,不是硬體</div>
+      <div class="cols">
+        <div>
+          <h4>使用對象與人力</h4>
+          <ul>
+            <li>院內相關組別顧問 10–30 人,純內部</li>
+            <li>人力:1 人專責 + 0.2 兼任(資料維護/使用者窗口)</li>
+            <li>兼任者同時作為第 2 位熟悉全流程的備援</li>
+          </ul>
+          <h4>資料庫與伺服器</h4>
+          <ul>
+            <li>Supabase(PostgreSQL 正式關聯式資料庫)</li>
+            <li>資料量在免費額度內,但建議 Pro:每日自動備份 + 不休眠保證</li>
+            <li>Vercel 升級 Pro,符合非個人用途條款</li>
+          </ul>
+        </div>
+        <div>
+          <h4>資安評估(本階段重點)</h4>
+          <ul>
+            <li><b>金鑰分權</b>:查詢用受限金鑰、管理另用管理金鑰;單一金鑰外洩 ≠ 全庫外洩</li>
+            <li><b>資料列權限(RLS)</b>:資料庫層級控管誰能看什麼</li>
+            <li><b>聯絡資訊遮罩</b>:一般使用者看到的聯絡人資料經遮罩</li>
+            <li>個資盤點:確認聯絡人資料蒐集依據與利用範圍(個資法)</li>
+          </ul>
+          <h4>費用估算:約 NT$1,500–2,500/月</h4>
+          <ul>
+            <li>Supabase Pro 約 US$25/月</li>
+            <li>Vercel Pro 約 US$20/月</li>
+            <li>AI 用量隨人數微增(數百至一千元)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="gate"><strong>升級判斷點:</strong>①穩定使用滿 1–2 個月、無資料正確性客訴 ②有 10 人以上實際使用數據佐證價值 ③案例知識庫開始累積。達成後才值得投資階段三。</div>
+    </div>
+
+    <!-- 階段三 -->
+    <div class="detail d3">
+      <h3>階段三.旗艦店:院級正式服務</h3>
+      <div class="period">中期 3–9 個月|目標:從「好用的工具」升級為「說得出口的正式服務」,可作為 B2G 智庫資產展示;MCP 評估在此啟動</div>
+      <div class="cols">
+        <div>
+          <h4>使用對象與人力</h4>
+          <ul>
+            <li>數轉院內 50–100 人;院內其他單位可申請使用</li>
+            <li>PM 1 人(產品與跨單位溝通)</li>
+            <li>資料治理/案例知識庫 0.5–1 人(內容把關需領域判斷,AI 無法全代)</li>
+            <li>技術維運 0.5 人(異常處理與值班,可兼任)</li>
+          </ul>
+          <h4>資料庫與伺服器</h4>
+          <ul>
+            <li>Supabase Pro 續用,加購時間點還原(PITR)強化備份</li>
+            <li>Vercel Pro + 正式自訂網域(提升對外簡報可信度)</li>
+            <li>資料治理:206 筆 AI 標註補齊、欄位命名統一</li>
+          </ul>
+        </div>
+        <div>
+          <h4>資安評估</h4>
+          <ul>
+            <li><b>登入機制</b>:院內信箱登入或 SSO,取代連結制</li>
+            <li><b>稽核紀錄</b>:誰在何時查了什麼,留存 log 備查</li>
+            <li><b>備份還原演練</b>:每季實際演練,不只「有備份」</li>
+            <li>對齊資策會內部資安規範,先做內部自評</li>
+          </ul>
+          <h4>費用估算:約 NT$3,000–6,000/月</h4>
+          <ul>
+            <li>Supabase Pro + PITR 加購</li>
+            <li>Vercel Pro + 網域(年費約千元)</li>
+            <li>AI 用量隨人數成長(估 1,000–3,000 元/月)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="gate"><strong>升級判斷點:</strong>①有明確跨院需求方(至少一個院所表達採用意願) ②院方同意投入階段四資安檢測預算。<b>沒有確定的外部需求,就不進入階段四</b>——整條路線圖最重要的煞車。</div>
+    </div>
+
+    <!-- 階段四 -->
+    <div class="detail d4">
+      <h3>階段四.中央廚房:跨院/對外 B2B 服務</h3>
+      <div class="period">長期 9–18 個月(需求觸發)|目標:供應其他院所使用;一旦對外即有 SLA 與正式資安要求,主機選型在此才做最終決定</div>
+      <div class="cols">
+        <div>
+          <h4>使用對象與人力</h4>
+          <ul>
+            <li>100 人以上;他院透過帳號或系統介接(API/MCP)使用</li>
+            <li>PM/產品 1 人</li>
+            <li>維運工程 1 人(選項 B 自建機房須專職)</li>
+            <li>資安/法遵窗口 0.5 人</li>
+            <li>導入支援/客戶窗口 0.5–1 人</li>
+          </ul>
+          <h4>主機三選項(屆時擇一)</h4>
+          <ul>
+            <li><b>A. 商用雲端(GCP/AWS/Azure 台灣區)</b>:彈性最高、上線最快;月費約 1.5–4 萬;適合需求量不確定時</li>
+            <li><b>B. 院內機房自建</b>:資料完全在院內,資料主權最嚴格;需一次性硬體投資 + 專職維運</li>
+            <li><b>C. 政府雲(如 TWCC/公務雲)</b>:法遵路徑最順,適合政府標案情境;採購流程較長</li>
+            <li>初步傾向:客戶以政府相關院所為主 → C 合規優勢最大;速度優先 → A 先行、C 為終點</li>
+          </ul>
+        </div>
+        <div>
+          <h4>資安評估(對外門檻)</h4>
+          <ul>
+            <li><b>資通安全管理法適用性評估</b>:確認對外後的資安責任等級</li>
+            <li><b>弱點掃描 + 滲透測試</b>:委外執行,一次性估 NT$15–40 萬(需正式詢價)</li>
+            <li>個資去識別化政策正式化;與使用院所簽訂資料使用協議</li>
+            <li>SLA 承諾(可用率、故障通報時限)與值班機制</li>
+          </ul>
+          <h4>費用估算:約 NT$15,000–50,000/月 + 一次性檢測費</h4>
+          <ul>
+            <li>依主機選項 A/B/C 而定</li>
+            <li>AI 用量隨查詢量成長,可對使用院所採計量分攤</li>
+            <li>維運人力成本另計(B 選項尤其顯著)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="gate"><strong>本階段原則:</strong>所有大額支出(主機、滲透測試)都在「確認有付費或分攤機制的使用方」之後才發生。中央廚房是接到分店訂單才蓋,不是先蓋再找分店。</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>備註:本文件所有費用為 2026-07 匯率與公開牌價之估算區間,正式編列前需重新詢價;人力配置以 FTE(全職當量)估算,兼任以 0.2/0.5 表示。|產業策略智庫 Solution Finder.內部規劃文件.請勿外流</p>
+  </div>
+</footer>
+
+</body>
+</html>
