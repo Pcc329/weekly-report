@@ -159,7 +159,7 @@
     </div>
   </div>
 
-  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">A / E</span></div>
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">A / F</span></div>
 </section>
 
 <!-- ════════════ 圖 B｜雲端部署架構 ════════════ -->
@@ -208,7 +208,7 @@
     </div>
   </div>
 
-  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">B / E</span></div>
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">B / F</span></div>
 </section>
 
 <!-- ════════════ 圖 C｜AI 整合架構 ════════════ -->
@@ -259,7 +259,7 @@
     </div>
   </div>
 
-  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">C / E</span></div>
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">C / F</span></div>
 </section>
 
 <!-- ════════════ 圖 D｜AI 協作開發流程 ════════════ -->
@@ -321,14 +321,70 @@
     </div>
   </div>
 
-  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">D / E</span></div>
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">D / F</span></div>
 </section>
 
-<!-- ════════════ 圖 E｜方法論 Kit 上手指南 ════════════ -->
+<!-- ════════════ 圖 E｜執行中途:持續記錄與回報 ════════════ -->
 <section class="slide">
   <div class="head">
     <div>
       <div class="eyebrow">Solution Finder · 架構三視圖＋方法論 E</div>
+      <h1>執行中途:記錄與回報<span class="q">專案跑起來之後,怎麼追蹤、怎麼讓總教練看見?</span></h1>
+    </div>
+    <div class="ref mono">core/dev-log · core/briefing</div>
+  </div>
+  <div class="legend">
+    <div class="key"><span class="chip live"></span>給 AI 讀</div>
+    <div class="key"><span class="chip ext"></span>給人讀</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;justify-content:center;flex:1">
+
+    <p style="font-size:14.5px;color:#33514a;margin-bottom:20px;padding:0 6px">
+      SETUP 是「發車那一刻的快照」,但專案是動態的。中途需要一份持續紀錄——
+      而且刻意拆兩份:<b>給 AI 的越完整越好,給人的越精簡越好</b>,一份文件服務兩種讀者一定四不像。
+    </p>
+
+    <div class="row" style="grid-template-columns:1fr 1fr;gap:18px">
+      <div class="node" style="text-align:left;border-width:2px">
+        <b>開發日誌 dev-log　·　給 AI　·　兩天一記</b>
+        <span style="text-align:left;margin-top:8px;line-height:1.9">
+        完整的過程脈絡,接手時整份貼給 AI:<br>
+        ✅ 完成的任務<br>
+        🔀 決策與轉向(＋為何、何時重估)<br>
+        🚧 卡住:等什麼、卡多久<br>
+        🕳️ 新踩的坑(下次要閃的地雷)</span>
+      </div>
+      <div class="node ext" style="text-align:left;border-width:2px">
+        <b>要聞 briefing　·　給人　·　五天一報</b>
+        <span style="text-align:left;margin-top:8px;line-height:1.9">
+        過濾後只留「需要人動作」的點:<br>
+        🟢 進度　🔴 需要決策<br>
+        🟡 需要注意　🤝 需要協助<br>
+        <br>
+        「需要協助」= 總教練小地圖上<br>舉手進站的那台車</span>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="tag">AI 過濾</span></div>
+    <div class="row" style="grid-template-columns:1fr;max-width:640px;margin:0 auto;width:100%">
+      <div class="node" style="border-style:dashed"><b>日誌是原料,要聞是成品</b><span>五天回報不用重寫:把這五天的 dev-log 貼給 AI,請它過濾成 briefing,你再親自過目——對外陳述發出前人要看過</span></div>
+    </div>
+
+    <div class="noline" style="margin-top:28px">
+      <span class="x">⚠</span>
+      <span class="cap">日誌若「兩天記不完、密度異常升高」,那是專案警報——去檢討為何問題這麼頻繁,不是記更勤</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">E / F</span></div>
+</section>
+
+<!-- ════════════ 圖 F｜方法論 Kit 上手指南 ════════════ -->
+<section class="slide">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Solution Finder · 架構三視圖＋方法論 F</div>
       <h1>方法論 Kit 上手指南<span class="q">新同事怎麼依樣畫葫蘆開一個專案？</span></h1>
     </div>
     <div class="ref mono">github.com/Pcc329/pm-ai-workflow-kit</div>
@@ -344,16 +400,23 @@
       <div class="band-label">Kit 結構 · 兩層分離</div>
       <div class="row" style="grid-template-columns:1.15fr 1fr">
         <div class="node" style="text-align:left">
-          <b>core/ — 可攜帶的通用方法論（8 份）</b>
+          <b>core/ — 可攜帶的通用方法論（10 份）</b>
           <span class="mono" style="text-align:left;margin-top:8px;line-height:1.9">
+          <u>起手式</u><br>
           ① project-kickoff-interview　啟動訪談（入口）<br>
+          <u>動手前</u><br>
           ② ai-collaboration-roles　　AI 角色分工（＝圖 D）<br>
           ③ workflow-pipeline　　　　流程關卡<br>
           ④ codex_spec_template　　　規格書範本<br>
-          ⑤ handover_template　　　　交接清冊範本<br>
-          ⑥ data-cleaning-patterns　 資料清理陷阱<br>
-          ⑦ governance-checklist　　 該不該做的判斷<br>
-          ⑧ config-categories　　　　環境設定盤點</span>
+          <u>執行中途</u>（＝圖 E）<br>
+          ⑤ dev-log-template　　　　 開發日誌(給AI)<br>
+          ⑥ briefing-template　　　　要聞(給人)<br>
+          <u>交接</u><br>
+          ⑦ handover_template　　　　交接清冊範本<br>
+          <u>隨時查閱</u><br>
+          ⑧ data-cleaning-patterns　 資料清理陷阱<br>
+          ⑨ governance-checklist　　 該不該做的判斷<br>
+          ⑩ config-categories　　　　環境設定盤點</span>
         </div>
         <div class="node ext" style="text-align:left">
           <b>instances/ — 各專案的具體事實</b>
@@ -369,11 +432,19 @@
         <div class="harrow"></div>
         <div class="node ext"><b>2｜存放專案設定</b><span>訪談產出的 SETUP 初稿存進 instances/&lt;專案名&gt;/，之後每個中斷點回來更新——它是活文件不是報告</span></div>
         <div class="harrow"></div>
-        <div class="node"><b>3｜開始開發循環</b><span>依圖 D 的八步流程跑任務；踩到「換個專案也會遇到」的坑，就把它從專案層搬進通用層</span></div>
+        <div class="node"><b>3｜開始開發循環</b><span>依圖 D 八步跑任務、用圖 E 記錄回報；決定動手時,tools/ 有 GitHub＋Vercel 實作教學</span></div>
       </div>
     </div>
 
-    <div style="margin-top:26px" class="band">
+    <div style="margin-top:22px" class="band">
+      <div class="band-label">兩階段結構:先想清楚,再搭環境</div>
+      <div class="row" style="grid-template-columns:1fr 1fr;gap:16px">
+        <div class="node"><b>core/　第一階段·怎麼想</b><span>與工具無關的方法論,可攜帶、不過期。換公司換專案都跟著你走</span></div>
+        <div class="node ext"><b>tools/　第二階段·怎麼點</b><span>GitHub＋Vercel 實作教學,會隨工具改版。認每份的「最後驗證日期」</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:22px" class="band">
       <div class="band-label">這套方法論的自我演化機制</div>
       <div class="row" style="grid-template-columns:1fr">
         <div class="node" style="text-align:left;border-style:solid"><b>「這個坑是專案獨有，還是換個專案也會踩？」</b><span style="text-align:left">每次做這個判斷並把通用的坑搬進 core，Kit 就準一分——方法論不是寫完的文件，是用出來的紀律。任何人接任何新專案，從第 1 步開始即可，30 分鐘產出自己的專案說明書。</span></div>
@@ -381,7 +452,7 @@
     </div>
   </div>
 
-  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">E / E</span></div>
+  <div class="foot"><span>產業策略智庫 · 方法論傳承簡報</span><span class="mono">F / F</span></div>
 </section>
 
 </body>
