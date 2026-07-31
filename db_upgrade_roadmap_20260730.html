@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>產業策略智庫|資料庫升級路線圖 v3(2026-07-30)</title>
+<title>產業策略智庫|資料庫升級路線圖 v5(2026-07-30)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -157,6 +157,30 @@ td li{margin-bottom:2px}
 .lvl.hi{background:#FCE9E4;color:#B4472C}
 .lvl.dn{background:#E7F3EF;color:var(--c-dev)}
 .matrix-legend{font-size:12.5px;color:var(--ink-soft);margin-top:10px;display:flex;gap:18px;flex-wrap:wrap}
+/* 怎麼讀說明框 */
+.read-note{background:#EEF1FA;border:1px solid #D3DBF0;border-radius:8px;padding:13px 18px;margin-bottom:18px}
+.read-note .rn-t{font-weight:900;font-size:14px;color:var(--s3);margin-bottom:6px}
+.read-note ul{padding-left:18px;margin:0}
+.read-note li{font-size:13.5px;margin-bottom:4px}
+.read-note b{color:var(--ink)}
+/* 佔比堆疊圖 */
+.share-row{display:grid;grid-template-columns:110px 1fr 180px;gap:12px;align-items:center;margin-bottom:14px}
+.share-stg{font-size:14px;font-weight:900;text-align:right;line-height:1.25}
+.share-stg small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-soft)}
+.share-stg.t1{color:var(--s1)}.share-stg.t2{color:var(--s2)}.share-stg.t3{color:var(--s3)}.share-stg.t4{color:var(--s4)}
+.stack{display:flex;height:38px;border-radius:6px;overflow:hidden;background:#EEF2F7}
+.seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;min-width:0}
+.seg.dev{background:var(--c-dev)}.seg.db{background:var(--c-db)}.seg.ai{background:var(--c-ai)}
+.share-total{font-size:12px;color:var(--ink-soft);line-height:1.45}
+.share-total b{display:block;color:var(--ink);font-size:14px}
+.share-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:6px;padding-left:122px}
+.share-legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+@media(max-width:640px){
+  .share-row{grid-template-columns:80px 1fr}
+  .share-total{grid-column:2;margin-top:-6px;margin-bottom:4px}
+  .share-total b{display:inline;margin-right:8px}
+  .share-legend{padding-left:0}
+}
 @media(max-width:640px){.cost-split{grid-template-columns:1fr}}
 
 footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color:var(--ink-soft)}
@@ -180,7 +204,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
     <h1>資料庫升級評估:<br>從內部工具到跨院服務的四階段路線圖</h1>
     <p class="lede">一句話結論:<strong>系統不需要一次到位,而是隨著「服務對象擴大」分四階段升級</strong>——每一階段的費用、人力與資安投入,都由使用對象的改變所觸發,避免提前投資、也避免臨時補課。目前正處於階段一往階段二的過渡期(資料庫遷移進度約四成)。</p>
     <div class="meta">
-      <span>版本:v4(加入階段情境)</span>
+      <span>版本:v5(費用改全成本+佔比圖)</span>
       <span>日期:2026-07-30</span>
       <span>資料規模:方案約 2,400 筆.公司約 850 家</span>
       <span>撰寫:Jojo(數位轉型研究院)</span>
@@ -209,19 +233,19 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
       <div class="gantt-inner">
         <div class="g-row">
           <div class="g-label">階段一.餐車<small>試營運(進行中)</small></div>
-          <div class="g-track"><div class="g-bar b-1" style="left:0;width:8.3%">現況<span class="tail">1 人.月費近乎 0</span></div></div>
+          <div class="g-track"><div class="g-bar b-1" style="left:0;width:8.3%">現況<span class="tail">1 人.全成本約 4 千/月</span></div></div>
         </div>
         <div class="g-row">
           <div class="g-label">階段二.固定店面<small>資料庫遷移+分權</small></div>
-          <div class="g-track"><div class="g-bar b-2" style="left:0;width:16.6%">3 個月<span class="tail">1+0.2 人.約 NT$2 千/月</span></div></div>
+          <div class="g-track"><div class="g-bar b-2" style="left:0;width:16.6%">3 個月<span class="tail">1+0.2 人.約 3–3.5 千/月</span></div></div>
         </div>
         <div class="g-row">
           <div class="g-label">階段三.旗艦店<small>院級服務+MCP評估</small></div>
-          <div class="g-track"><div class="g-bar b-3" style="left:16.6%;width:33.4%">6 個月<span class="tail">2–3 人.約 NT$3–6 千/月</span></div></div>
+          <div class="g-track"><div class="g-bar b-3" style="left:16.6%;width:33.4%">6 個月<span class="tail">2–3 人.約 5–6.5 千/月</span></div></div>
         </div>
         <div class="g-row">
           <div class="g-label">階段四.中央廚房<small>跨院 B2B(需求觸發)</small></div>
-          <div class="g-track"><div class="g-bar b-4" style="left:50%;width:50%">9 個月.3–5 人.約 NT$1.5–5 萬/月</div></div>
+          <div class="g-track"><div class="g-bar b-4" style="left:50%;width:50%">9 個月.3–5 人.約 3–5 萬/月</div></div>
         </div>
         <div class="g-scale">
           <div></div>
@@ -234,7 +258,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
     <div class="table-scroll" style="margin-top:18px">
       <table class="bigpic">
         <thead>
-          <tr><th>階段</th><th>時程</th><th>人(人力配置)</th><th>物(資訊建設)</th><th>資安重點</th><th>錢(月費估算)</th></tr>
+          <tr><th>階段</th><th>時程</th><th>人(人力配置)</th><th>物(資訊建設)</th><th>資安重點</th><th>錢(全成本月費)</th></tr>
         </thead>
         <tbody>
           <tr>
@@ -242,28 +266,28 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
             <td>1 人(PM 兼 AI 協作)</td>
             <td>Airtable + Vercel 免費方案</td>
             <td>金鑰保管.部署保護</td>
-            <td class="money">近乎 0 + AI 用量數百元</td>
+            <td class="money">約 4,000(全成本)</td>
           </tr>
           <tr>
             <td class="b2">② 固定店面</td><td>0–3 個月</td>
             <td>1 人專責 + 0.2 兼任</td>
             <td>Supabase Pro + Vercel Pro</td>
             <td>金鑰分權.RLS.個資遮罩</td>
-            <td class="money">約 1,500–2,500</td>
+            <td class="money">約 3,000–3,500</td>
           </tr>
           <tr>
             <td class="b3">③ 旗艦店</td><td>3–9 個月</td>
             <td>2–3 人(PM+資料+維運)</td>
             <td>登入機制.稽核紀錄.自訂網域.PITR 備份</td>
             <td>SSO.稽核 log.備份演練</td>
-            <td class="money">約 3,000–6,000</td>
+            <td class="money">約 5,000–6,500</td>
           </tr>
           <tr>
             <td class="b4">④ 中央廚房</td><td>9–18 個月</td>
             <td>3–5 人(含維運工程+資安窗口)</td>
             <td>正式主機三選項擇一.API/MCP 介接</td>
             <td>資安法遵.弱掃/滲透測試.SLA</td>
-            <td class="money">約 15,000–50,000 + 一次性檢測費</td>
+            <td class="money">約 30,000–50,000 + 一次性檢測費</td>
           </tr>
         </tbody>
       </table>
@@ -289,7 +313,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
           <td><ul><li>1 人(PM 兼 AI 協作)</li></ul></td>
           <td>Airtable(遷移中)</td>
           <td>Vercel 免費方案</td>
-          <td class="money">近乎 0 + AI 用量數百元</td>
+          <td class="money">約 4,000(全成本)</td>
         </tr>
         <tr>
           <th class="b2">② 固定店面<br><small style="font-weight:400;color:var(--ink-soft)">短期</small></th>
@@ -298,7 +322,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
           <td><ul><li>1 人專責</li><li>+0.2 兼任(資料/窗口)</li></ul></td>
           <td>Supabase 免費 → Pro</td>
           <td>Vercel Pro</td>
-          <td class="money">約 1,500–2,500</td>
+          <td class="money">約 3,000–3,500</td>
         </tr>
         <tr>
           <th class="b3">③ 旗艦店<br><small style="font-weight:400;color:var(--ink-soft)">中期</small></th>
@@ -307,7 +331,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
           <td><ul><li>PM 1 人</li><li>資料治理 0.5–1 人</li><li>技術維運 0.5 人</li></ul></td>
           <td>Supabase Pro + PITR</td>
           <td>Vercel Pro + 自訂網域</td>
-          <td class="money">約 3,000–6,000</td>
+          <td class="money">約 5,000–6,500</td>
         </tr>
         <tr>
           <th class="b4">④ 中央廚房<br><small style="font-weight:400;color:var(--ink-soft)">長期</small></th>
@@ -316,7 +340,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
           <td><ul><li>PM 1 人</li><li>維運工程 1 人</li><li>資安窗口 0.5 人</li><li>導入支援 0.5–1 人</li></ul></td>
           <td>雲端 / 院內機房 / 政府雲 三選一</td>
           <td>依資料庫選項配套</td>
-          <td class="money">約 15,000–50,000<br>+ 一次性資安檢測費</td>
+          <td class="money">約 30,000–50,000<br>+ 一次性資安檢測費</td>
         </tr>
       </tbody>
     </table>
@@ -430,60 +454,63 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
       </div>
     </div>
 
-    <div class="cost-h3">四類費用在各階段的走勢</div>
-    <p class="sub" style="margin-top:-4px">用同一套四類口徑對照時程,一眼看出:資料庫在遷移後先降、對外時再升;AI 推論則一路隨使用人數往上,是唯一要持續盯的成本。</p>
-    <div class="table-scroll">
-      <table class="matrix">
-        <thead>
-          <tr>
-            <th class="hcat">階段</th>
-            <th class="hcat"><span class="cdot" style="background:var(--c-dev)"></span>開發</th>
-            <th class="hcat"><span class="cdot" style="background:var(--c-db)"></span>資料庫</th>
-            <th class="hcat"><span class="cdot" style="background:var(--c-ai)"></span>AI 推論</th>
-            <th class="hcat"><span class="cdot" style="background:var(--c-src)"></span>資料來源</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th class="b1">① 餐車</th>
-            <td><span class="lvl mid">中.建置</span></td>
-            <td><span class="lvl hi">高</span></td>
-            <td><span class="lvl lo">低</span></td>
-            <td><span class="lvl lo">一次性</span></td>
-          </tr>
-          <tr>
-            <th class="b2">② 固定店面</th>
-            <td><span class="lvl mid">中</span></td>
-            <td><span class="lvl dn">中 ▼ 遷移降</span></td>
-            <td><span class="lvl lo">低 ▲</span></td>
-            <td><span class="lvl lo">視需要</span></td>
-          </tr>
-          <tr>
-            <th class="b3">③ 旗艦店</th>
-            <td><span class="lvl lo">中偏低</span></td>
-            <td><span class="lvl mid">中</span></td>
-            <td><span class="lvl mid">中 ▲</span></td>
-            <td><span class="lvl lo">視需要</span></td>
-          </tr>
-          <tr>
-            <th class="b4">④ 中央廚房</th>
-            <td><span class="lvl dn">低 ▼ 轉維護</span></td>
-            <td><span class="lvl hi">高 ▲ 對外主機</span></td>
-            <td><span class="lvl hi">高 ▲ 可分攤</span></td>
-            <td><span class="lvl mid">視採購</span></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="cost-h3">各階段費用佔比(全成本月費結構)</div>
+    <div class="read-note">
+      <div class="rn-t">怎麼讀這張圖(為什麼用佔比呈現)</div>
+      <ul>
+        <li>每條 = 該階段<b>每月全成本</b>的 100%(含開發訂閱 + 基礎設施 + AI 用量);色段寬度 = 各類佔比,條尾 = 月費總額。</li>
+        <li><b>要「佔比」和「總額」一起看</b>:佔比是相對值——階段二資料庫遷移後總額下降,開發的佔比反而上升,不代表開發變貴,而是分母變小。條尾總額就是為了避免這個誤讀。</li>
+        <li>與上方「累計支出 20,748」不同:那是<b>過去實際帳單</b>(含一次性 Crunchbase);這張是<b>各階段每月的預估結構</b>。一次性採購不列入月費,故此圖只有三類。</li>
+      </ul>
     </div>
-    <div class="matrix-legend">
-      <span><span class="lvl lo" style="padding:1px 8px">低</span> 佔比小/穩定</span>
-      <span><span class="lvl mid" style="padding:1px 8px">中</span> 中等</span>
-      <span><span class="lvl hi" style="padding:1px 8px">高</span> 佔比大</span>
-      <span>▲ 隨規模成長　▼ 下降</span>
+
+    <div class="share">
+      <div class="share-row">
+        <div class="share-stg t1">① 餐車<small>現況實績</small></div>
+        <div class="stack">
+          <div class="seg dev" style="width:34%">34%</div>
+          <div class="seg db" style="width:56%">56%</div>
+          <div class="seg ai" style="width:10%">10%</div>
+        </div>
+        <div class="share-total"><b>約 NT$ 4,000/月</b>依 4–7 月帳單月均</div>
+      </div>
+      <div class="share-row">
+        <div class="share-stg t2">② 固定店面<small>估算</small></div>
+        <div class="stack">
+          <div class="seg dev" style="width:41%">41%</div>
+          <div class="seg db" style="width:42%">42%</div>
+          <div class="seg ai" style="width:17%">17%</div>
+        </div>
+        <div class="share-total"><b>約 NT$ 3,000–3,500/月</b>總額↓:Airtable 換 Supabase</div>
+      </div>
+      <div class="share-row">
+        <div class="share-stg t3">③ 旗艦店<small>估算</small></div>
+        <div class="stack">
+          <div class="seg dev" style="width:24%">24%</div>
+          <div class="seg db" style="width:40%">40%</div>
+          <div class="seg ai" style="width:36%">36%</div>
+        </div>
+        <div class="share-total"><b>約 NT$ 5,000–6,500/月</b>AI 隨人數放大</div>
+      </div>
+      <div class="share-row">
+        <div class="share-stg t4">④ 中央廚房<small>估算</small></div>
+        <div class="stack">
+          <div class="seg dev" style="width:4%"></div>
+          <div class="seg db" style="width:68%">68%</div>
+          <div class="seg ai" style="width:28%">28%</div>
+        </div>
+        <div class="share-total"><b>約 NT$ 30,000–50,000/月</b>對外主機為主;AI 可分攤</div>
+      </div>
+      <div class="share-legend">
+        <span><i style="background:var(--c-dev)"></i>開發(Codex + Claude 訂閱)</span>
+        <span><i style="background:var(--c-db)"></i>資料庫基礎設施(含 Vercel 代管)</span>
+        <span><i style="background:var(--c-ai)"></i>AI 推論(營運)</span>
+        <span style="color:var(--ink-soft)">※ 資料來源採購(Crunchbase)屬一次性,不列入月費</span>
+      </div>
     </div>
 
     <div class="gate" style="margin-top:18px">
-      <strong>費用面重點:</strong>①資料庫目前是最大宗(54%),Airtable→Supabase 遷移直接優化此項,是「技術升級順便省錢」的雙重效益 ②AI 推論雖僅 7.5%,卻是唯一隨使用人數成長的成本,擴大到跨院服務前,應先設計計量分攤機制。
+      <strong>費用面重點:</strong>①<b>資料庫</b>是各階段最大宗;現況佔 56%,Airtable→Supabase 遷移讓階段二總額不升反降,是「技術升級順便省錢」的雙重效益 ②<b>AI 推論</b>佔比一路從 10% 爬到 28–36%,是唯一隨使用人數成長的成本,擴大到跨院服務前應先設計計量分攤機制。
     </div>
   </div>
 </section>
@@ -529,7 +556,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
   <div class="wrap">
     <h2>結論三點建議</h2>
     <ol class="advice">
-      <li><strong>近三個月只需核可階段二的小額經費</strong>(月費約 NT$1,500–2,500):完成資料庫遷移與資安分權,是後續一切的地基;同時建議指派 1 位 0.2 兼任同仁,開始分散單人風險。</li>
+      <li><strong>階段二的實際新增預算接近零</strong>:全成本月費約 NT$3,000–3,500,但其中開發訂閱(約 1,360)現在已在支付,而遷移是把 Airtable(約 2,300)換成更便宜的 Supabase——<b>淨增量幾乎為零,甚至可能省錢</b>。這是「順便省錢的地基工程」,建議優先核可;同時指派 1 位 0.2 兼任同仁,開始分散單人風險。</li>
       <li><strong>階段三啟動前,先確認「案例知識庫」的內部結案報告來源</strong>:這是本平台的長期護城河(獨有資料),比任何硬體升級都更決定智庫的價值;人力上需預留 0.5–1 名資料治理角色。</li>
       <li><strong>階段四採需求觸發制,不預先編列大額預算</strong>:待有明確的跨院使用方後,再啟動主機選型與資安檢測詢價;屆時可將部分成本設計為使用院所分攤。</li>
     </ol>
@@ -567,10 +594,12 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
             <li>預覽環境有部署保護(需登入)</li>
             <li>聯絡人個資僅內部可見</li>
           </ul>
-          <h4>費用</h4>
+          <h4>費用(全成本月費約 NT$4,000)</h4>
           <ul>
-            <li>近乎 NT$0/月</li>
-            <li>唯一變動成本為 AI 用量,試測規模下每月數百元</li>
+            <li>資料庫:Airtable 約 2,300(佔比最大)</li>
+            <li>開發:Codex + Claude 訂閱 約 1,360</li>
+            <li>AI 推論:Claude API 約 400(試測規模)</li>
+            <li>代管:Vercel 免費方案 NT$0</li>
           </ul>
         </div>
       </div>
@@ -604,11 +633,12 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
             <li><b>聯絡資訊遮罩</b>:一般使用者看到的聯絡人資料經遮罩</li>
             <li>個資盤點:確認聯絡人資料蒐集依據與利用範圍(個資法)</li>
           </ul>
-          <h4>費用估算:約 NT$1,500–2,500/月</h4>
+          <h4>費用估算:全成本約 NT$3,000–3,500/月</h4>
           <ul>
-            <li>Supabase Pro 約 US$25/月</li>
-            <li>Vercel Pro 約 US$20/月</li>
-            <li>AI 用量隨人數微增(數百至一千元)</li>
+            <li>資料庫:Supabase Pro 約 800 + Vercel Pro 約 640</li>
+            <li>開發:Codex + Claude 訂閱 約 1,360(續用)</li>
+            <li>AI 推論:隨人數微增(數百至一千元)</li>
+            <li><b>關鍵</b>:總額比階段一還低——Airtable(約 2,300)退場、換成更便宜的 Supabase,遷移的「淨增量」接近零甚至為負</li>
           </ul>
         </div>
       </div>
@@ -643,11 +673,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
             <li><b>備份還原演練</b>:每季實際演練,不只「有備份」</li>
             <li>對齊資策會內部資安規範,先做內部自評</li>
           </ul>
-          <h4>費用估算:約 NT$3,000–6,000/月</h4>
+          <h4>費用估算:全成本約 NT$5,000–6,500/月</h4>
           <ul>
-            <li>Supabase Pro + PITR 加購</li>
-            <li>Vercel Pro + 網域(年費約千元)</li>
-            <li>AI 用量隨人數成長(估 1,000–3,000 元/月)</li>
+            <li>資料庫:Supabase Pro + PITR + Vercel Pro + 網域 約 2,200</li>
+            <li>開發:Codex + Claude 訂閱 約 1,300(開發趨緩)</li>
+            <li>AI 推論:隨 50–100 人成長(估 1,500–3,000 元/月)</li>
           </ul>
         </div>
       </div>
@@ -684,10 +714,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color
             <li>個資去識別化政策正式化;與使用院所簽訂資料使用協議</li>
             <li>SLA 承諾(可用率、故障通報時限)與值班機制</li>
           </ul>
-          <h4>費用估算:約 NT$15,000–50,000/月 + 一次性檢測費</h4>
+          <h4>費用估算:全成本約 NT$30,000–50,000/月 + 一次性檢測費</h4>
           <ul>
-            <li>依主機選項 A/B/C 而定</li>
-            <li>AI 用量隨查詢量成長,可對使用院所採計量分攤</li>
+            <li>資料庫/主機為大宗(約佔 68%),依主機選項 A/B/C 而定</li>
+            <li>AI 推論隨查詢量成長(約佔 28%),可對使用院所採計量分攤</li>
+            <li>開發已轉維護,佔比降至個位數</li>
             <li>維運人力成本另計(B 選項尤其顯著)</li>
           </ul>
         </div>
