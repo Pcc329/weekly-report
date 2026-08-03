@@ -19,12 +19,17 @@
 - 決策：基於個資保護，contacts 不建對外 API；資料已完成後端遷移與遮罩
 - 系統為純公開查詢站，無登入機制
 
+### ✅ 資安：RLS policy 六表複查
+- 六表全數 RLS 啟用且有 policy，內容正確（三角色分層 admin/consultant/anon）
+- contacts 雙鎖一致：table 權限 + RLS 皆只允許 admin_role，明碼鎖死
+- cases 額外有機密分級、digital_needs 限 consultant 讀
+- 備忘：consultant 角色 table 權限未查（暴露面小，低優先）
+
 ### ✅ 資安：收 authenticated 角色權限
 - 七張表撤 DML 只留 SELECT，contacts 明碼表零權限
 - 現況：anon/authenticated 皆無寫入權，contacts 明碼無任何角色可讀
 
 ### ⬜ 待辦（本週）
-- RLS policy 六表複查（安全里程碑收尾）
 - sources.html 補農業部來源
 - fix/cid-bom、fix/price-zero-preserve
 - 遷移評估文件 Ch2–4
