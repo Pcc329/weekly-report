@@ -29,8 +29,12 @@
 - 七張表撤 DML 只留 SELECT，contacts 明碼表零權限
 - 現況：anon/authenticated 皆無寫入權，contacts 明碼無任何角色可讀
 
+### ✅ 查證：sources.html 農業部來源已完整
+- 來源清單 + 詳細說明皆已含「農業雲市集-數位館（農業部）93 筆」
+- SQL 核對 data_source='農業部' 實際 93 筆，與頁面一致
+- 此待辦為舊清單殘留，查證後確認早已完成
+
 ### ⬜ 待辦（本週）
-- sources.html 補農業部來源
 - fix/cid-bom、fix/price-zero-preserve
 - 遷移評估文件 Ch2–4
 
