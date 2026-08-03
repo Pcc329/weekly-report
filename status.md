@@ -19,8 +19,9 @@
 - 決策：基於個資保護，contacts 不建對外 API；資料已完成後端遷移與遮罩
 - 系統為純公開查詢站，無登入機制
 
-### 🔄 進行中：收 authenticated 角色權限
-- 收斂目標：商業表 + contacts_masked 留 SELECT，contacts 明碼表零權限
+### ✅ 資安：收 authenticated 角色權限
+- 七張表撤 DML 只留 SELECT，contacts 明碼表零權限
+- 現況：anon/authenticated 皆無寫入權，contacts 明碼無任何角色可讀
 
 ### ⬜ 待辦（本週）
 - RLS policy 六表複查（安全里程碑收尾）
