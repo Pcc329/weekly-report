@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>切換後資料維護方案｜讀寫情境與權限規劃</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16233B;
+  --ink-soft:#4A5A74;
+  --paper:#FBFCFE;
+  --card:#FFFFFF;
+  --line:#DCE3EE;
+  --navy:#1F344A;
+  --teal:#0F7B6C;
+  --teal-bg:#EAF5F2;
+  --blue:#35509E;
+  --blue-bg:#EDF1FA;
+  --gold:#B08D3E;
+  --gold-bg:#FBF4E8;
+  --green:#17A08F;
+  --green-bg:#E7F7F3;
+  --warn:#C97A2B;
+  --warn-bg:#FBF3E8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.75;
+  font-size:16px;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+header{
+  border-bottom:3px solid var(--ink);
+  padding:52px 0 34px;
+  background:linear-gradient(180deg,#F3F6FB 0%,var(--paper) 100%);
+}
+.eyebrow{
+  font-size:13px;
+  letter-spacing:.35em;
+  color:var(--ink-soft);
+  font-weight:900;
+  margin-bottom:14px;
+}
+h1{
+  font-family:'Noto Serif TC',serif;
+  font-weight:900;
+  font-size:clamp(30px,4.6vw,44px);
+  line-height:1.35;
+  margin-bottom:18px;
+}
+.lede{max-width:780px;color:var(--ink-soft);font-size:17px}
+.lede strong{color:var(--ink)}
+.meta{margin-top:20px;font-size:13px;color:var(--ink-soft);display:flex;gap:18px;flex-wrap:wrap}
+.meta span{border-left:3px solid var(--line);padding-left:10px}
+section{padding:42px 0}
+h2{font-family:'Noto Serif TC',serif;font-weight:900;font-size:24px;margin-bottom:6px}
+.sub{color:var(--ink-soft);font-size:14.5px;margin-bottom:22px}
+p{margin:0 0 10px}
+strong{font-weight:900;color:var(--ink)}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+thead th{background:var(--navy);color:#fff;font-weight:900;white-space:nowrap;border-bottom:none}
+tbody tr:last-child td{border-bottom:none}
+td:first-child{font-weight:700}
+.badge{
+  display:inline-flex;align-items:center;border-radius:999px;
+  padding:3px 10px;font-size:12px;font-weight:900;white-space:nowrap;
+  border:1px solid var(--line);background:#fff;color:var(--ink-soft);
+}
+.badge.ok{background:var(--green-bg);border-color:#BFE7DC;color:#087263}
+.badge.warn{background:var(--warn-bg);border-color:#E5CDAA;color:#9D621D}
+.badge.blue{background:var(--blue-bg);border-color:#CDD7EF;color:var(--blue)}
+.badge.dark{background:#EEF2F7;border-color:#D4DCE8;color:var(--ink)}
+.callout{
+  background:var(--teal-bg);
+  border:1px solid #CDE5DF;
+  border-left:6px solid var(--teal);
+  border-radius:12px;
+  padding:18px 20px;
+  margin:20px 0 0;
+}
+.callout.gold{background:var(--gold-bg);border-color:#E3CFA6;border-left-color:var(--gold)}
+.callout.warn{background:var(--warn-bg);border-color:#E9D3B6;border-left-color:var(--warn)}
+.callout h3{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin-bottom:4px}
+.callout p{font-size:15px;color:var(--ink-soft);margin:0}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 8px 20px rgba(22,35,59,.04)}
+.kpi .label{font-size:12px;color:var(--ink-soft);font-weight:700;letter-spacing:.08em}
+.kpi .num{font-family:'Noto Serif TC',serif;font-size:25px;font-weight:900;line-height:1.2;margin-top:4px}
+.kpi .note{font-size:12.5px;color:var(--ink-soft);margin-top:6px}
+.route{margin:40px 0 4px}
+.route-track{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.route-track::before{content:"";position:absolute;top:13px;left:12%;right:12%;height:3px;background:var(--line)}
+.station{position:relative;padding:0 10px;text-align:center}
+.dot{width:26px;height:26px;border-radius:50%;margin:0 auto 10px;border:3px solid var(--card);box-shadow:0 0 0 2px currentColor;position:relative;z-index:1;background:currentColor}
+.station.c1{color:var(--teal)}.station.c2{color:var(--blue)}.station.c3{color:var(--gold)}.station.c4{color:var(--ink)}
+.st-name{font-family:'Noto Serif TC',serif;font-weight:900;font-size:17px;color:var(--ink)}
+.st-time{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+.st-tag{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:900;padding:2px 10px;border-radius:99px;background:currentColor}
+.st-tag span{color:#fff}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:0 8px 22px rgba(22,35,59,.04)}
+.card h3{font-family:'Noto Serif TC',serif;font-weight:900;font-size:19px;margin-bottom:8px}
+.card .q{font-size:13px;font-weight:900;color:var(--ink-soft);letter-spacing:.08em;margin-bottom:8px}
+.card p,.card li{font-size:14.5px;color:var(--ink-soft)}
+.card ul{padding-left:18px}
+.card li{margin-bottom:4px}
+.flow{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:16px;
+}
+.flow-item{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 18px;
+  position:relative;
+}
+.flow-item h3{font-size:17px;font-family:'Noto Serif TC',serif;font-weight:900;margin-bottom:4px}
+.flow-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.step-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--ink);color:#fff;font-weight:900;font-size:12px;margin-bottom:8px;
+}
+.checklist{display:grid;gap:10px;margin-top:14px}
+.check{
+  display:grid;
+  grid-template-columns:30px 1fr;
+  gap:10px;
+  align-items:start;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px 14px;
+}
+.check .icon{color:var(--teal);font-weight:900;font-size:18px;line-height:1.4}
+.check h4{font-size:15px;font-weight:900;margin-bottom:2px}
+.check p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.result-table td:nth-child(2){font-weight:700}
+.final-box{
+  background:linear-gradient(135deg,#EAF5F2 0%,#F6FAFE 100%);
+  border:1px solid #CDE5DF;
+  border-radius:14px;
+  padding:24px 26px;
+  margin-top:18px;
+}
+.final-box h3{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;margin-bottom:6px;color:var(--teal)}
+.final-box p{color:var(--ink-soft);font-size:15.5px;margin:0}
+.footer{
+  padding:34px 0 46px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  font-size:13px;
+}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:9px 15px;
+  background:#fff;
+  font-weight:900;
+  color:var(--ink);
+  font-size:14px;
+}
+.btn.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+@media (max-width:760px){
+  .wrap{padding:0 18px}
+  header{padding:38px 0 26px}
+  section{padding:32px 0}
+  .route-track{grid-template-columns:1fr;gap:18px}
+  .route-track::before{display:none}
+  .cards,.flow,.kpi-grid{grid-template-columns:1fr}
+  th,td{padding:9px 10px}
+}
+</style>
+<style>
+/* 本頁補充樣式 */
+.flowbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-top:16px}
+.flowbox h4{font-size:14px;font-weight:900;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:12px}
+.pipe{font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:13.5px;line-height:2.1;color:var(--ink);white-space:pre-wrap}
+.pipe .ok{color:var(--teal);font-weight:900}
+.pipe .bad{color:#B5652C;font-weight:900}
+.opt-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-top:16px;box-shadow:0 8px 22px rgba(22,35,59,.04)}
+.opt-card.pick{border:2px solid var(--teal);box-shadow:0 10px 26px rgba(15,123,108,.10)}
+.opt-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.opt-tag{font-size:11.5px;font-weight:900;letter-spacing:.12em;padding:3px 10px;border-radius:999px;background:var(--wire,#EEF2F7);color:var(--ink-soft);border:1px solid var(--line)}
+.opt-tag.rec{background:var(--teal-bg);color:#0B6153;border-color:#BFE7DC}
+.opt-card h3{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:900}
+.opt-card .lead{color:var(--ink-soft);font-size:14.5px;margin:6px 0 14px}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.pc h5{font-size:13px;font-weight:900;margin-bottom:5px}
+.pc .good h5{color:var(--teal)}
+.pc .bad h5{color:#B5652C}
+.pc ul{padding-left:17px;margin:0}
+.pc li{font-size:14px;color:var(--ink-soft);margin-bottom:3px}
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.who .p{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.who .p .role{font-size:11.5px;letter-spacing:.14em;font-weight:900;color:var(--faint,#8A97AC)}
+.who .p h4{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:2px 0 8px}
+.who .p p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.phase{border-left:3px solid var(--line);padding-left:20px;margin-top:18px}
+.phase .ph{margin-bottom:20px;position:relative}
+.phase .ph::before{content:"";position:absolute;left:-26px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px var(--paper)}
+.phase .ph.later::before{background:var(--line)}
+.phase h4{font-size:16px;font-weight:900;margin-bottom:3px}
+.phase .when{font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--faint,#8A97AC);margin-bottom:4px}
+.phase p{font-size:14px;color:var(--ink-soft);margin:0}
+@media(max-width:760px){.pc,.who{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">POST-MIGRATION DATA GOVERNANCE</div>
+    <h1>切換後資料維護與權限規劃</h1>
+    <p class="lede">
+      資料庫切換改變的不只是「網站去哪裡拿資料」，也改變了<strong>資料在哪裡更新、由誰更新</strong>。
+      本規劃採「單一資料源 + 過渡期保險」架構：日常維護全數移至 Supabase，
+      Airtable 保留兩席作為回滾保險，並訂定三個月後的退場條件，避免過渡狀態長期化。
+    </p>
+    <div class="meta">
+      <span>適用：Supabase 正式切換後</span>
+      <span>期程：三個月</span>
+      <span>狀態：定案（餘 1 項待查）</span>
+      <span>2026-08-04</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section>
+  <h2>一、切換改變了什麼</h2>
+  <p class="sub">先釐清一個常見誤解：Airtable 不會被停用，它只是不再是網站的資料來源。</p>
+
+  <div class="flowbox">
+    <h4>切換前</h4>
+    <div class="pipe">維護人員編輯 → Airtable → 網站讀取 → 使用者看到  <span class="ok">✓ 全線相通</span></div>
+  </div>
+
+  <div class="flowbox">
+    <h4>切換後（若未調整維護方式）</h4>
+    <div class="pipe">維護人員編輯 → Airtable  <span class="bad">✗ 斷點：網站已不讀此處</span>
+
+                     Supabase → 網站讀取 → 使用者看到  <span class="ok">✓</span></div>
+  </div>
+
+  <div class="callout warn">
+    <h3>這不是故障，是遷移完成後必然出現的狀況</h3>
+    <p>
+      任何系統從 A 資料源搬到 B 資料源都會遇到同一件事：讀取端切走了，寫入端還留在原地。
+      Airtable 資料完整保留、帳號照常可登入，只是<strong>在其中所做的修改不會反映到網站上</strong>。
+      本規劃即在把寫入端接回去。
+    </p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>二、兩種「權限」的區別</h2>
+  <p class="sub">本規劃中最容易混淆之處，先行釐清。這也是同仁不需要 Supabase 後台帳號、卻仍能維護資料的原因。</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th></th><th>後台成員權限</th><th>資料庫權限</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>管的是什麼</td><td>能否登入 supabase.com 管理介面</td><td>連進資料庫後能對資料做什麼</td></tr>
+        <tr><td>由誰決定</td><td>Supabase 預設角色，僅三級</td><td>由 PM 以 SQL 自訂，可精確切分</td></tr>
+        <tr><td>最低一級</td><td>Developer（<strong>已含刪除資料</strong>）</td><td>可自訂為僅 SELECT / INSERT / UPDATE</td></tr>
+        <tr><td>同仁是否給</td><td><span class="badge warn">不給</span></td><td><span class="badge ok">給</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout gold">
+    <h3>為何不採後台帳號</h3>
+    <p>
+      Supabase 後台角色最低一級為 Developer，其權限說明已明確包含刪除資料，且無更低選項可選。
+      若循此途徑，同仁將具備刪除全表記錄的能力。
+      改由資料庫層授權可繞開此限制，將權限精確切分至所需範圍。
+    </p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>三、席次與權限配置</h2>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;margin:22px 0 8px">Airtable｜過渡期保險</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>對象</th><th>席次</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td>PM</td><td><span class="badge ok">保留</span></td><td>回滾操作、資料匯出備份</td></tr>
+        <tr><td>組長</td><td><span class="badge ok">保留</span></td><td>過渡期查閱</td></tr>
+        <tr><td>同仁</td><td><span class="badge warn">拔除</span></td><td>改由 Supabase 維護</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:12px">
+    <strong>保留席次是為了回滾能力，而非保存資料。</strong>
+    Airtable 免費方案上限為每個 base 1,000 筆，現行 base 約 4,310 筆；降為免費方案後 base 將轉為唯讀，回滾路徑即失效。
+    資料本身在任何方案下都不會被刪除。Airtable 依編輯者席次計費，唯讀檢視者不計費，三席降兩席可直接減少支出。
+  </p>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;margin:26px 0 8px">Supabase｜正式維護環境</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>對象</th><th>存取方式</th><th>可執行</th><th>不可執行</th></tr></thead>
+      <tbody>
+        <tr><td>PM</td><td>後台 Owner</td><td>全部操作</td><td>—</td></tr>
+        <tr><td>同仁</td><td><strong>資料庫連線</strong><br><span style="font-weight:400;font-size:13px;color:var(--ink-soft)">非後台成員</span></td><td>查詢、新增、修改</td><td>刪除記錄、改表結構、存取 Contacts</td></tr>
+        <tr><td>組長</td><td>不開放</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards" style="margin-top:18px">
+    <div class="card">
+      <div class="q">同仁的實際操作方式</div>
+      <h3>以資料庫工具連線</h3>
+      <p>使用 TablePlus、DBeaver 或 psql 等工具連線，不需登入 supabase.com，不佔組織席次，接觸不到專案設定與帳務。若嘗試刪除，資料庫直接回傳 <code>42501 permission denied</code>。</p>
+    </div>
+    <div class="card">
+      <div class="q">為何不給刪除權限</div>
+      <h3>不可逆操作集中管理</h3>
+      <p>Supabase 無 Airtable 的 Snapshot 還原機制，誤刪後若無備份即無法復原。改錯可再改回，刪除不可逆。此與專案既有 ETL 安全流程（DRY_RUN → 小批次驗證 → 全量執行）採同一套邏輯。</p>
+    </div>
+  </div>
+
+  <p style="margin-top:16px">
+    <strong>組長不開放帳號的理由：</strong>實際需求為查看資料現況與統計，網站 dashboard 已可滿足，不需進入資料庫層。
+    減少一個具寫入能力的帳號，同時降低操作風險與管理成本。
+  </p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>四、開通時點：先收後放</h2>
+  <p class="sub">角色建立腳本已備置完成，但不預先開通。</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>時點</th><th>動作</th></tr></thead>
+      <tbody>
+        <tr><td>現在</td><td>SQL 腳本備置完成，不執行</td></tr>
+        <tr><td>同仁提出維護需求時</td><td>執行腳本、設定密碼、提供連線資訊（約 1 分鐘）</td></tr>
+        <tr><td>同仁不再參與時</td><td>執行 DROP ROLE，一步結束，不需變更其他設定</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <h3>先收後放的兩個理由</h3>
+    <p>
+      <strong>其一</strong>，權限開了用不到，比要用時沒有更難處理。
+      <strong>其二</strong>，開通與升級 Pro（取得每日備份）兩件事的時點可自然對齊——
+      同仁開始寫入資料時，正是備份保障開始重要的時候。
+    </p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>五、三個月期程</h2>
+
+  <div class="phase">
+    <div class="ph">
+      <div class="when">階段一 · 切換後約 1 週</div>
+      <h4>凍結期：確認系統穩定</h4>
+      <p>暫停資料異動，專注觀察系統運作。此期間若發生問題，可確定與資料變更無關，排查範圍單純。同時向同仁與組長說明凍結範圍與預計期限。</p>
+    </div>
+    <div class="ph">
+      <div class="when">階段二 · 凍結期後約 11 週</div>
+      <h4>正式維護</h4>
+      <p>Supabase 為唯一維護入口，Airtable 僅供查閱與回滾備援。同仁依實際需求開通資料庫連線。</p>
+    </div>
+    <div class="ph later">
+      <div class="when">階段三 · 第 3 個月末</div>
+      <h4>檢討與調整</h4>
+      <p>依實際運作狀況決定 Airtable 是否退場、是否導入 MCP。此時已累積足夠運作經驗，可作出有依據的判斷。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>六、退場條件</h2>
+  <p class="sub">為避免過渡狀態長期化，明訂 Airtable 訂閱的退場條件。</p>
+
+  <div class="checklist">
+    <div class="check">
+      <div class="icon">1</div>
+      <div><h4>Supabase 穩定運作滿三個月</h4><p>期間無需執行回滾</p></div>
+    </div>
+    <div class="check">
+      <div class="icon">2</div>
+      <div><h4>完整資料備份已匯出並存檔</h4><p>停止訂閱前完成，不於需要時才處理</p></div>
+    </div>
+    <div class="check">
+      <div class="icon">3</div>
+      <div><h4>同仁維護流程已穩定運作</h4><p>確認 Supabase 路徑可完全取代原有作業</p></div>
+    </div>
+  </div>
+
+  <p style="margin-top:14px">三項同時成立後停止訂閱。屆時 base 轉為唯讀，資料仍保留可讀，僅無法新增編輯。</p>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>七、MCP 導入時機</h2>
+  <p class="sub">組長已於其他計畫使用 MCP，後期可透過 MCP 讀取本專案資料，不需再使用 Airtable。</p>
+
+  <div class="callout warn">
+    <h3>但導入應在觀察期之後</h3>
+    <p>
+      專案既定的三項 MCP 觸發條件中，「Supabase 遷移完成」目前尚未達成。
+      系統尚未穩定時加接一層，問題發生時將難以判斷來源為遷移或 MCP。
+      <strong>觀察期間組長的查閱方式</strong>：直接使用網站 dashboard，不需資料庫權限。
+    </p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>八、成本</h2>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>項目</th><th>切換前</th><th>過渡期</th><th>觀察期後</th></tr></thead>
+      <tbody>
+        <tr><td>Airtable</td><td>3 席</td><td>2 席</td><td>0 席</td></tr>
+        <tr><td>Supabase</td><td>—</td><td>免費方案</td><td>依需求</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout gold">
+    <h3>Supabase Pro 的唯一必要理由是每日自動備份</h3>
+    <p>
+      「加成員」此一理由已不成立——同仁走資料庫連線，不佔組織席次。
+      考量無 Snapshot 還原機制，備份保障的優先序較高。
+      建議升級時點：同仁開通寫入權限時同步升級，兩者時點對齊。升級判斷應為需求觸發，而非預先購買。
+    </p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>九、待查與已確認事項</h2>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:18px 0 8px">待查（1 項）</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>項目</th><th>影響</th><th>確認方式</th></tr></thead>
+      <tbody>
+        <tr><td>Airtable 現行方案的 API 呼叫限制</td><td>影響觀察期內回滾可行性</td><td>Airtable 帳號後台</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:24px 0 8px">已確認</h3>
+  <div class="checklist">
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>Supabase Assistant Opt-in Level 維持 Disabled</h4>
+        <p>Contacts 表含個資，不應將 schema 或資料提供予第三方 AI 供應商。設定已正確，不予變更。</p>
+      </div>
+    </div>
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>Contacts 表維持不遷移、不開放 API、不授權同仁存取</h4>
+        <p>既有治理決策，本規劃不予變更。授權腳本採逐表授權而非全表授權，即為避免誤將此表納入。</p>
+      </div>
+    </div>
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>同仁具 SQL 操作能力</h4>
+        <p>故採資料庫層授權路徑，此方式對其可行。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-box">
+    <h3>本規劃已定案，可於切換後依此執行</h3>
+    <p>角色建立腳本（含前置確認、逐表授權與驗證測試）已備置完成，待實際需求時執行。唯一待查項目為 Airtable API 呼叫限制，不影響本規劃結構。</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>產業策略智庫｜切換後資料維護與權限規劃 v2 · 2026-08-04</p>
+    <p>附件：create_data_editor_role.sql（角色建立腳本，存放於專案資料夾）</p>
+    <div class="actions">
+      <a class="btn primary" href="migration_acceptance_20260804.html">← 切換前驗收結論</a>
+      <a class="btn" href="db_upgrade_roadmap_20260730.html">資料庫升級路線圖 →</a>
+      <a class="btn" href="index.html#database">回報告中心</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
