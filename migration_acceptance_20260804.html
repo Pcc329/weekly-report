@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>切換前驗收結論｜Supabase 遷移技術驗收</title>
+<title>切換後資料維護方案｜讀寫情境與權限規劃</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -187,22 +187,55 @@ td:first-child{font-weight:700}
   th,td{padding:9px 10px}
 }
 </style>
+<style>
+/* 本頁補充樣式 */
+.flowbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-top:16px}
+.flowbox h4{font-size:14px;font-weight:900;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:12px}
+.pipe{font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:13.5px;line-height:2.1;color:var(--ink);white-space:pre-wrap}
+.pipe .ok{color:var(--teal);font-weight:900}
+.pipe .bad{color:#B5652C;font-weight:900}
+.opt-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-top:16px;box-shadow:0 8px 22px rgba(22,35,59,.04)}
+.opt-card.pick{border:2px solid var(--teal);box-shadow:0 10px 26px rgba(15,123,108,.10)}
+.opt-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.opt-tag{font-size:11.5px;font-weight:900;letter-spacing:.12em;padding:3px 10px;border-radius:999px;background:var(--wire,#EEF2F7);color:var(--ink-soft);border:1px solid var(--line)}
+.opt-tag.rec{background:var(--teal-bg);color:#0B6153;border-color:#BFE7DC}
+.opt-card h3{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:900}
+.opt-card .lead{color:var(--ink-soft);font-size:14.5px;margin:6px 0 14px}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.pc h5{font-size:13px;font-weight:900;margin-bottom:5px}
+.pc .good h5{color:var(--teal)}
+.pc .bad h5{color:#B5652C}
+.pc ul{padding-left:17px;margin:0}
+.pc li{font-size:14px;color:var(--ink-soft);margin-bottom:3px}
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.who .p{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.who .p .role{font-size:11.5px;letter-spacing:.14em;font-weight:900;color:var(--faint,#8A97AC)}
+.who .p h4{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:2px 0 8px}
+.who .p p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.phase{border-left:3px solid var(--line);padding-left:20px;margin-top:18px}
+.phase .ph{margin-bottom:20px;position:relative}
+.phase .ph::before{content:"";position:absolute;left:-26px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px var(--paper)}
+.phase .ph.later::before{background:var(--line)}
+.phase h4{font-size:16px;font-weight:900;margin-bottom:3px}
+.phase .when{font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--faint,#8A97AC);margin-bottom:4px}
+.phase p{font-size:14px;color:var(--ink-soft);margin:0}
+@media(max-width:760px){.pc,.who{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <div class="eyebrow">MIGRATION ACCEPTANCE REPORT</div>
-    <h1>切換前驗收結論：Supabase 版通過技術驗收，具備正式切換條件</h1>
+    <div class="eyebrow">POST-MIGRATION DATA GOVERNANCE</div>
+    <h1>切換後資料維護與權限規劃</h1>
     <p class="lede">
-      2026-08-04 執行雙線路自動化測試共兩輪，對 Airtable 正式站與 Supabase Preview 版進行等價比對。
-      <strong>資料差異全數收斂至已知的 4 筆空殼記錄</strong>，無任何無法解釋的殘差；
-      統編欄位（cid）補齊 2,211 筆，為本次遷移的實質增益。
-      效能面 Supabase 版目前略慢於現行版本，屬可接受範圍，列為切換後複測項目。
+      資料庫切換改變的不只是「網站去哪裡拿資料」，也改變了<strong>資料在哪裡更新、由誰更新</strong>。
+      本規劃採「單一資料源 + 過渡期保險」架構：日常維護全數移至 Supabase，
+      Airtable 保留兩席作為回滾保險，並訂定三個月後的退場條件，避免過渡狀態長期化。
     </p>
     <div class="meta">
-      <span>執行工具：dual_line_test_v2.ipynb</span>
-      <span>比對基準：Airtable 正式站</span>
-      <span>執行輪次：2 輪（含冷啟動排除）</span>
+      <span>適用：Supabase 正式切換後</span>
+      <span>期程：三個月</span>
+      <span>狀態：定案（餘 1 項待查）</span>
       <span>2026-08-04</span>
     </div>
   </div>
@@ -210,266 +243,267 @@ td:first-child{font-weight:700}
 
 <main class="wrap">
 
-<!-- 執行摘要 -->
+<!-- 1 -->
 <section>
-  <h2>執行摘要</h2>
-  <p class="sub">依 8/3 策略決策，切換前提由「真人測試通過」調整為「雙線路測試通過」，本次驗收即為該條件之達成證明。</p>
+  <h2>一、切換改變了什麼</h2>
+  <p class="sub">先釐清一個常見誤解：Airtable 不會被停用，它只是不再是網站的資料來源。</p>
 
-  <div class="kpi-grid">
-    <div class="kpi">
-      <div class="label">資料筆數一致性</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">差異 −4 筆，全數可歸因</div>
-    </div>
-    <div class="kpi">
-      <div class="label">資料完整性</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">主鍵零缺漏 · cid 補齊 2,211 筆</div>
-    </div>
-    <div class="kpi">
-      <div class="label">使用流程模擬</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">8 種查詢情境全數合理</div>
-    </div>
-    <div class="kpi">
-      <div class="label">回應效能</div>
-      <div class="num">⚠️ 可接受</div>
-      <div class="note">低於門檻，惟略慢於現行</div>
-    </div>
+  <div class="flowbox">
+    <h4>切換前</h4>
+    <div class="pipe">維護人員編輯 → Airtable → 網站讀取 → 使用者看到  <span class="ok">✓ 全線相通</span></div>
   </div>
 
-  <div class="callout">
-    <h3>結論</h3>
-    <p>Supabase 版 API 已通過技術驗收，滿足正式切換之前提條件。切換時點另行決策。</p>
+  <div class="flowbox">
+    <h4>切換後（若未調整維護方式）</h4>
+    <div class="pipe">維護人員編輯 → Airtable  <span class="bad">✗ 斷點：網站已不讀此處</span>
+
+                     Supabase → 網站讀取 → 使用者看到  <span class="ok">✓</span></div>
+  </div>
+
+  <div class="callout warn">
+    <h3>這不是故障，是遷移完成後必然出現的狀況</h3>
+    <p>
+      任何系統從 A 資料源搬到 B 資料源都會遇到同一件事：讀取端切走了，寫入端還留在原地。
+      Airtable 資料完整保留、帳號照常可登入，只是<strong>在其中所做的修改不會反映到網站上</strong>。
+      本規劃即在把寫入端接回去。
+    </p>
   </div>
 </section>
 
-<!-- 資料一致性 -->
+<!-- 2 -->
 <section>
-  <h2>一、資料一致性驗證</h2>
-  <p class="sub">同一測試套件對兩版各執行一次，逐端點比對筆數。</p>
-
-  <div class="table-scroll">
-    <table class="result-table">
-      <thead>
-        <tr><th>端點</th><th>Airtable</th><th>Supabase</th><th>差異</th><th>判定</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>/api/solutions</td><td>2,433</td><td>2,429</td><td>−4</td><td><span class="badge ok">可歸因</span></td></tr>
-        <tr><td>/api/companies</td><td>200</td><td>200</td><td>0</td><td><span class="badge ok">一致</span></td></tr>
-        <tr><td>/api/cases</td><td>29</td><td>29</td><td>0</td><td><span class="badge ok">一致</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h2 style="font-size:20px;margin-top:32px">差異歸因：本次驗收的關鍵證據</h2>
-  <p class="sub">solutions 的 −4 筆差異，完整收斂至單一來源：ETL 階段刻意跳過的 4 筆空殼記錄。</p>
-  <p>單看總量相符，僅能說明數字對得上。真正的等價性證明來自<strong>切片後的交叉驗證</strong>——將資料依不同維度切分後，差異仍精確收斂至同一組記錄：</p>
-
-  <div class="table-scroll" style="margin-top:14px">
-    <table>
-      <thead>
-        <tr><th>查詢維度</th><th>Airtable</th><th>Supabase</th><th>差異</th><th>歸因</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>非 AI 方案</td><td>1,558</td><td>1,554</td><td>−4</td><td>4 筆空殼皆非 AI 方案</td></tr>
-        <tr><td>北部方案</td><td>1,430</td><td>1,427</td><td>−3</td><td>4 筆中有 3 筆屬北部</td></tr>
-        <tr><td>AI 方案</td><td>875</td><td>875</td><td>0</td><td>空殼不在此集合</td></tr>
-        <tr><td>其餘 5 項情境</td><td colspan="2" style="font-weight:400">完全相同</td><td>0</td><td>不受影響</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="callout">
-    <h3>無任何無法解釋的殘差</h3>
-    <p>差異不僅在總量上符合預期，且在各維度切片後仍精確收斂至同一組 4 筆記錄。此為兩版資料等價的直接證明。</p>
-  </div>
-</section>
-
-<!-- 資料完整性 -->
-<section>
-  <h2>二、資料完整性</h2>
-  <p class="sub">除筆數外，另檢查主鍵缺漏與關鍵欄位填充狀況。</p>
+  <h2>二、兩種「權限」的區別</h2>
+  <p class="sub">本規劃中最容易混淆之處，先行釐清。這也是同仁不需要 Supabase 後台帳號、卻仍能維護資料的原因。</p>
 
   <div class="table-scroll">
     <table>
       <thead>
-        <tr><th>檢查項</th><th>Airtable</th><th>Supabase</th><th>說明</th></tr>
+        <tr><th></th><th>後台成員權限</th><th>資料庫權限</th></tr>
       </thead>
       <tbody>
-        <tr><td>主鍵（id）為空</td><td>0 筆</td><td>0 筆</td><td>兩版皆無缺漏</td></tr>
-        <tr><td>方案名為空</td><td>4 筆</td><td>0 筆</td><td>空殼記錄已於 ETL 排除</td></tr>
-        <tr><td>統編（cid）有值</td><td>0 筆</td><td><strong>2,211 筆</strong></td><td>fix/cid-bom 生效</td></tr>
+        <tr><td>管的是什麼</td><td>能否登入 supabase.com 管理介面</td><td>連進資料庫後能對資料做什麼</td></tr>
+        <tr><td>由誰決定</td><td>Supabase 預設角色，僅三級</td><td>由 PM 以 SQL 自訂，可精確切分</td></tr>
+        <tr><td>最低一級</td><td>Developer（<strong>已含刪除資料</strong>）</td><td>可自訂為僅 SELECT / INSERT / UPDATE</td></tr>
+        <tr><td>同仁是否給</td><td><span class="badge warn">不給</span></td><td><span class="badge ok">給</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="callout gold">
-    <h3>cid 欄位為本次遷移的實質增益</h3>
-    <p>Airtable 版因 BOM 字元問題導致統編欄位恆為空值；Supabase 版修正後補齊 2,211 筆企業統編，可支援後續跨資料庫勾稽與外部資料源比對。</p>
-  </div>
-</section>
-
-<!-- 使用流程 -->
-<section>
-  <h2>三、使用流程驗證</h2>
-  <p class="sub">複製 manufacturing.html 前端篩選邏輯，模擬顧問實際查詢情境。</p>
-
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr><th>查詢情境</th><th>Airtable</th><th>Supabase</th><th>判定</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>製造業 AI 方案</td><td>177</td><td>177</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>北部方案</td><td>1,430</td><td>1,427</td><td><span class="badge ok">✓ 空殼歸因</span></td></tr>
-        <tr><td>中部方案</td><td>253</td><td>253</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>南部方案</td><td>213</td><td>213</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>AI 方案（全體）</td><td>875</td><td>875</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>非 AI 方案</td><td>1,558</td><td>1,554</td><td><span class="badge ok">✓ 空殼歸因</span></td></tr>
-        <tr><td>5 萬以下方案</td><td>1,246</td><td>1,246</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>低價方案（&lt;1 萬）</td><td>357</td><td>357</td><td><span class="badge ok">✓</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p style="margin-top:14px">完整路徑模擬（搜尋 → 方案詳情）：兩版皆確認詳情頁欄位完整。</p>
-</section>
-
-<!-- 效能 -->
-<section>
-  <h2>四、效能觀察</h2>
-  <p class="sub">執行兩輪測試以區分冷啟動雜訊與真實效能差異。</p>
-
-  <div class="cards">
-    <div class="card">
-      <div class="q">第一輪 vs 第二輪（Supabase）</div>
-      <h3>冷啟動已排除</h3>
-      <ul>
-        <li>/api/companies：5,136ms → <strong>147ms</strong></li>
-        <li>/api/cases：1,956ms → 1,433ms</li>
-        <li>/api/solutions：7,117ms → 5,998ms</li>
-      </ul>
-      <p style="margin-top:8px">companies 端點熱機後降至 147ms，證實首輪延遲主因為 Preview 環境冷啟動。</p>
-    </div>
-    <div class="card">
-      <div class="q">熱機後兩版對照</div>
-      <h3>Supabase 版略慢</h3>
-      <ul>
-        <li>/api/companies：148ms vs 147ms（持平）</li>
-        <li>/api/cases：438ms vs 1,433ms（慢 1.0s）</li>
-        <li>/api/solutions：3,859ms vs 5,998ms（慢 2.1s）</li>
-      </ul>
-      <p style="margin-top:8px">首輪出現的「Supabase 較快」為冷啟動雜訊造成的假象，第二輪已修正此判斷。</p>
-    </div>
-  </div>
-
-  <div class="callout warn">
-    <h3>判讀：不擋切換，但列為切換後複測項</h3>
+    <h3>為何不採後台帳號</h3>
     <p>
-      三項理由支持此判斷：<strong>其一</strong>，全數低於 10 秒可用性門檻，最慢者 6 秒，對「一次載入全庫、前端篩選」的現行使用模式屬可接受範圍。
-      <strong>其二</strong>，比較條件不對等——Airtable 版跑在正式站（持續流量、函式常駐），Supabase 版跑在 Preview（低流量、易冷啟動）。
-      <strong>其三</strong>，資料正確性為切換的必要條件，效能屬可事後優化項。
-      正式切換後須複測；若 /api/solutions 仍維持 6 秒量級，則屬真實效能問題，應以索引優化或改採分頁載入處理。
+      Supabase 後台角色最低一級為 Developer，其權限說明已明確包含刪除資料，且無更低選項可選。
+      若循此途徑，同仁將具備刪除全表記錄的能力。
+      改由資料庫層授權可繞開此限制，將權限精確切分至所需範圍。
     </p>
   </div>
 </section>
 
-<!-- price=0 -->
+<!-- 3 -->
 <section>
-  <h2>五、附帶查證：price = 0 議題結案</h2>
-  <p class="sub">待辦 fix/price-zero-preserve 原假設遷移可能將免費方案誤存為 price = 0，導致前端顯示錯誤。</p>
+  <h2>三、席次與權限配置</h2>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;margin:22px 0 8px">Airtable｜過渡期保險</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>對象</th><th>席次</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td>PM</td><td><span class="badge ok">保留</span></td><td>回滾操作、資料匯出備份</td></tr>
+        <tr><td>組長</td><td><span class="badge ok">保留</span></td><td>過渡期查閱</td></tr>
+        <tr><td>同仁</td><td><span class="badge warn">拔除</span></td><td>改由 Supabase 維護</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:12px">
+    <strong>保留席次是為了回滾能力，而非保存資料。</strong>
+    Airtable 免費方案上限為每個 base 1,000 筆，現行 base 約 4,310 筆；降為免費方案後 base 將轉為唯讀，回滾路徑即失效。
+    資料本身在任何方案下都不會被刪除。Airtable 依編輯者席次計費，唯讀檢視者不計費，三席降兩席可直接減少支出。
+  </p>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;margin:26px 0 8px">Supabase｜正式維護環境</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>對象</th><th>存取方式</th><th>可執行</th><th>不可執行</th></tr></thead>
+      <tbody>
+        <tr><td>PM</td><td>後台 Owner</td><td>全部操作</td><td>—</td></tr>
+        <tr><td>同仁</td><td><strong>資料庫連線</strong><br><span style="font-weight:400;font-size:13px;color:var(--ink-soft)">非後台成員</span></td><td>查詢、新增、修改</td><td>刪除記錄、改表結構、存取 Contacts</td></tr>
+        <tr><td>組長</td><td>不開放</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards" style="margin-top:18px">
+    <div class="card">
+      <div class="q">同仁的實際操作方式</div>
+      <h3>以資料庫工具連線</h3>
+      <p>使用 TablePlus、DBeaver 或 psql 等工具連線，不需登入 supabase.com，不佔組織席次，接觸不到專案設定與帳務。若嘗試刪除，資料庫直接回傳 <code>42501 permission denied</code>。</p>
+    </div>
+    <div class="card">
+      <div class="q">為何不給刪除權限</div>
+      <h3>不可逆操作集中管理</h3>
+      <p>Supabase 無 Airtable 的 Snapshot 還原機制，誤刪後若無備份即無法復原。改錯可再改回，刪除不可逆。此與專案既有 ETL 安全流程（DRY_RUN → 小批次驗證 → 全量執行）採同一套邏輯。</p>
+    </div>
+  </div>
+
+  <p style="margin-top:16px">
+    <strong>組長不開放帳號的理由：</strong>實際需求為查看資料現況與統計，網站 dashboard 已可滿足，不需進入資料庫層。
+    減少一個具寫入能力的帳號，同時降低操作風險與管理成本。
+  </p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>四、開通時點：先收後放</h2>
+  <p class="sub">角色建立腳本已備置完成，但不預先開通。</p>
 
   <div class="table-scroll">
     <table>
-      <thead>
-        <tr><th>全庫 price 分布（n = 2,429）</th><th>筆數</th></tr>
-      </thead>
+      <thead><tr><th>時點</th><th>動作</th></tr></thead>
       <tbody>
-        <tr><td>price 精確為 0</td><td>13</td></tr>
-        <tr><td>price 為 null</td><td>143</td></tr>
-        <tr><td>price &gt; 0</td><td>2,273</td></tr>
+        <tr><td>現在</td><td>SQL 腳本備置完成，不執行</td></tr>
+        <tr><td>同仁提出維護需求時</td><td>執行腳本、設定密碼、提供連線資訊（約 1 分鐘）</td></tr>
+        <tr><td>同仁不再參與時</td><td>執行 DROP ROLE，一步結束，不需變更其他設定</td></tr>
       </tbody>
     </table>
   </div>
-
-  <p style="margin-top:16px">逐筆檢視該 13 筆記錄：</p>
-  <div class="table-scroll" style="margin-top:10px">
-    <table>
-      <thead>
-        <tr><th>檢查項</th><th>結果</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>pricing_model 含「訂閱制」</td><td><strong>13 / 13</strong></td></tr>
-        <tr><td>monthly_price 有值</td><td><strong>0 / 13</strong></td></tr>
-        <tr><td>price_tier 標示為「免費」</td><td><strong>0 / 13</strong>（4 筆「待確認」、9 筆 null）</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p style="margin-top:16px">方案性質佐證：ECPay 金流整合、Hami Cam AI 智慧攝影機、旅宿收益管理顧問服務、官網 Booking Engine 訂房系統等，均為明確商業產品或顧問服務，不存在零元版本。</p>
 
   <div class="callout">
-    <h3>結論：待辦關閉，且不應執行</h3>
+    <h3>先收後放的兩個理由</h3>
     <p>
-      price = 0 為 ETL 填充值，代表「價格未提供」，非「售價為零」。
-      現行前端已將 price 為 null / 0 / falsy 統一顯示為「📞 洽詢報價」——此邏輯對該 13 筆而言正是最準確的表述。
-      若改為顯示「免費」，將產生錯誤資訊並影響顧問對客戶的推薦準確性，屬負面改動。
+      <strong>其一</strong>，權限開了用不到，比要用時沒有更難處理。
+      <strong>其二</strong>，開通與升級 Pro（取得每日備份）兩件事的時點可自然對齊——
+      同仁開始寫入資料時，正是備份保障開始重要的時候。
     </p>
   </div>
 </section>
 
-<!-- 非阻斷性發現 -->
+<!-- 5 -->
 <section>
-  <h2>六、非阻斷性發現</h2>
-  <p class="sub">以下項目經確認與本次遷移無關，不構成切換阻礙，另列為獨立待辦。</p>
+  <h2>五、三個月期程</h2>
+
+  <div class="phase">
+    <div class="ph">
+      <div class="when">階段一 · 切換後約 1 週</div>
+      <h4>凍結期：確認系統穩定</h4>
+      <p>暫停資料異動，專注觀察系統運作。此期間若發生問題，可確定與資料變更無關，排查範圍單純。同時向同仁與組長說明凍結範圍與預計期限。</p>
+    </div>
+    <div class="ph">
+      <div class="when">階段二 · 凍結期後約 11 週</div>
+      <h4>正式維護</h4>
+      <p>Supabase 為唯一維護入口，Airtable 僅供查閱與回滾備援。同仁依實際需求開通資料庫連線。</p>
+    </div>
+    <div class="ph later">
+      <div class="when">階段三 · 第 3 個月末</div>
+      <h4>檢討與調整</h4>
+      <p>依實際運作狀況決定 Airtable 是否退場、是否導入 MCP。此時已累積足夠運作經驗，可作出有依據的判斷。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>六、退場條件</h2>
+  <p class="sub">為避免過渡狀態長期化，明訂 Airtable 訂閱的退場條件。</p>
 
   <div class="checklist">
     <div class="check">
-      <div class="icon" style="color:var(--warn)">!</div>
-      <div>
-        <h4>/api/companies 回傳上限 200 筆（實際 852 家）</h4>
-        <p>
-          兩版皆為 200 筆、55KB、147ms——連回應大小與耗時均相同，證明兩條邏輯分支共用同一段限制程式碼，屬 API 層寫死參數，非 Airtable 分頁問題。
-          Airtable 版本來即為此行為，現行正式站一直如此運作，非遷移造成之退化。
-          後續應確認前端是否有頁面需完整 852 筆列表。
-        </p>
-      </div>
+      <div class="icon">1</div>
+      <div><h4>Supabase 穩定運作滿三個月</h4><p>期間無需執行回滾</p></div>
     </div>
     <div class="check">
-      <div class="icon" style="color:var(--ink-soft)">?</div>
-      <div>
-        <h4>疑似重複記錄</h4>
-        <p>
-          SOL-FIELD-0030 與 SOL-FIELD-0126 方案名稱與各欄位值均相同（「旅宿收益管理顧問服務」）。
-          後續於切換後執行全庫 solution_name + company_id 重複掃描，判定為個案或系統性問題。優先序低。
-        </p>
-      </div>
+      <div class="icon">2</div>
+      <div><h4>完整資料備份已匯出並存檔</h4><p>停止訂閱前完成，不於需要時才處理</p></div>
     </div>
+    <div class="check">
+      <div class="icon">3</div>
+      <div><h4>同仁維護流程已穩定運作</h4><p>確認 Supabase 路徑可完全取代原有作業</p></div>
+    </div>
+  </div>
+
+  <p style="margin-top:14px">三項同時成立後停止訂閱。屆時 base 轉為唯讀，資料仍保留可讀，僅無法新增編輯。</p>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>七、MCP 導入時機</h2>
+  <p class="sub">組長已於其他計畫使用 MCP，後期可透過 MCP 讀取本專案資料，不需再使用 Airtable。</p>
+
+  <div class="callout warn">
+    <h3>但導入應在觀察期之後</h3>
+    <p>
+      專案既定的三項 MCP 觸發條件中，「Supabase 遷移完成」目前尚未達成。
+      系統尚未穩定時加接一層，問題發生時將難以判斷來源為遷移或 MCP。
+      <strong>觀察期間組長的查閱方式</strong>：直接使用網站 dashboard，不需資料庫權限。
+    </p>
   </div>
 </section>
 
-<!-- 驗收結論 -->
+<!-- 8 -->
 <section>
-  <h2>七、驗收結論</h2>
+  <h2>八、成本</h2>
 
   <div class="table-scroll">
     <table>
-      <thead>
-        <tr><th>切換前提</th><th>狀態</th><th>依據</th></tr>
-      </thead>
+      <thead><tr><th>項目</th><th>切換前</th><th>過渡期</th><th>觀察期後</th></tr></thead>
       <tbody>
-        <tr><td>資料遷移完成</td><td><span class="badge ok">已達成</span></td><td>Cases / Companies / Solutions 三表已遷移</td></tr>
-        <tr><td>雙線路測試通過</td><td><span class="badge ok">已達成</span></td><td>本文件</td></tr>
-        <tr><td>資料一致性可歸因</td><td><span class="badge ok">已達成</span></td><td>差異全數收斂至 4 筆空殼</td></tr>
-        <tr><td>已知議題完成查證</td><td><span class="badge ok">已達成</span></td><td>price=0 已結案</td></tr>
-        <tr><td>回滾機制就緒</td><td><span class="badge ok">已達成</span></td><td>DB_SOURCE_* 環境變數可即時切回</td></tr>
+        <tr><td>Airtable</td><td>3 席</td><td>2 席</td><td>0 席</td></tr>
+        <tr><td>Supabase</td><td>—</td><td>免費方案</td><td>依需求</td></tr>
       </tbody>
     </table>
   </div>
 
+  <div class="callout gold">
+    <h3>Supabase Pro 的唯一必要理由是每日自動備份</h3>
+    <p>
+      「加成員」此一理由已不成立——同仁走資料庫連線，不佔組織席次。
+      考量無 Snapshot 還原機制，備份保障的優先序較高。
+      建議升級時點：同仁開通寫入權限時同步升級，兩者時點對齊。升級判斷應為需求觸發，而非預先購買。
+    </p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>九、待查與已確認事項</h2>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:18px 0 8px">待查（1 項）</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>項目</th><th>影響</th><th>確認方式</th></tr></thead>
+      <tbody>
+        <tr><td>Airtable 現行方案的 API 呼叫限制</td><td>影響觀察期內回滾可行性</td><td>Airtable 帳號後台</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin:24px 0 8px">已確認</h3>
+  <div class="checklist">
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>Supabase Assistant Opt-in Level 維持 Disabled</h4>
+        <p>Contacts 表含個資，不應將 schema 或資料提供予第三方 AI 供應商。設定已正確，不予變更。</p>
+      </div>
+    </div>
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>Contacts 表維持不遷移、不開放 API、不授權同仁存取</h4>
+        <p>既有治理決策，本規劃不予變更。授權腳本採逐表授權而非全表授權，即為避免誤將此表納入。</p>
+      </div>
+    </div>
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>同仁具 SQL 操作能力</h4>
+        <p>故採資料庫層授權路徑，此方式對其可行。</p>
+      </div>
+    </div>
+  </div>
+
   <div class="final-box">
-    <h3>Supabase 版 API 已通過技術驗收，具備正式切換條件</h3>
-    <p>依 8/3 策略決策，切換前提已由「真人測試通過」調整為「雙線路測試通過」，本次驗收即為該條件之達成證明。切換時點另行決策。</p>
+    <h3>本規劃已定案，可於切換後依此執行</h3>
+    <p>角色建立腳本（含前置確認、逐表授權與驗證測試）已備置完成，待實際需求時執行。唯一待查項目為 Airtable API 呼叫限制，不影響本規劃結構。</p>
   </div>
 </section>
 
@@ -477,12 +511,12 @@ td:first-child{font-weight:700}
 
 <footer class="footer">
   <div class="wrap">
-    <p>產業策略智庫｜Supabase 遷移切換前驗收結論 · 2026-08-04</p>
-    <p>數據來源：dual_line_test_v2.ipynb 執行紀錄（共兩輪）及 Supabase SQL Editor 查證結果。</p>
+    <p>產業策略智庫｜切換後資料維護與權限規劃 v2 · 2026-08-04</p>
+    <p>附件：create_data_editor_role.sql（角色建立腳本，存放於專案資料夾）</p>
     <div class="actions">
-      <a class="btn primary" href="dual_line_test_spec_20260804.html">← 雙線路測試工具說明</a>
+      <a class="btn primary" href="migration_acceptance_20260804.html">← 切換前驗收結論</a>
       <a class="btn" href="db_upgrade_roadmap_20260730.html">資料庫升級路線圖 →</a>
-      <a class="btn" href="https://github.com/Pcc329/weekly-report" target="_blank" rel="noopener">查看 GitHub 原始碼 ↗</a>
+      <a class="btn" href="index.html#database">回報告中心</a>
     </div>
   </div>
 </footer>
