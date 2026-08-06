@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資料 ETL 檢查報告｜新北產業AI化輔導計畫</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  :root {
+    --primary: #2c3e50;
+    --teal: #1D9E75;
+    --red: #e74c3c;
+    --yellow: #f39c12;
+    --bg: #f4f7f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg); margin: 0; padding: 0; color: #333;
+  }
+
+  .back-btn {
+    position: fixed; top: 15px; left: 15px;
+    padding: 10px 20px; background: #34495e; color: white;
+    text-decoration: none; border-radius: 50px; font-weight: bold;
+    font-size: 14px; z-index: 9999; transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  .back-btn:hover { background: #2c3e50; transform: scale(1.05); }
+
+  header {
+    background: var(--primary); color: white;
+    padding: 52px 20px 28px; text-align: center;
+  }
+  header .badge {
+    display: inline-block; background: var(--teal);
+    color: white; font-size: 0.75rem; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  header h1 { margin: 0 0 8px; font-size: 1.9rem; }
+  header p { margin: 0; opacity: 0.65; font-size: 0.9rem; }
+
+  .container { width: 95%; max-width: 1000px; margin: 28px auto; }
+
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: white; border-radius: 10px; padding: 18px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center;
+    border-top: 3px solid var(--teal);
+  }
+  .kpi-card.warn { border-top-color: var(--yellow); }
+  .kpi-card.danger { border-top-color: var(--red); }
+  .kpi-num { font-size: 1.9rem; font-weight: 800; color: var(--teal); }
+  .kpi-card.warn .kpi-num { color: var(--yellow); }
+  .kpi-card.danger .kpi-num { color: var(--red); }
+  .kpi-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
+  .kpi-sub { font-size: 0.7rem; color: #bbb; margin-top: 2px; }
+
+  .status-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .status-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+  }
+  .status-badge.ok { background: #e8f8f2; color: #1D9E75; }
+  .status-badge.warn { background: #fef9e7; color: #d68910; }
+  .status-badge.danger { background: #fdecea; color: #c0392b; }
+  .status-badge.info { background: #eaf3fb; color: #2471a3; }
+
+  .card {
+    background: white; border-radius: 10px; padding: 28px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 18px;
+  }
+  .card h2 {
+    color: var(--primary); margin: 0 0 16px;
+    font-size: 1.1rem; border-left: 4px solid var(--teal);
+    padding-left: 12px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .cell-ok { color: var(--teal); font-weight: 600; }
+  .cell-warn { color: var(--yellow); font-weight: 600; }
+  .cell-danger { color: var(--red); font-weight: 600; }
+
+  .conclusion {
+    border-radius: 10px; padding: 20px 24px; margin-bottom: 18px;
+  }
+  .conclusion.danger { background: #fdecea; border-left: 5px solid var(--red); }
+  .conclusion.warn { background: #fef9e7; border-left: 5px solid var(--yellow); }
+  .conclusion.ok { background: #e8f8f2; border-left: 5px solid var(--teal); }
+  .conclusion h3 { margin: 0 0 8px; font-size: 1rem; }
+  .conclusion p { margin: 0; font-size: 0.9rem; line-height: 1.7; }
+
+  .progress-bar-wrap { margin: 6px 0 2px; }
+  .progress-bar-bg { background: #eee; border-radius: 99px; height: 8px; }
+  .progress-bar-fill { height: 8px; border-radius: 99px; background: var(--teal); }
+  .progress-bar-fill.warn { background: var(--yellow); }
+  .progress-bar-fill.danger { background: var(--red); }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 2px; }
+
+  .next-steps { list-style: none; padding: 0; margin: 0; }
+  .next-steps li {
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+    font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .next-steps li.high { background: #fdecea; }
+  .next-steps li.mid { background: #fef9e7; }
+  .next-steps li.low { background: #f4f7f6; }
+  .next-steps .step-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .next-steps .step-text { line-height: 1.5; }
+  .next-steps .step-text strong { display: block; }
+
+  .update-time { text-align: right; font-size: 0.75rem; color: #aaa; margin-bottom: 10px; }
+
+  footer { text-align: center; padding: 28px; color: #aaa; font-size: 0.8rem; }
+
+  @media (max-width: 600px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">🏠 回到報告首頁</a>
+
+<header>
+  <div class="badge">ETL 檢查報告</div>
+  <h1>📋 新北產業AI化輔導計畫 資料匯入</h1>
+  <p>115年新北產業AI化輔導計畫_45家AI服務供應商方案表.pdf · 執行期間：2026-08-05 ～ 2026-08-06</p>
+</header>
+
+<div class="container">
+
+  <div class="update-time" id="update-time"></div>
+
+  <!-- KPI 列 -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-num">56</div>
+      <div class="kpi-label">方案總數</div>
+      <div class="kpi-sub">45家供應商</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">25 / 20</div>
+      <div class="kpi-label">既有公司 / 新公司</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">56</div>
+      <div class="kpi-label">最終匯入筆數</div>
+      <div class="kpi-sub">SOL-NTPC-0001~0056</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-num">3</div>
+      <div class="kpi-label">意外發現的既有問題</div>
+      <div class="kpi-sub">一併修復</div>
+    </div>
+  </div>
+
+  <!-- 狀態 badges -->
+  <div class="status-row">
+    <span class="status-badge ok">✅ 方案名稱 100% 完整</span>
+    <span class="status-badge ok">✅ 統編 100% 完整（多來源交叉查證）</span>
+    <span class="status-badge ok">✅ Solutions.price 全程未被優惠價污染</span>
+    <span class="status-badge warn">⚠️ PDF數字為特殊字型，需人工核對重建</span>
+    <span class="status-badge danger">❌ 首版AI批次分類因輸入資料設計不良，暫無法分類率達31%</span>
+  </div>
+
+  <!-- 資料來源與擷取 -->
+  <div class="card">
+    <h2>資料來源與擷取方式</h2>
+    <p style="font-size:0.9rem; line-height:1.8; color:#555;">
+      原始資料是設計排版的 PDF（非表格化資料），數字使用特殊字型渲染，<code>pdfplumber</code> 直接抽取文字時價格欄位全部變成亂碼（如 <code>NT$&#9633;&#9633;,&#9633;&#9633;&#9633;</code>）。
+      改用影像分割逐段肉眼核對＋人工重建 56 筆結構化資料，耗時但確保正確性優於直接文字擷取。
+    </p>
+  </div>
+
+  <!-- 公司比對結果 -->
+  <div class="card">
+    <h2>公司比對結果</h2>
+    <table>
+      <thead><tr><th>類別</th><th>家數</th><th>處理方式</th></tr></thead>
+      <tbody>
+        <tr><td>既有公司（已存在Companies表）</td><td class="cell-ok">25家（36筆方案）</td><td>直接沿用既有 company_id</td></tr>
+        <tr><td>全新公司</td><td class="cell-warn">20家（20筆方案）</td><td>統編查證後新建 Companies 紀錄</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:0.95rem; color:#2c3e50; margin:20px 0 10px;">新公司統編查證信心分布</h3>
+    <table>
+      <thead><tr><th>信心等級</th><th>家數</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-ok">高信心（多來源一致）</td><td>17家</td><td>twincn/twfile/官網/上市櫃公開資訊互相印證</td></tr>
+        <tr><td class="cell-warn">中信心</td><td>2家</td><td>凌松科技（單一來源）、睿力智能運動（登記業務項目與方案內容有落差）；經人工複核於findbiz官方資料確認統編無誤</td></tr>
+        <tr><td class="cell-danger">需另查</td><td>1家</td><td>卡菲卡金融科技，第三方資料庫查無，原因為近期改名（前名稱「墨沫有限公司」），最終由使用者於findbiz官方查得</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px; padding:12px 16px; background:#eaf3fb; border-radius:8px; font-size:0.85rem; color:#2471a3;">
+      ℹ️ 另有一家不用查：華苓科技(股)公司實為既有 company_id <code>16861784</code>，非新公司，PDF方案(Secorion)沿用既有連結。
+    </div>
+  </div>
+
+  <!-- 重複比對 -->
+  <div class="card">
+    <h2>重複比對：5項疑似重複，逐筆核對後確認處理方式</h2>
+    <table>
+      <thead><tr><th>新北方案</th><th>既有 solution_id</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>探點TanDian Pro</td><td>SOL-SME-0366</td><td>同一產品，新北優惠版另建列</td></tr>
+        <tr><td>空品平台系統</td><td>SOL-FIELD-0089</td><td>同一產品，新北優惠版另建列</td></tr>
+        <tr><td>WebGUID網路指南針</td><td>SOL-0253</td><td>同一產品，新北優惠版另建列</td></tr>
+        <tr><td>Secorion 資安獵捕平台</td><td>SOL-0434 / SOL-SME-0158 / SOL-MOE-0459</td><td>同一產品第4筆，符合既有多來源慣例</td></tr>
+        <tr><td>TeamSync</td><td>SOL-BIZ-0093 / SOL-BIZ-0094</td><td class="cell-ok">非重複，既有為不同子系統產品線</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 架構決策 -->
+  <div class="conclusion ok">
+    <h3>✅ 架構決策：時效性優惠與正規價分離</h3>
+    <p>新北方案多帶有「新北專屬優惠價」，若直接覆寫 Solutions.price，優惠到期時需回頭手動改回原價，容易遺漏。改採新建 Program_Promotions 表，優惠價/原價分離存放，Solutions.price 全程只存正規價。共 16 筆優惠紀錄（12筆既有公司批次 + 4筆新公司批次）。valid_from/valid_until 欄位保留但暫空，待向新北經發局確認官方計畫執行期間後回填。</p>
+  </div>
+
+  <!-- industry_category分類 -->
+  <div class="card">
+    <h2>industry_category 批次分類</h2>
+    <p style="font-size:0.88rem; color:#666; margin-bottom:16px;">36筆既有公司批次方案需補分類，比照既有Haiku批次分類方法，但第一版嘗試出現重大瑕疵。</p>
+    <table>
+      <thead><tr><th>版本</th><th>輸入資料</th><th>暫無法分類比例</th><th>問題</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="cell-danger">v1</td>
+          <td>誤用 pricing_notes（折扣資訊）當輸入</td>
+          <td class="cell-danger">31%</td>
+          <td>AI Sales智能銷售助手被分到暫無法分類（名稱明寫Sales卻無法判斷），證實是輸入資料問題而非邏輯錯誤</td>
+        </tr>
+        <tr>
+          <td class="cell-ok">v2</td>
+          <td>改用PDF原始功能描述</td>
+          <td class="cell-warn">17.1%→16.7%（temperature=0後穩定）</td>
+          <td>7筆暫無法分類經複核為合理判斷（通用型基礎工具無明確功能領域）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="conclusion danger">
+    <h3>🔴 根因：ETL可重複驗證性的破口</h3>
+    <p>v1 未設定 <code>temperature</code> 參數，同樣輸入重跑結果會飄動（19.4% vs 17.1%），破壞ETL「可反覆驗證」的基本要求，v2 已修正並封裝進共用框架。</p>
+  </div>
+
+  <!-- 意外發現 -->
+  <div class="card">
+    <h2>過程中發現的既有資料品質問題（非本次任務範圍，一併處理）</h2>
+
+    <h3 style="font-size:0.95rem; color:#2c3e50; margin:10px 0 8px;">1. Companies表外鍵配錯</h3>
+    <p style="font-size:0.88rem; line-height:1.7; color:#555; margin-bottom:18px;">
+      <code>42837620</code> 公司名誤標「睿思創新」實為「睿鼎數位股份有限公司」，其下11筆Solutions有9筆（CROSSBOT系列/商機王等）外鍵配錯，已改連到正確的 <code>82800070</code>。發現路徑：新北CROSSBOT方案統編查證時比對既有Companies紀錄意外發現。
+    </p>
+
+    <h3 style="font-size:0.95rem; color:#2c3e50; margin:10px 0 8px;">2. 臺灣雲市集26筆AI補完失敗殘留</h3>
+    <p style="font-size:0.88rem; line-height:1.7; color:#555; margin-bottom:18px;">
+      <code>solution_name</code> 欄位存有佔位符「缺」，description 內容為未填的AI模板文字。人工抽樣9家於官網（tcloud.gov.tw）查證全數「查無」，確認源頭資料已不存在、無法修復。採標記不刪除策略：新增 <code>record_status</code> 欄位標記「已下架_資料異常」，並修正API層（<code>api/solutions.js</code>／<code>api/stats.js</code>）排除該狀態，PR #120。
+    </p>
+
+    <h3 style="font-size:0.95rem; color:#2c3e50; margin:10px 0 8px;">3. sources.html與實際資料脫節</h3>
+    <p style="font-size:0.88rem; line-height:1.7; color:#555;">
+      第一輪修正誤把「產業案例知識庫」（Cases表）算進「9大方案來源」，第二輪修正案例知識庫獨立顯示、來源卡片改為即時讀取 <code>/api/stats</code>，不再寫死數字（根因修法）。PR #121。
+    </p>
+  </div>
+
+  <!-- BOM陷阱 -->
+  <div class="card">
+    <h2>技術debt：BOM欄位命名陷阱</h2>
+    <p style="font-size:0.88rem; color:#666; margin-bottom:14px;">
+      Airtable這個Base的多個表格主鍵欄位，顯示名稱與實際欄位名稱不同（實際欄位名稱前綴隱藏BOM字元）：
+    </p>
+    <table style="margin-bottom:14px;">
+      <thead><tr><th>表格</th><th>受影響欄位</th></tr></thead>
+      <tbody>
+        <tr><td>Solutions</td><td><code>solution_id</code></td></tr>
+        <tr><td>Companies</td><td><code>company_id</code></td></tr>
+      </tbody>
+    </table>
+    <div style="padding:12px 16px; background:#fef9e7; border-radius:8px; font-size:0.85rem; color:#666;">
+      ⚠️ 寫入與查詢（filterByFormula）都需要用帶BOM前綴的欄位名稱才能正確命中，否則寫入報 <code>UNKNOWN_FIELD_NAME</code>、查詢靜默回傳0筆（不會報錯，最容易誤判為資料遺失）。本次於Companies/Solutions雙表的建立與驗證流程中都踩到，已記錄為固定坑點。
+    </div>
+  </div>
+
+  <!-- 可重用資產 -->
+  <div class="conclusion ok">
+    <h3>✅ 建立的可重用資產</h3>
+    <p><strong>ai_batch_etl_lib.py</strong>：通用AI批次分類ETL框架，內建輸入資料品質檢查、品質閘門（fallback類別比例超門檻示警）、標準DRY_RUN→小批次→全批次→驗證流程、稽核記錄（含完整prompt與AI回應存檔）。可直接用於has_ai None值206筆等未來類似任務。</p>
+  </div>
+
+  <!-- 最終數字 -->
+  <div class="card">
+    <h2>最終數字</h2>
+    <table>
+      <thead><tr><th>項目</th><th>匯入前</th><th>匯入後</th><th>差異</th></tr></thead>
+      <tbody>
+        <tr><td>Solutions</td><td>2,433</td><td>2,489</td><td class="cell-ok">+56</td></tr>
+        <tr><td>Companies</td><td>852</td><td>871</td><td class="cell-ok">+19</td></tr>
+        <tr><td>Program_Promotions</td><td>0</td><td>16</td><td class="cell-ok">+16</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 下一步 -->
+  <div class="card">
+    <h2>建議下一步</h2>
+    <ul class="next-steps">
+      <li class="high">
+        <span class="step-icon">🔴</span>
+        <span class="step-text"><strong>10大領域→9類industry_category正式對照規則（2-2）仍未拍板</strong>本次僅為individual分類，未觸及規則制定本身。</span>
+      </li>
+      <li class="mid">
+        <span class="step-icon">🟡</span>
+        <span class="step-text"><strong>Program_Promotions的valid_from/valid_until待新北經發局回覆</strong>官方計畫執行期間。</span>
+      </li>
+      <li class="mid">
+        <span class="step-icon">🟡</span>
+        <span class="step-text"><strong>Supabase資料落差</strong>獨立於本案發現，Preview環境Solutions少40筆，含本次新增56筆是否已同步未知，需併入既有Supabase遷移blocker清理工作流程處理，不與本案混合。</span>
+      </li>
+      <li class="low">
+        <span class="step-icon">🟢</span>
+        <span class="step-text"><strong>睿力智能運動業務內容落差</strong>已記錄於Solutions備註，非阻斷，暫不追查。</span>
+      </li>
+      <li class="low">
+        <span class="step-icon">🟢</span>
+        <span class="step-text"><strong>82800070底下4組真重複</strong>（商機王/Crossbot系列各2筆）待整理，屬既有資料真重複非本次外鍵錯誤所致。</span>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>III 產業資料庫專案 · ETL 報告系統 · 2026-08-06</footer>
+
+<script>
+  document.getElementById('update-time').textContent =
+    '報告產出時間：2026-08-06　|　分析工具：Claude + Airtable API + Colab';
+</script>
+
+</body>
+</html>
