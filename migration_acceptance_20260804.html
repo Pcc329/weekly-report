@@ -191,7 +191,7 @@ td:first-child{font-weight:700}
 <body>
 <header>
   <div class="wrap">
-    <div class="eyebrow">MIGRATION ACCEPTANCE REPORT</div>
+    <div class="eyebrow">MIGRATION ACCEPTANCE REPORT · 含測試方法說明</div>
     <h1>切換前驗收結論：Supabase 版通過技術驗收，具備正式切換條件</h1>
     <p class="lede">
       2026-08-04 執行雙線路自動化測試共兩輪，對 Airtable 正式站與 Supabase Preview 版進行等價比對。
@@ -209,6 +209,28 @@ td:first-child{font-weight:700}
 </header>
 
 <main class="wrap">
+
+<!-- 測試方法（原雙線路工具說明併入）-->
+<section>
+  <h2>測試方法：雙線路自動化設計</h2>
+  <p class="sub">本次驗收採「雙線路」自動化測試，取代被動等待他組真人測試排程——把「能不能切換」從等待鏈改成可由本組主動執行的客觀檢查。</p>
+  <div class="cards">
+    <div class="card">
+      <div class="q">LINE 01</div>
+      <h3>系統穩定性</h3>
+      <p>回答：「系統會不會壞、資料完不完整？」針對 solutions／companies／cases 三支核心 API，檢查 HTTP 回應、資料格式、非空、回應時間、主鍵完整度。</p>
+    </div>
+    <div class="card">
+      <div class="q">LINE 02</div>
+      <h3>模擬使用流程</h3>
+      <p>回答：「顧問實際查資料時路徑走不走得通？」模擬製造業＋AI、地區篩選、預算篩選等 8 種典型查詢情境，並跑通「搜尋→篩選→方案詳情」完整路徑。</p>
+    </div>
+  </div>
+  <div class="callout">
+    <h3>切換前提的重新定義（8/3 策略決策）</h3>
+    <p>正式切換原綁定「真人測試結束」，但真人測試又受制於他組人力，形成不可控依賴鏈。改以「雙線路測試通過」為技術前提後，切換由本組可控；真人測試轉為並行的產品體驗優化，不再阻塞切換。</p>
+  </div>
+</section>
 
 <!-- 執行摘要 -->
 <section>
@@ -473,14 +495,44 @@ td:first-child{font-weight:700}
   </div>
 </section>
 
+
+<!-- 八、8/7 後續進展 -->
+<section>
+  <h2>八、後續進展（2026-08-07 更新）</h2>
+  <p class="sub">本驗收為 8/4 之技術快照；其後資料庫又有兩批異動，一併更新於此，驗收結論本身不受影響。</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>項目</th><th>8/4 驗收時</th><th>8/7 現況</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Solutions（Airtable）</td><td>2,433</td><td><strong>2,489</strong></td><td>新北案匯入 56 筆</td></tr>
+        <tr><td>Solutions（Supabase）</td><td>2,429</td><td><strong>2,485</strong></td><td>新北 56 筆已 backfill；另 26 筆下架記錄之 record_status 補標待執行</td></tr>
+        <tr><td>Companies 落差</td><td>—</td><td><span class="badge ok">歸零</span></td><td>8/6 新增 19 家原未同步，8/7 已補齊</td></tr>
+        <tr><td>Program_Promotions</td><td>不存在</td><td><span class="badge ok">已建表+16 筆</span></td><td>Supabase 新建表（含 RLS），優惠價同步完成</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout gold">
+    <h3>切換前唯一新增的必要條件</h3>
+    <p>Supabase solutions 表 8/7 新增 record_status 欄位，其預設值使既有 26 筆下架記錄被標為「正常」。切換前須執行補標 SQL（COUNT 應為 26），否則已下架的異常資料將重新對外可見。此為 1 分鐘作業，已列為切換前檢查清單第一項。</p>
+  </div>
+
+  <div class="callout">
+    <h3>對驗收結論的影響：無</h3>
+    <p>8/4 驗收之「資料等價、差異可歸因、回滾就緒」結論在 8/7 後續同步後依然成立——新北案兩批資料在 Airtable 與 Supabase 均已存在且一致，未產生新的無法解釋殘差。Supabase Preview 版之雙線路複測仍為切換前最後動作。</p>
+  </div>
+</section>
 </main>
 
 <footer class="footer">
   <div class="wrap">
     <p>產業策略智庫｜Supabase 遷移切換前驗收結論 · 2026-08-04</p>
-    <p>數據來源：dual_line_test_v2.ipynb 執行紀錄（共兩輪）及 Supabase SQL Editor 查證結果。</p>
+    <p>數據來源：dual_line_test_v2.ipynb 執行紀錄（共兩輪）及 Supabase SQL Editor 查證結果。本文件已整併原「雙線路測試工具說明」，方法與結論合一。</p>
     <div class="actions">
-      <a class="btn primary" href="dual_line_test_spec_20260804.html">← 雙線路測試工具說明</a>
+      
       <a class="btn" href="db_upgrade_roadmap_20260730.html">資料庫升級路線圖 →</a>
       <a class="btn" href="https://github.com/Pcc329/weekly-report" target="_blank" rel="noopener">查看 GitHub 原始碼 ↗</a>
     </div>
