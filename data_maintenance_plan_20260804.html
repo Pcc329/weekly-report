@@ -236,7 +236,7 @@ td:first-child{font-weight:700}
       <span>適用：Supabase 正式切換後</span>
       <span>期程：三個月</span>
       <span>狀態：定案（餘 1 項待查）</span>
-      <span>2026-08-04</span>
+      <span>2026-08-04(現況校準 2026-08-07)</span>
     </div>
   </div>
 </header>
@@ -316,7 +316,7 @@ td:first-child{font-weight:700}
   </div>
   <p style="margin-top:12px">
     <strong>保留席次是為了回滾能力，而非保存資料。</strong>
-    Airtable 免費方案上限為每個 base 1,000 筆，現行 base 約 4,310 筆；降為免費方案後 base 將轉為唯讀，回滾路徑即失效。
+    Airtable 免費方案上限為每個 base 1,000 筆，現行 base 約 4,400 筆（含 8 月新北案新增）；降為免費方案後 base 將轉為唯讀，回滾路徑即失效。
     資料本身在任何方案下都不會被刪除。Airtable 依編輯者席次計費，唯讀檢視者不計費，三席降兩席可直接減少支出。
   </p>
 
@@ -489,7 +489,7 @@ td:first-child{font-weight:700}
       <div class="icon">✓</div>
       <div>
         <h4>Contacts 表維持不遷移、不開放 API、不授權同仁存取</h4>
-        <p>既有治理決策，本規劃不予變更。授權腳本採逐表授權而非全表授權，即為避免誤將此表納入。</p>
+        <p>既有治理決策，本規劃不予變更。授權腳本採逐表授權而非全表授權，即為避免誤將此表納入；8 月新增之 program_promotions 表若開放同仁維護，需另行納入授權清單。</p>
       </div>
     </div>
     <div class="check">
@@ -497,6 +497,13 @@ td:first-child{font-weight:700}
       <div>
         <h4>同仁具 SQL 操作能力</h4>
         <p>故採資料庫層授權路徑，此方式對其可行。</p>
+      </div>
+    </div>
+    <div class="check">
+      <div class="icon">✓</div>
+      <div>
+        <h4>Supabase 資料同步已完成（2026-08-07）</h4>
+        <p>新北案 56 筆方案、19 家公司、Program_Promotions 16 筆優惠價均已 backfill 至 Supabase，落差歸零。同仁開通寫入權限後，維護對象即為已完整同步之資料庫。</p>
       </div>
     </div>
   </div>
