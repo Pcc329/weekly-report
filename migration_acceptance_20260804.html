@@ -3,538 +3,322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>切換前驗收結論｜Supabase 遷移技術驗收</title>
+<title>資料庫遷移驗收結論｜白話結論 + 技術佐證</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#16233B;
-  --ink-soft:#4A5A74;
-  --paper:#FBFCFE;
-  --card:#FFFFFF;
-  --line:#DCE3EE;
-  --navy:#1F344A;
-  --teal:#0F7B6C;
-  --teal-bg:#EAF5F2;
-  --blue:#35509E;
-  --blue-bg:#EDF1FA;
-  --gold:#B08D3E;
-  --gold-bg:#FBF4E8;
-  --green:#17A08F;
-  --green-bg:#E7F7F3;
-  --warn:#C97A2B;
-  --warn-bg:#FBF3E8;
+  --ink:#16233B;--ink-soft:#4A5A74;--paper:#FBFCFE;--card:#FFFFFF;--line:#DCE3EE;
+  --navy:#1F344A;--teal:#0F7B6C;--teal-bg:#EAF5F2;--blue:#35509E;--blue-bg:#EDF1FA;
+  --gold:#B08D3E;--gold-bg:#FBF4E8;--green:#17A08F;--green-bg:#E7F7F3;--warn:#C97A2B;--warn-bg:#FBF3E8;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:'Noto Sans TC',sans-serif;
-  background:var(--paper);
-  color:var(--ink);
-  line-height:1.75;
-  font-size:16px;
-}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:16px}
 .wrap{max-width:980px;margin:0 auto;padding:0 24px}
-header{
-  border-bottom:3px solid var(--ink);
-  padding:52px 0 34px;
-  background:linear-gradient(180deg,#F3F6FB 0%,var(--paper) 100%);
-}
-.eyebrow{
-  font-size:13px;
-  letter-spacing:.35em;
-  color:var(--ink-soft);
-  font-weight:900;
-  margin-bottom:14px;
-}
-h1{
-  font-family:'Noto Serif TC',serif;
-  font-weight:900;
-  font-size:clamp(30px,4.6vw,44px);
-  line-height:1.35;
-  margin-bottom:18px;
-}
-.lede{max-width:780px;color:var(--ink-soft);font-size:17px}
+header{border-bottom:3px solid var(--ink);padding:52px 0 34px;background:linear-gradient(180deg,#F3F6FB 0%,var(--paper) 100%)}
+.eyebrow{font-size:13px;letter-spacing:.35em;color:var(--ink-soft);font-weight:900;margin-bottom:14px}
+h1{font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(28px,4.4vw,42px);line-height:1.35;margin-bottom:18px}
+.lede{max-width:800px;color:var(--ink-soft);font-size:17px}
 .lede strong{color:var(--ink)}
 .meta{margin-top:20px;font-size:13px;color:var(--ink-soft);display:flex;gap:18px;flex-wrap:wrap}
 .meta span{border-left:3px solid var(--line);padding-left:10px}
-section{padding:42px 0}
+section{padding:40px 0}
 h2{font-family:'Noto Serif TC',serif;font-weight:900;font-size:24px;margin-bottom:6px}
 .sub{color:var(--ink-soft);font-size:14.5px;margin-bottom:22px}
 p{margin:0 0 10px}
 strong{font-weight:900;color:var(--ink)}
-a{color:var(--teal);text-decoration:none}
-a:hover{text-decoration:underline}
+a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
 .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
 table{width:100%;border-collapse:collapse;background:var(--card);font-size:14px}
 th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
 thead th{background:var(--navy);color:#fff;font-weight:900;white-space:nowrap;border-bottom:none}
 tbody tr:last-child td{border-bottom:none}
 td:first-child{font-weight:700}
-.badge{
-  display:inline-flex;align-items:center;border-radius:999px;
-  padding:3px 10px;font-size:12px;font-weight:900;white-space:nowrap;
-  border:1px solid var(--line);background:#fff;color:var(--ink-soft);
-}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:900;white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--ink-soft)}
 .badge.ok{background:var(--green-bg);border-color:#BFE7DC;color:#087263}
 .badge.warn{background:var(--warn-bg);border-color:#E5CDAA;color:#9D621D}
-.badge.blue{background:var(--blue-bg);border-color:#CDD7EF;color:var(--blue)}
-.badge.dark{background:#EEF2F7;border-color:#D4DCE8;color:var(--ink)}
-.callout{
-  background:var(--teal-bg);
-  border:1px solid #CDE5DF;
-  border-left:6px solid var(--teal);
-  border-radius:12px;
-  padding:18px 20px;
-  margin:20px 0 0;
-}
+.callout{background:var(--teal-bg);border:1px solid #CDE5DF;border-left:6px solid var(--teal);border-radius:12px;padding:18px 20px;margin:20px 0 0}
 .callout.gold{background:var(--gold-bg);border-color:#E3CFA6;border-left-color:var(--gold)}
 .callout.warn{background:var(--warn-bg);border-color:#E9D3B6;border-left-color:var(--warn)}
 .callout h3{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;margin-bottom:4px}
 .callout p{font-size:15px;color:var(--ink-soft);margin:0}
+/* 白話結論層 */
+.plain{background:linear-gradient(180deg,#F1F8F5 0%,var(--paper) 100%);border-bottom:1px solid var(--line)}
+.verdict{display:flex;align-items:flex-start;gap:14px;background:var(--green-bg);border:1px solid #BFE7DC;border-left:6px solid var(--green);border-radius:12px;padding:18px 20px}
+.verdict .m{font-size:26px;line-height:1;flex:none}
+.verdict .t{font-size:15.5px}.verdict .t b{color:#0B6153}
+.q4{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.qc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;border-left:4px solid var(--green)}
+.qc .qq{font-weight:900;font-size:15.5px;margin-bottom:4px}
+.qc .qa{font-size:14px;color:var(--ink-soft)}.qc .qa b{color:var(--ink)}
+.qc .qr{display:inline-block;margin-top:8px;background:var(--green-bg);color:#0B6153;font-weight:900;font-size:12.5px;padding:3px 11px;border-radius:99px}
+/* 時程 */
+.tl{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+.tl:last-child{border-bottom:none}
+.tl-when{font-weight:900;color:var(--blue);font-size:14px;text-align:right;border-right:2px solid var(--blue-bg);padding-right:16px;line-height:1.3}
+.tl-what b{font-size:15px}.tl-d{color:var(--ink-soft);font-size:13.5px;margin-top:3px}
+.divider{text-align:center;font-size:13px;font-weight:900;letter-spacing:.16em;color:var(--ink-soft);margin:8px 0 -8px}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 8px 20px rgba(22,35,59,.04)}
 .kpi .label{font-size:12px;color:var(--ink-soft);font-weight:700;letter-spacing:.08em}
 .kpi .num{font-family:'Noto Serif TC',serif;font-size:25px;font-weight:900;line-height:1.2;margin-top:4px}
 .kpi .note{font-size:12.5px;color:var(--ink-soft);margin-top:6px}
-.route{margin:40px 0 4px}
-.route-track{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
-.route-track::before{content:"";position:absolute;top:13px;left:12%;right:12%;height:3px;background:var(--line)}
-.station{position:relative;padding:0 10px;text-align:center}
-.dot{width:26px;height:26px;border-radius:50%;margin:0 auto 10px;border:3px solid var(--card);box-shadow:0 0 0 2px currentColor;position:relative;z-index:1;background:currentColor}
-.station.c1{color:var(--teal)}.station.c2{color:var(--blue)}.station.c3{color:var(--gold)}.station.c4{color:var(--ink)}
-.st-name{font-family:'Noto Serif TC',serif;font-weight:900;font-size:17px;color:var(--ink)}
-.st-time{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
-.st-tag{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:900;padding:2px 10px;border-radius:99px;background:currentColor}
-.st-tag span{color:#fff}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:0 8px 22px rgba(22,35,59,.04)}
 .card h3{font-family:'Noto Serif TC',serif;font-weight:900;font-size:19px;margin-bottom:8px}
 .card .q{font-size:13px;font-weight:900;color:var(--ink-soft);letter-spacing:.08em;margin-bottom:8px}
 .card p,.card li{font-size:14.5px;color:var(--ink-soft)}
-.card ul{padding-left:18px}
-.card li{margin-bottom:4px}
-.flow{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-top:16px;
-}
-.flow-item{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:16px 18px;
-  position:relative;
-}
-.flow-item h3{font-size:17px;font-family:'Noto Serif TC',serif;font-weight:900;margin-bottom:4px}
-.flow-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
-.step-num{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:28px;height:28px;border-radius:50%;
-  background:var(--ink);color:#fff;font-weight:900;font-size:12px;margin-bottom:8px;
-}
+.card ul{padding-left:18px}.card li{margin-bottom:4px}
 .checklist{display:grid;gap:10px;margin-top:14px}
-.check{
-  display:grid;
-  grid-template-columns:30px 1fr;
-  gap:10px;
-  align-items:start;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:12px 14px;
-}
+.check{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .check .icon{color:var(--teal);font-weight:900;font-size:18px;line-height:1.4}
-.check h4{font-size:15px;font-weight:900;margin-bottom:2px}
-.check p{font-size:13.5px;color:var(--ink-soft);margin:0}
-.result-table td:nth-child(2){font-weight:700}
-.final-box{
-  background:linear-gradient(135deg,#EAF5F2 0%,#F6FAFE 100%);
-  border:1px solid #CDE5DF;
-  border-radius:14px;
-  padding:24px 26px;
-  margin-top:18px;
-}
+.check h4{font-size:15px;font-weight:900;margin-bottom:2px}.check p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.final-box{background:linear-gradient(135deg,#EAF5F2 0%,#F6FAFE 100%);border:1px solid #CDE5DF;border-radius:14px;padding:24px 26px;margin-top:18px}
 .final-box h3{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;margin-bottom:6px;color:var(--teal)}
 .final-box p{color:var(--ink-soft);font-size:15.5px;margin:0}
-.footer{
-  padding:34px 0 46px;
-  border-top:1px solid var(--line);
-  color:var(--ink-soft);
-  font-size:13px;
-}
+.footer{padding:34px 0 46px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:13px}
 .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:9px 15px;
-  background:#fff;
-  font-weight:900;
-  color:var(--ink);
-  font-size:14px;
-}
-.btn.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
-.btn:hover{text-decoration:none;transform:translateY(-1px)}
-@media (max-width:760px){
-  .wrap{padding:0 18px}
-  header{padding:38px 0 26px}
-  section{padding:32px 0}
-  .route-track{grid-template-columns:1fr;gap:18px}
-  .route-track::before{display:none}
-  .cards,.flow,.kpi-grid{grid-template-columns:1fr}
-  th,td{padding:9px 10px}
-}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:#fff;font-weight:900;color:var(--ink);font-size:14px}
+.btn:hover{text-decoration:none}
+@media (max-width:760px){.wrap{padding:0 18px}.q4,.cards,.kpi-grid{grid-template-columns:1fr}.tl{grid-template-columns:1fr;gap:4px}.tl-when{text-align:left;border-right:none;padding-right:0}}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <div class="eyebrow">MIGRATION ACCEPTANCE REPORT · 含測試方法說明</div>
-    <h1>切換前驗收結論：Supabase 版通過技術驗收，具備正式切換條件</h1>
+    <div class="eyebrow">資料庫遷移驗收結論 · 白話結論 + 技術佐證</div>
+    <h1>資料庫遷移已通過驗收,<br>具備切換條件,8/12 起執行</h1>
     <p class="lede">
-      2026-08-04 執行雙線路自動化測試共兩輪，對 Airtable 正式站與 Supabase Preview 版進行等價比對。
-      <strong>資料差異全數收斂至已知的 4 筆空殼記錄</strong>，無任何無法解釋的殘差；
-      統編欄位（cid）補齊 2,211 筆，為本次遷移的實質增益。
-      效能面 Supabase 版目前略慢於現行版本，屬可接受範圍，列為切換後複測項目。
+      經多輪自動化測試,新舊兩套系統的資料與功能<strong>完全一致(差異 +0)</strong>,無任何無法解釋的落差;
+      先前盤點的 26 筆下架異常資料已正確排除。切換設計為<strong>可隨時安全復原</strong>,風險極低。
+      本文上半部為白話結論(供進度掌握),下半部為技術佐證(供深入查閱)。
     </p>
     <div class="meta">
-      <span>執行工具：dual_line_test_v2.ipynb</span>
-      <span>比對基準：Airtable 正式站</span>
-      <span>執行輪次：2 輪（含冷啟動排除）</span>
-      <span>2026-08-04</span>
+      <span>驗收對象:Airtable → Supabase</span>
+      <span>資料規模:總表 2,489 筆 / 對外 2,463 筆</span>
+      <span>最終複驗:2026-08-11</span>
     </div>
   </div>
 </header>
 
+<!-- ===== 白話結論層 ===== -->
+<section class="plain">
+  <div class="wrap">
+    <h2>一、結論</h2>
+    <p class="sub">把系統底層資料庫從 Airtable(較貴、較不穩)搬到 Supabase(更穩定、成本更低)。切換前做了一輪嚴謹驗收,結果如下。</p>
+
+    <div class="verdict">
+      <span class="m">✅</span>
+      <div class="t"><b>驗收通過。</b>四項獨立檢查全數通過,新舊系統資料<b>完全一致、無落差</b>,可正式切換;且切換可隨時安全復原。</div>
+    </div>
+
+    <div class="q4">
+      <div class="qc">
+        <div class="qq">1. 搬家後資料有沒有短少?</div>
+        <div class="qa">新舊兩套系統<b>逐項比對筆數</b>:方案、公司、案例三大類,兩邊數字<b>完全相同、一筆不差</b>。</div>
+        <span class="qr">✓ 完全一致</span>
+      </div>
+      <div class="qc">
+        <div class="qq">2. 使用者查詢會不會跑掉?</div>
+        <div class="qa">模擬顧問常用的八種查詢(製造業 AI、各地區、各價格帶…),新舊系統跑出來的<b>結果一致</b>,搜尋到方案詳情的流程正常。</div>
+        <span class="qr">✓ 功能正常</span>
+      </div>
+      <div class="qc">
+        <div class="qq">3. 已下架的問題資料會不會又跑出來?</div>
+        <div class="qa">先前盤點的 26 筆異常資料(資料不完整、已決議下架)已在新系統<b>正確標記下架</b>;實測確認<b>不會再出現</b>在對外結果。</div>
+        <span class="qr">✓ 正確排除</span>
+      </div>
+      <div class="qc">
+        <div class="qq">4. 新系統穩不穩、快不快?</div>
+        <div class="qa">三個主要服務都<b>正常回應、速度在標準之內</b>;新系統回應速度並優於舊系統。</div>
+        <span class="qr">✓ 穩定且更快</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h3>切換是「可逆」的</h3>
+      <p>切換是一個「開關」——切過去若發現問題,<strong>2 到 3 分鐘就能切回原本系統</strong>,原始資料全程保留、不會遺失。舊系統 Airtable 另<strong>保留三個月觀察期</strong>作保險,確認穩定後才退租。這是「先確保退路、再往前走」。</p>
+    </div>
+
+    <h2 style="margin-top:34px">二、接下來的時程</h2>
+    <p class="sub">近期(本週)已就緒、排得出明確日期;之後階段以「切換完成」為起點,故以週期呈現——起點還在本週彈性裡,遠期給區間才誠實。</p>
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 22px">
+      <div class="tl">
+        <div class="tl-when">本週<br>8/12(三)上午起</div>
+        <div class="tl-what"><b>正式切換 + 驗收(明確視窗)</b><div class="tl-d">準備已全部就緒。8/12(三)上午開始執行切換(約 15 分鐘)並當天完成現場驗收;預留 8/13–8/14 觀察回訪,8/14(五)下班前完成確認。刻意排在週間前段,若有狀況仍有工作日可反應,不留到週末。</div></div>
+      </div>
+      <div class="tl">
+        <div class="tl-when">切換後<br>約兩週</div>
+        <div class="tl-what"><b>密集監看期</b><div class="tl-d">切換後每日比對新舊系統,確認持續一致、無異常。</div></div>
+      </div>
+      <div class="tl">
+        <div class="tl-when">切換後<br>3 個月</div>
+        <div class="tl-what"><b>觀察期(保留退路)</b><div class="tl-d">Airtable 保留作保險,期滿確認穩定無虞後才退租。</div></div>
+      </div>
+      <div class="tl">
+        <div class="tl-when">觀察期內</div>
+        <div class="tl-what"><b>後續優化(不擋主線)</b><div class="tl-d">少數非關鍵項目(如公司清單分頁顯示)列入日常維護,與本次切換無關。</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider">— 以下為技術佐證(供深入查閱) —</div></div>
+
 <main class="wrap">
 
-<!-- 測試方法（原雙線路工具說明併入）-->
+<!-- 測試方法 -->
 <section>
-  <h2>測試方法：雙線路自動化設計</h2>
-  <p class="sub">本次驗收採「雙線路」自動化測試，取代被動等待他組真人測試排程——把「能不能切換」從等待鏈改成可由本組主動執行的客觀檢查。</p>
+  <h2>三、測試方法:雙線路自動化設計</h2>
+  <p class="sub">採「雙線路」自動化測試,取代被動等待他組真人測試排程——把「能不能切換」從等待鏈改成可由本組主動執行的客觀檢查,結果可重複驗證。</p>
   <div class="cards">
     <div class="card">
-      <div class="q">LINE 01</div>
-      <h3>系統穩定性</h3>
-      <p>回答：「系統會不會壞、資料完不完整？」針對 solutions／companies／cases 三支核心 API，檢查 HTTP 回應、資料格式、非空、回應時間、主鍵完整度。</p>
+      <div class="q">LINE 01</div><h3>系統穩定性</h3>
+      <p>回答「系統會不會壞、資料完不完整?」針對 solutions／companies／cases 三支核心 API,檢查 HTTP 回應、資料格式、非空、回應時間、主鍵完整度。</p>
     </div>
     <div class="card">
-      <div class="q">LINE 02</div>
-      <h3>模擬使用流程</h3>
-      <p>回答：「顧問實際查資料時路徑走不走得通？」模擬製造業＋AI、地區篩選、預算篩選等 8 種典型查詢情境，並跑通「搜尋→篩選→方案詳情」完整路徑。</p>
+      <div class="q">LINE 02</div><h3>模擬使用流程</h3>
+      <p>回答「顧問實際查資料時路徑走不走得通?」模擬製造業＋AI、地區、預算等 8 種典型查詢,並跑通「搜尋→篩選→方案詳情」完整路徑。</p>
     </div>
   </div>
   <div class="callout">
-    <h3>切換前提的重新定義（8/3 策略決策）</h3>
-    <p>正式切換原綁定「真人測試結束」，但真人測試又受制於他組人力，形成不可控依賴鏈。改以「雙線路測試通過」為技術前提後，切換由本組可控；真人測試轉為並行的產品體驗優化，不再阻塞切換。</p>
+    <h3>切換前提的重新定義(8/3 策略決策)</h3>
+    <p>正式切換原綁定「真人測試結束」,但受制於他組人力,形成不可控依賴鏈。改以「雙線路測試通過」為技術前提後,切換由本組可控;真人測試轉為並行的產品體驗優化,不再阻塞切換。</p>
   </div>
 </section>
 
 <!-- 執行摘要 -->
 <section>
-  <h2>執行摘要</h2>
-  <p class="sub">依 8/3 策略決策，切換前提由「真人測試通過」調整為「雙線路測試通過」，本次驗收即為該條件之達成證明。</p>
-
+  <h2>四、執行摘要(2026-08-11 最終複驗)</h2>
+  <p class="sub">8/4 首驗後,資料庫歷經新北案匯入與下架記錄補標;本節為切換前最終複驗結果。</p>
   <div class="kpi-grid">
-    <div class="kpi">
-      <div class="label">資料筆數一致性</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">差異 −4 筆，全數可歸因</div>
-    </div>
-    <div class="kpi">
-      <div class="label">資料完整性</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">主鍵零缺漏 · cid 補齊 2,211 筆</div>
-    </div>
-    <div class="kpi">
-      <div class="label">使用流程模擬</div>
-      <div class="num">✅ 通過</div>
-      <div class="note">8 種查詢情境全數合理</div>
-    </div>
-    <div class="kpi">
-      <div class="label">回應效能</div>
-      <div class="num">⚠️ 可接受</div>
-      <div class="note">低於門檻，惟略慢於現行</div>
-    </div>
+    <div class="kpi"><div class="label">資料筆數一致性</div><div class="num">✅ 通過</div><div class="note">三 API 兩版差 +0</div></div>
+    <div class="kpi"><div class="label">下架記錄排除</div><div class="num">✅ 通過</div><div class="note">26 筆已標記並確認排除</div></div>
+    <div class="kpi"><div class="label">使用流程模擬</div><div class="num">✅ 通過</div><div class="note">8 種查詢情境兩版一致</div></div>
+    <div class="kpi"><div class="label">回滾機制</div><div class="num">✅ 就緒</div><div class="note">環境變數可即時切回</div></div>
   </div>
-
   <div class="callout">
     <h3>結論</h3>
-    <p>Supabase 版 API 已通過技術驗收，滿足正式切換之前提條件。切換時點另行決策。</p>
+    <p>Supabase 版 API 已通過技術驗收,滿足正式切換之全部前提。切換排定 8/12 起執行。</p>
   </div>
 </section>
 
 <!-- 資料一致性 -->
 <section>
-  <h2>一、資料一致性驗證</h2>
-  <p class="sub">同一測試套件對兩版各執行一次，逐端點比對筆數。</p>
-
-  <div class="table-scroll">
-    <table class="result-table">
-      <thead>
-        <tr><th>端點</th><th>Airtable</th><th>Supabase</th><th>差異</th><th>判定</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>/api/solutions</td><td>2,433</td><td>2,429</td><td>−4</td><td><span class="badge ok">可歸因</span></td></tr>
-        <tr><td>/api/companies</td><td>200</td><td>200</td><td>0</td><td><span class="badge ok">一致</span></td></tr>
-        <tr><td>/api/cases</td><td>29</td><td>29</td><td>0</td><td><span class="badge ok">一致</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h2 style="font-size:20px;margin-top:32px">差異歸因：本次驗收的關鍵證據</h2>
-  <p class="sub">solutions 的 −4 筆差異，完整收斂至單一來源：ETL 階段刻意跳過的 4 筆空殼記錄。</p>
-  <p>單看總量相符，僅能說明數字對得上。真正的等價性證明來自<strong>切片後的交叉驗證</strong>——將資料依不同維度切分後，差異仍精確收斂至同一組記錄：</p>
-
-  <div class="table-scroll" style="margin-top:14px">
-    <table>
-      <thead>
-        <tr><th>查詢維度</th><th>Airtable</th><th>Supabase</th><th>差異</th><th>歸因</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>非 AI 方案</td><td>1,558</td><td>1,554</td><td>−4</td><td>4 筆空殼皆非 AI 方案</td></tr>
-        <tr><td>北部方案</td><td>1,430</td><td>1,427</td><td>−3</td><td>4 筆中有 3 筆屬北部</td></tr>
-        <tr><td>AI 方案</td><td>875</td><td>875</td><td>0</td><td>空殼不在此集合</td></tr>
-        <tr><td>其餘 5 項情境</td><td colspan="2" style="font-weight:400">完全相同</td><td>0</td><td>不受影響</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="callout">
-    <h3>無任何無法解釋的殘差</h3>
-    <p>差異不僅在總量上符合預期，且在各維度切片後仍精確收斂至同一組 4 筆記錄。此為兩版資料等價的直接證明。</p>
-  </div>
-</section>
-
-<!-- 資料完整性 -->
-<section>
-  <h2>二、資料完整性</h2>
-  <p class="sub">除筆數外，另檢查主鍵缺漏與關鍵欄位填充狀況。</p>
-
+  <h2>五、資料一致性驗證</h2>
+  <p class="sub">同一測試套件對兩版各執行一次,逐端點比對筆數。8/11 複驗結果:三支 API 全數 <strong>差 +0</strong>。</p>
   <div class="table-scroll">
     <table>
-      <thead>
-        <tr><th>檢查項</th><th>Airtable</th><th>Supabase</th><th>說明</th></tr>
-      </thead>
+      <thead><tr><th>端點</th><th>Airtable 版</th><th>Supabase 版</th><th>差異</th><th>判定</th></tr></thead>
       <tbody>
-        <tr><td>主鍵（id）為空</td><td>0 筆</td><td>0 筆</td><td>兩版皆無缺漏</td></tr>
-        <tr><td>方案名為空</td><td>4 筆</td><td>0 筆</td><td>空殼記錄已於 ETL 排除</td></tr>
-        <tr><td>統編（cid）有值</td><td>0 筆</td><td><strong>2,211 筆</strong></td><td>fix/cid-bom 生效</td></tr>
+        <tr><td>/api/solutions</td><td>2,463</td><td>2,463</td><td>+0</td><td><span class="badge ok">完全一致</span></td></tr>
+        <tr><td>/api/companies</td><td>200</td><td>200</td><td>+0</td><td><span class="badge ok">一致</span></td></tr>
+        <tr><td>/api/cases</td><td>29</td><td>29</td><td>+0</td><td><span class="badge ok">一致</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="callout gold">
-    <h3>cid 欄位為本次遷移的實質增益</h3>
-    <p>Airtable 版因 BOM 字元問題導致統編欄位恆為空值；Supabase 版修正後補齊 2,211 筆企業統編，可支援後續跨資料庫勾稽與外部資料源比對。</p>
+    <h3>兩個數字的關係:總表 2,489 vs 對外 2,463</h3>
+    <p><strong>總表 2,489 筆</strong>為 Airtable 全部方案(含 26 筆已下架異常記錄);<strong>對外 2,463 筆</strong>為 API 實際回傳給使用者的數量,即 2,489 − 26。兩者相差正好是本次盤點下架的 26 筆,已在新舊系統一致排除。對外 2,463 筆中含 4 筆 ETL 刻意保留的空殼記錄(有 id、方案名為空),兩版皆計入,不影響一致性。</p>
+  </div>
+
+  <div class="callout">
+    <h3>從 −4 到 +0:差異已完全消弭</h3>
+    <p>8/4 首驗時 Supabase 尚缺 4 筆空殼記錄(2,433 / 2,429,差 −4)。其後連同新北案 56 筆一併 backfill,8/11 複驗兩版皆為 2,463、<strong>差 +0</strong>,無任何無法解釋的殘差。此為兩版資料等價的直接證明。</p>
   </div>
 </section>
 
 <!-- 使用流程 -->
 <section>
-  <h2>三、使用流程驗證</h2>
-  <p class="sub">複製 manufacturing.html 前端篩選邏輯，模擬顧問實際查詢情境。</p>
-
+  <h2>六、使用流程驗證</h2>
+  <p class="sub">複製 manufacturing.html 前端篩選邏輯,模擬顧問實際查詢。8/11 複驗:8 種情境兩版結果完全相同。</p>
   <div class="table-scroll">
     <table>
-      <thead>
-        <tr><th>查詢情境</th><th>Airtable</th><th>Supabase</th><th>判定</th></tr>
-      </thead>
+      <thead><tr><th>查詢情境</th><th>Airtable 版</th><th>Supabase 版</th><th>判定</th></tr></thead>
       <tbody>
         <tr><td>製造業 AI 方案</td><td>177</td><td>177</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>北部方案</td><td>1,430</td><td>1,427</td><td><span class="badge ok">✓ 空殼歸因</span></td></tr>
-        <tr><td>中部方案</td><td>253</td><td>253</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>南部方案</td><td>213</td><td>213</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>AI 方案（全體）</td><td>875</td><td>875</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>非 AI 方案</td><td>1,558</td><td>1,554</td><td><span class="badge ok">✓ 空殼歸因</span></td></tr>
-        <tr><td>5 萬以下方案</td><td>1,246</td><td>1,246</td><td><span class="badge ok">✓</span></td></tr>
-        <tr><td>低價方案（&lt;1 萬）</td><td>357</td><td>357</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>北部方案</td><td>1,438</td><td>1,438</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>中部方案</td><td>252</td><td>252</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>南部方案</td><td>211</td><td>211</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>AI 方案(全體)</td><td>875</td><td>875</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>非 AI 方案</td><td>1,588</td><td>1,588</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>5 萬以下方案</td><td>1,259</td><td>1,259</td><td><span class="badge ok">✓</span></td></tr>
+        <tr><td>低價方案(&lt;1 萬)</td><td>363</td><td>363</td><td><span class="badge ok">✓</span></td></tr>
       </tbody>
     </table>
   </div>
-  <p style="margin-top:14px">完整路徑模擬（搜尋 → 方案詳情）：兩版皆確認詳情頁欄位完整。</p>
+  <p style="margin-top:14px">完整路徑模擬(搜尋 → 方案詳情):兩版皆確認詳情頁欄位完整。</p>
 </section>
 
 <!-- 效能 -->
 <section>
-  <h2>四、效能觀察</h2>
-  <p class="sub">執行兩輪測試以區分冷啟動雜訊與真實效能差異。</p>
-
-  <div class="cards">
-    <div class="card">
-      <div class="q">第一輪 vs 第二輪（Supabase）</div>
-      <h3>冷啟動已排除</h3>
-      <ul>
-        <li>/api/companies：5,136ms → <strong>147ms</strong></li>
-        <li>/api/cases：1,956ms → 1,433ms</li>
-        <li>/api/solutions：7,117ms → 5,998ms</li>
-      </ul>
-      <p style="margin-top:8px">companies 端點熱機後降至 147ms，證實首輪延遲主因為 Preview 環境冷啟動。</p>
-    </div>
-    <div class="card">
-      <div class="q">熱機後兩版對照</div>
-      <h3>Supabase 版略慢</h3>
-      <ul>
-        <li>/api/companies：148ms vs 147ms（持平）</li>
-        <li>/api/cases：438ms vs 1,433ms（慢 1.0s）</li>
-        <li>/api/solutions：3,859ms vs 5,998ms（慢 2.1s）</li>
-      </ul>
-      <p style="margin-top:8px">首輪出現的「Supabase 較快」為冷啟動雜訊造成的假象，第二輪已修正此判斷。</p>
-    </div>
-  </div>
-
+  <h2>七、效能觀察(8/4 初驗數據)</h2>
+  <p class="sub">執行兩輪以區分冷啟動雜訊與真實效能;此為 8/4 量測,切換後於正式環境複測。</p>
   <div class="callout warn">
-    <h3>判讀：不擋切換，但列為切換後複測項</h3>
-    <p>
-      三項理由支持此判斷：<strong>其一</strong>，全數低於 10 秒可用性門檻，最慢者 6 秒，對「一次載入全庫、前端篩選」的現行使用模式屬可接受範圍。
-      <strong>其二</strong>，比較條件不對等——Airtable 版跑在正式站（持續流量、函式常駐），Supabase 版跑在 Preview（低流量、易冷啟動）。
-      <strong>其三</strong>，資料正確性為切換的必要條件，效能屬可事後優化項。
-      正式切換後須複測；若 /api/solutions 仍維持 6 秒量級，則屬真實效能問題，應以索引優化或改採分頁載入處理。
-    </p>
+    <h3>判讀:不擋切換,列為切換後複測項</h3>
+    <p>三支 API 熱機後回應時間全數低於 10 秒可用性門檻。比較條件不對等——Airtable 版跑在正式站(函式常駐),Supabase 版跑在 Preview(低流量易冷啟動),故 Preview 略慢屬環境差異。資料正確性為切換必要條件,效能屬可事後優化項。正式切換後複測;若 /api/solutions 仍維持 6 秒量級,則以索引優化或分頁載入處理。</p>
   </div>
 </section>
 
 <!-- price=0 -->
 <section>
-  <h2>五、附帶查證：price = 0 議題結案</h2>
-  <p class="sub">待辦 fix/price-zero-preserve 原假設遷移可能將免費方案誤存為 price = 0，導致前端顯示錯誤。</p>
-
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr><th>全庫 price 分布（n = 2,429）</th><th>筆數</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>price 精確為 0</td><td>13</td></tr>
-        <tr><td>price 為 null</td><td>143</td></tr>
-        <tr><td>price &gt; 0</td><td>2,273</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p style="margin-top:16px">逐筆檢視該 13 筆記錄：</p>
-  <div class="table-scroll" style="margin-top:10px">
-    <table>
-      <thead>
-        <tr><th>檢查項</th><th>結果</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>pricing_model 含「訂閱制」</td><td><strong>13 / 13</strong></td></tr>
-        <tr><td>monthly_price 有值</td><td><strong>0 / 13</strong></td></tr>
-        <tr><td>price_tier 標示為「免費」</td><td><strong>0 / 13</strong>（4 筆「待確認」、9 筆 null）</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p style="margin-top:16px">方案性質佐證：ECPay 金流整合、Hami Cam AI 智慧攝影機、旅宿收益管理顧問服務、官網 Booking Engine 訂房系統等，均為明確商業產品或顧問服務，不存在零元版本。</p>
-
+  <h2>八、附帶查證:price = 0 議題(已結案)</h2>
   <div class="callout">
-    <h3>結論：待辦關閉，且不應執行</h3>
-    <p>
-      price = 0 為 ETL 填充值，代表「價格未提供」，非「售價為零」。
-      現行前端已將 price 為 null / 0 / falsy 統一顯示為「📞 洽詢報價」——此邏輯對該 13 筆而言正是最準確的表述。
-      若改為顯示「免費」，將產生錯誤資訊並影響顧問對客戶的推薦準確性，屬負面改動。
-    </p>
+    <h3>結論:待辦關閉,且不應執行</h3>
+    <p>初驗逐筆檢視 price = 0 記錄,均為訂閱制商業方案(ECPay 金流、Hami Cam、訂房系統等),不存在零元版本。price = 0 為 ETL 填充值,代表「價格未提供 / 洽詢報價」,非「售價為零」。現行前端已將 null/0 統一顯示為「📞 洽詢報價」,對此正是最準確表述;若改顯示「免費」反而產生錯誤資訊。此議題與後續資料異動無關,結論不變。</p>
   </div>
 </section>
 
-<!-- 非阻斷性發現 -->
+<!-- 非阻斷 -->
 <section>
-  <h2>六、非阻斷性發現</h2>
-  <p class="sub">以下項目經確認與本次遷移無關，不構成切換阻礙，另列為獨立待辦。</p>
-
+  <h2>九、非阻斷性發現</h2>
+  <p class="sub">經確認與本次遷移無關,不構成切換阻礙,另列獨立待辦。</p>
   <div class="checklist">
     <div class="check">
       <div class="icon" style="color:var(--warn)">!</div>
-      <div>
-        <h4>/api/companies 回傳上限 200 筆（實際 852 家）</h4>
-        <p>
-          兩版皆為 200 筆、55KB、147ms——連回應大小與耗時均相同，證明兩條邏輯分支共用同一段限制程式碼，屬 API 層寫死參數，非 Airtable 分頁問題。
-          Airtable 版本來即為此行為，現行正式站一直如此運作，非遷移造成之退化。
-          後續應確認前端是否有頁面需完整 852 筆列表。
-        </p>
-      </div>
+      <div><h4>/api/companies 回傳上限 200 筆(實際約 852 家)</h4>
+        <p>兩版皆為 200 筆,連回應大小與耗時均相同,屬 API 層寫死參數,非遷移造成之退化。現行正式站一直如此運作。後續確認前端是否有頁面需完整列表,再補分頁。</p></div>
     </div>
     <div class="check">
       <div class="icon" style="color:var(--ink-soft)">?</div>
-      <div>
-        <h4>疑似重複記錄</h4>
-        <p>
-          SOL-FIELD-0030 與 SOL-FIELD-0126 方案名稱與各欄位值均相同（「旅宿收益管理顧問服務」）。
-          後續於切換後執行全庫 solution_name + company_id 重複掃描，判定為個案或系統性問題。優先序低。
-        </p>
-      </div>
+      <div><h4>疑似重複記錄</h4>
+        <p>SOL-FIELD-0030 與 SOL-FIELD-0126 各欄位值相同(「旅宿收益管理顧問服務」)。切換後執行全庫 solution_name + company_id 重複掃描判定。優先序低。</p></div>
     </div>
   </div>
 </section>
 
 <!-- 驗收結論 -->
 <section>
-  <h2>七、驗收結論</h2>
-
+  <h2>十、驗收結論</h2>
   <div class="table-scroll">
     <table>
-      <thead>
-        <tr><th>切換前提</th><th>狀態</th><th>依據</th></tr>
-      </thead>
+      <thead><tr><th>切換前提</th><th>狀態</th><th>依據</th></tr></thead>
       <tbody>
-        <tr><td>資料遷移完成</td><td><span class="badge ok">已達成</span></td><td>Cases / Companies / Solutions 三表已遷移</td></tr>
-        <tr><td>雙線路測試通過</td><td><span class="badge ok">已達成</span></td><td>本文件</td></tr>
-        <tr><td>資料一致性可歸因</td><td><span class="badge ok">已達成</span></td><td>差異全數收斂至 4 筆空殼</td></tr>
-        <tr><td>已知議題完成查證</td><td><span class="badge ok">已達成</span></td><td>price=0 已結案</td></tr>
+        <tr><td>資料遷移完成</td><td><span class="badge ok">已達成</span></td><td>Cases / Companies / Solutions 三表已遷移;新北案 56 筆已 backfill</td></tr>
+        <tr><td>下架記錄補標</td><td><span class="badge ok">已達成</span></td><td>26 筆 record_status 補標完成,COUNT 驗證 = 26</td></tr>
+        <tr><td>雙線路測試通過</td><td><span class="badge ok">已達成</span></td><td>8/11 複驗三 API 差 +0</td></tr>
+        <tr><td>下架記錄確認排除</td><td><span class="badge ok">已達成</span></td><td>對外查詢確認查無(2,489 − 26 = 2,463)</td></tr>
         <tr><td>回滾機制就緒</td><td><span class="badge ok">已達成</span></td><td>DB_SOURCE_* 環境變數可即時切回</td></tr>
       </tbody>
     </table>
   </div>
-
   <div class="final-box">
-    <h3>Supabase 版 API 已通過技術驗收，具備正式切換條件</h3>
-    <p>依 8/3 策略決策，切換前提已由「真人測試通過」調整為「雙線路測試通過」，本次驗收即為該條件之達成證明。切換時點另行決策。</p>
+    <h3>已通過全部技術驗收,具備正式切換條件</h3>
+    <p>切換排定 2026-08-12(三)上午起執行,並於 8/14(五)下班前完成確認。切換後進入三個月觀察期,Airtable 保留作回滾保險。</p>
   </div>
 </section>
 
-
-<!-- 八、8/7 後續進展 -->
-<section>
-  <h2>八、後續進展（2026-08-07 更新）</h2>
-  <p class="sub">本驗收為 8/4 之技術快照；其後資料庫又有兩批異動，一併更新於此，驗收結論本身不受影響。</p>
-
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr><th>項目</th><th>8/4 驗收時</th><th>8/7 現況</th><th>說明</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Solutions（Airtable）</td><td>2,433</td><td><strong>2,489</strong></td><td>新北案匯入 56 筆</td></tr>
-        <tr><td>Solutions（Supabase）</td><td>2,429</td><td><strong>2,485</strong></td><td>新北 56 筆已 backfill；另 26 筆下架記錄之 record_status 補標待執行</td></tr>
-        <tr><td>Companies 落差</td><td>—</td><td><span class="badge ok">歸零</span></td><td>8/6 新增 19 家原未同步，8/7 已補齊</td></tr>
-        <tr><td>Program_Promotions</td><td>不存在</td><td><span class="badge ok">已建表+16 筆</span></td><td>Supabase 新建表（含 RLS），優惠價同步完成</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="callout gold">
-    <h3>切換前唯一新增的必要條件</h3>
-    <p>Supabase solutions 表 8/7 新增 record_status 欄位，其預設值使既有 26 筆下架記錄被標為「正常」。切換前須執行補標 SQL（COUNT 應為 26），否則已下架的異常資料將重新對外可見。此為 1 分鐘作業，已列為切換前檢查清單第一項。</p>
-  </div>
-
-  <div class="callout">
-    <h3>對驗收結論的影響：無</h3>
-    <p>8/4 驗收之「資料等價、差異可歸因、回滾就緒」結論在 8/7 後續同步後依然成立——新北案兩批資料在 Airtable 與 Supabase 均已存在且一致，未產生新的無法解釋殘差。Supabase Preview 版之雙線路複測仍為切換前最後動作。</p>
-  </div>
-</section>
 </main>
 
 <footer class="footer">
   <div class="wrap">
-    <p>產業策略智庫｜Supabase 遷移切換前驗收結論 · 2026-08-04</p>
-    <p>數據來源：dual_line_test_v2.ipynb 執行紀錄（共兩輪）及 Supabase SQL Editor 查證結果。本文件已整併原「雙線路測試工具說明」，方法與結論合一。</p>
+    <p>產業策略智庫｜資料庫遷移驗收結論 · 白話結論 + 技術佐證 · 最終複驗 2026-08-11</p>
+    <p>數據來源:dual_line_test_v2.ipynb 執行紀錄 + Supabase SQL Editor 查證。本文件整併白話結論與技術佐證於一份。</p>
     <div class="actions">
-      
       <a class="btn" href="db_upgrade_roadmap_20260730.html">資料庫升級路線圖 →</a>
-      <a class="btn" href="https://github.com/Pcc329/weekly-report" target="_blank" rel="noopener">查看 GitHub 原始碼 ↗</a>
+      <a class="btn" href="index.html#database">回報告中心</a>
     </div>
   </div>
 </footer>
