@@ -39,7 +39,7 @@
     .stat-sub { font-size: 12px; color: var(--faint); margin-top: 3px; }
     @media(max-width:600px){ .stats { grid-template-columns: repeat(2,1fr); } }
     .gantt-wrap { overflow-x: auto; }
-    .gantt-inner { min-width: 720px; }
+    .gantt-inner { width: 780px; }
     .gantt-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
     .leg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
     .leg-box { width: 12px; height: 12px; border-radius: 2px; }
@@ -91,23 +91,23 @@
       <h1>產業策略智庫 — 系統全盤點</h1>
       <a href="https://pcc329.github.io/weekly-report/weekly.html" class="back-link">← 週報</a>
     </div>
-    <div class="header-meta">III 數位轉型研究院 · 盤點日期：2026-07-28 · v12</div>
+    <div class="header-meta">III 數位轉型研究院 · 盤點日期：2026-08-11 · v13</div>
   </div>
 
   <!-- Stats -->
   <div class="sec">
     <div class="sec-title">資料庫現況</div>
     <div class="stats">
-      <div class="stat"><div class="stat-num">2,433</div><div class="stat-label">方案總數</div><div class="stat-sub">8 大來源（含農業部）</div></div>
+      <div class="stat"><div class="stat-num">2,463</div><div class="stat-label">方案數（對外）</div><div class="stat-sub">總表 2,489｜排除 26 筆下架</div></div>
       <div class="stat"><div class="stat-num">852</div><div class="stat-label">業者總數</div><div class="stat-sub">company_id 全數唯一</div></div>
       <div class="stat"><div class="stat-num">59</div><div class="stat-label">案例知識庫</div><div class="stat-sub">含輔導案例 · 雙徽章呈現</div></div>
-      <div class="stat"><div class="stat-num">40%</div><div class="stat-label">Supabase 遷移進度</div><div class="stat-sub">Cases / Companies API 已切換</div></div>
+      <div class="stat"><div class="stat-num">95%</div><div class="stat-label">Supabase 遷移進度</div><div class="stat-sub">三 API 已遷、驗收通過 · 8/12 切換</div></div>
     </div>
   </div>
 
   <!-- Gantt -->
   <div class="sec">
-    <div class="sec-title">里程碑甘特圖（7 月）</div>
+    <div class="sec-title">里程碑甘特圖（7–8 月）</div>
     <div class="gantt-legend">
       <div class="leg"><div class="leg-box" style="background:#1d9e75"></div>功能開發</div>
       <div class="leg"><div class="leg-box" style="background:#3b82f6"></div>測試驗證</div>
@@ -132,9 +132,11 @@
       <div class="etl-arr">→</div>
       <div class="etl-step"><span class="etl-n">+170</span><span class="etl-l">農業部 / 新創等擴充</span></div>
       <div class="etl-arr">→</div>
-      <div class="etl-step"><span class="etl-n">2,433</span><span class="etl-l">方案總計</span></div>
+      <div class="etl-step"><span class="etl-n">+56</span><span class="etl-l">新北案匯入</span></div>
       <div class="etl-arr">→</div>
-      <div class="etl-step"><span class="etl-n" style="color:#8b5cf6">Supabase</span><span class="etl-l">六表全量同步</span></div>
+      <div class="etl-step"><span class="etl-n">2,489</span><span class="etl-l">方案總表</span></div>
+      <div class="etl-arr">→</div>
+      <div class="etl-step"><span class="etl-n" style="color:#8b5cf6">Supabase</span><span class="etl-l">全量同步 · 差 +0</span></div>
     </div>
   </div>
 
@@ -143,12 +145,13 @@
     <div class="sec-title">Supabase 資料層遷移（Airtable → PostgreSQL）</div>
     <table class="feat-table">
       <tr><th>階段</th><th>內容</th><th>說明</th><th>狀態</th></tr>
-      <tr><td>Stage 1</td><td>Schema + 全量載入</td><td>六表載入（companies 852 / solutions 2,433 / cases 59 / contacts 677 / digital_needs 145 / awards 148），連日同步驗證一致</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
+      <tr><td>Stage 1</td><td>Schema + 全量載入</td><td>六表載入（companies 852 / solutions 2,489 / cases 59 / contacts 677 / digital_needs 145 / awards 148），連日同步驗證一致</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
       <tr><td>Stage 2</td><td>RLS 安全政策</td><td>anon / consultant / admin 三角色驗證，敏感欄位遮罩（contacts_masked）</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
       <tr><td>Stage 3a</td><td>Cases API 切換</td><td>PR #115，逐列比對 differences=0（29 筆）</td><td><span class="badge badge-done">✅ 已合併</span></td></tr>
       <tr><td>Stage 3b</td><td>Companies API 切換</td><td>PR #116，companies_with_counts 檢視表 + 852 筆逐列比對通過</td><td><span class="badge badge-done">✅ 已合併</span></td></tr>
-      <tr><td>Stage 3c</td><td>Solutions API 切換</td><td>2,433 筆、欄位最複雜，為剩餘主要工作量</td><td><span class="badge badge-wip">⏳ 下一步</span></td></tr>
-      <tr><td>Stage 4</td><td>Production 切換 + 文件</td><td>正式切換、遷移評估文件第 2–4 章（策略 / 風險回滾 / 成本時程）</td><td><span class="badge badge-wip">⏳ 規劃中</span></td></tr>
+      <tr><td>Stage 3c</td><td>Solutions API 切換</td><td>2,463 筆（對外）；8/11 雙線路複驗兩版差 +0，最複雜一支完成</td><td><span class="badge badge-done">✅ 已完成</span></td></tr>
+      <tr><td>Stage 3d</td><td>record_status 補標</td><td>26 筆下架記錄補標為「已下架_資料異常」，COUNT 驗證 = 26；對外一致排除</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
+      <tr><td>Stage 4</td><td>Production 切換 + 文件</td><td>驗收通過，切換排定 8/12 上午起執行；遷移評估文件第 2–4 章（策略 / 風險回滾 / 成本時程）撰寫中</td><td><span class="badge badge-wip">⏳ 8/12 執行</span></td></tr>
     </table>
   </div>
 
@@ -164,9 +167,10 @@
       <tr><td>案例知識庫</td><td>dashboard.html</td><td>59 筆案例，case_type / outcome_status 雙徽章呈現</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>缺口分析矩陣</td><td>strategy-guide.html</td><td>10×10 產業需求覆蓋</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>競爭態勢 Grid</td><td>strategy-guide.html</td><td>G2 風格氣泡矩陣</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
-      <tr><td>資料來源說明</td><td>sources.html</td><td>三層架構；農業部（農業雲市集-數位館）條目補列中</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
+      <tr><td>資料來源說明</td><td>sources.html</td><td>三層架構；9 大來源動態讀取 /api/stats（含農業部、新北案）</td><td><span class="badge badge-done">✅ 上線</span></td></tr>
       <tr><td>資安基線檢測</td><td>—</td><td>TLS / 應用回應層被動掃描，基線報告 7/13 發布</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
-      <tr><td>小規模試測（Phase 1）</td><td>回饋表單</td><td>耕偉組 / 中原組 ≤5 位測試者，邀請已寄出，每兩日檢視後台回饋</td><td><span class="badge badge-wip">⏳ 進行中</span></td></tr>
+      <tr><td>切換前驗收</td><td>—</td><td>雙線路自動化測試，8/11 複驗三 API 差 +0，白話結論 + 技術佐證報告已發布</td><td><span class="badge badge-done">✅ 完成</span></td></tr>
+      <tr><td>小規模試測（Phase 1）</td><td>回饋表單</td><td>耕偉組 / 中原組 ≤5 位測試者，每兩日檢視後台回饋</td><td><span class="badge badge-wip">⏳ 進行中</span></td></tr>
       <tr><td>顧問數位診斷工具</td><td>diagnosis.html</td><td>AI 功能暫停中，重啟時點另行評估</td><td><span class="badge badge-wip">⏸ 暫停</span></td></tr>
     </table>
   </div>
@@ -191,18 +195,18 @@
     <div class="sec-title">發展路線圖</div>
     <div class="phases">
       <div class="phase-card" style="border-top-color:#1d9e75">
-        <div class="phase-tag" style="color:#1d9e75">本階段 — 7月底至8月初</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>Solutions API 遷移（Stage 3c，剩餘主力）</div>
+        <div class="phase-tag" style="color:#1d9e75">本階段 — 8月中</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>Production 正式切換（8/12 上午起，8/14 前完成）</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>切換後三個月觀察期啟動（Airtable 保留回滾）</div>
+        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>遷移評估文件第 2–4 章</div>
         <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>小規模試測回饋收斂</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>方法論教學分享（7/29）</div>
-        <div class="phase-item"><div class="p-dot" style="background:#1d9e75"></div>Companies API 遷移 ✅（PR #116）</div>
       </div>
       <div class="phase-card" style="border-top-color:#f59e0b">
-        <div class="phase-tag" style="color:#b45309">下一階段 — 8月</div>
-        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>Production 切換 + 遷移評估文件第 2–4 章</div>
-        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>has_ai 缺值 206 筆 Haiku 批次標註</div>
-        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>sources.html 補列農業部條目</div>
+        <div class="phase-tag" style="color:#b45309">下一階段 — 8月下～9月</div>
+        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>has_ai 缺值批次標註（Haiku，206+56 筆）</div>
         <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>manufacturing.html 農業部欄位顯示修正</div>
+        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>重複記錄清理（82800070 等）</div>
+        <div class="phase-item"><div class="p-dot" style="background:#f59e0b"></div>companies API 分頁（目前上限 200）</div>
       </div>
       <div class="phase-card" style="border-top-color:#8b5cf6">
         <div class="phase-tag" style="color:#7c3aed">之後</div>
@@ -213,36 +217,36 @@
     </div>
   </div>
 
-  <footer>產業策略智庫 系統盤點 · III 數位轉型研究院 · 2026-07-28</footer>
+  <footer>產業策略智庫 系統盤點 · III 數位轉型研究院 · 2026-08-11</footer>
 </div>
 
 <script>
-const TOTAL_DAYS = 35;
+const TOTAL_DAYS = 49;
 const BASE = new Date('2026-06-29');
 function dayOf(s){ const [m,d]=s.split('/').map(Number); return Math.round((new Date(2026,m-1,d)-BASE)/86400000); }
 
 const tasks = [
   {sec:'已完成', items:[
     {name:'資安基線檢測+報告', s:'7/10',e:'7/13',col:'#3b82f6'},
-    {name:'專案綜合評估',      s:'7/20',e:'7/20',col:'#3b82f6'},
     {name:'試測邀請寄出',      s:'7/21',e:'7/22',col:'#1d9e75'},
-    {name:'案例卡雙徽章修復',  s:'7/22',e:'7/22',col:'#1d9e75'},
     {name:'Supabase全量載入',  s:'7/22',e:'7/22',col:'#8b5cf6'},
     {name:'RLS安全政策',       s:'7/23',e:'7/24',col:'#8b5cf6'},
     {name:'Cases API遷移',     s:'7/24',e:'7/24',col:'#8b5cf6'},
-    {name:'PM方法論Kit',       s:'7/25',e:'7/27',col:'#f59e0b'},
     {name:'Companies API遷移', s:'7/27',e:'7/28',col:'#8b5cf6'},
+    {name:'Solutions API遷移', s:'7/29',e:'8/02',col:'#8b5cf6'},
+    {name:'新北案匯入(+56)',   s:'8/06',e:'8/07',col:'#f59e0b'},
+    {name:'record_status補標', s:'8/11',e:'8/11',col:'#f59e0b'},
+    {name:'雙線路複驗 差+0',   s:'8/11',e:'8/11',col:'#3b82f6'},
   ]},
-  {sec:'進行中', items:[
-    {name:'小規模試測回饋',    s:'7/22',e:'7/31',col:'#3b82f6'},
-    {name:'方法論教學分享',    s:'7/29',e:'7/29',col:'#d1d5db'},
-    {name:'Solutions API遷移', s:'7/29',e:'8/02',col:'#d1d5db'},
+  {sec:'即將', items:[
+    {name:'小規模試測回饋',    s:'7/22',e:'8/15',col:'#3b82f6'},
+    {name:'Production正式切換', s:'8/12',e:'8/14',col:'#1d9e75'},
   ]},
 ];
 
-const ticks = ['6/29','7/06','7/13','7/20','7/27'];
-const TODAY = dayOf('7/28');
-const trackW = 520;
+const ticks = ['6/29','7/06','7/13','7/20','7/27','8/03','8/10'];
+const TODAY = dayOf('8/11');
+const trackW = 620;
 const px = d => (d/TOTAL_DAYS)*trackW;
 
 const el = document.getElementById('gantt');
