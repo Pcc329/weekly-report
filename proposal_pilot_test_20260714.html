@@ -110,6 +110,16 @@
   .ask ul li::before{background:var(--copper)}
   .ask ul li strong{color:#fff}
 
+  /* Sample files (M3) */
+  .sample-files{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .sample-files .lbl{display:block;font-size:12px;color:var(--mute);margin-bottom:8px}
+  .sample-files .file-links{display:flex;gap:10px;flex-wrap:wrap}
+  .file-link{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+    background:var(--steel-lt);border:1px solid var(--steel);color:var(--steel);
+    text-decoration:none;font-size:12.5px;font-weight:700;border-radius:3px;transition:background .15s,color .15s}
+  .file-link:hover{background:var(--steel);color:#fff}
+  .file-link:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
   footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
   @media(max-width:640px){
@@ -228,7 +238,16 @@
         </tr>
         <tr>
           <td><strong>M3 AI分析與案例推薦精準度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 12 分鐘</span></td>
-          <td>以手上真實客戶（或最熟悉的過往輔導對象）條件，<strong>自選路徑</strong>（AI 搜尋、AI 分析或兩者都用）跑一次完整查找，檢視系統推薦的案例。</td>
+          <td>
+            以手上真實客戶（或最熟悉的過往輔導對象）條件，<strong>自選路徑</strong>（AI 搜尋、AI 分析或兩者都用）跑一次完整查找，檢視系統推薦的案例。
+            <div class="sample-files">
+              <span class="lbl">若手邊沒有現成的客戶文件，可先下載以下範例檔案，於「AI 分析」頁面測試上傳功能：</span>
+              <div class="file-links">
+                <a class="file-link" href="https://raw.githubusercontent.com/Pcc329/solution-finder/main/dotzero_ai_assessment.pdf" target="_blank" rel="noopener">📄 範例評量表下載</a>
+                <a class="file-link" href="https://raw.githubusercontent.com/Pcc329/solution-finder/main/dotzero_diagnosis_report.pdf" target="_blank" rel="noopener">📄 範例診斷報告下載</a>
+              </div>
+            </div>
+          </td>
           <td>①推薦案例中真正相關的有幾筆？②選了哪條路徑、為什麼？③若下週見此客戶，會引用查到的方案或案例嗎？會／不會＋原因</td>
         </tr>
       </table>
