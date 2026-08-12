@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>產業策略智庫 測試邀請與操作說明</title>
+<style>
+  :root{
+    --ink:#1a2733;
+    --slate:#3d5266;
+    --mute:#6d8296;
+    --line:#dde4ea;
+    --paper:#f6f8fa;
+    --white:#fff;
+    --steel:#2f5d7c;
+    --steel-lt:#e8f0f5;
+    --copper:#b1633a;
+    --copper-lt:#faefe8;
+    --green:#2f6a4f;
+    --green-lt:#e9f2ed;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;
+    color:var(--ink);background:var(--paper);
+    line-height:1.75;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:0 24px 96px}
+
+  /* Cover */
+  .cover{background:var(--ink);color:#fff;padding:64px 0 56px;margin-bottom:0}
+  .cover .wrap{padding-bottom:0}
+  .eyebrow{font-size:12px;letter-spacing:.18em;color:#8fa8bd;text-transform:uppercase;margin-bottom:20px}
+  .cover h1{font-size:34px;font-weight:800;line-height:1.35;letter-spacing:-.01em;margin-bottom:14px}
+  .cover .sub{font-size:16px;color:#a9becf;font-weight:400;max-width:640px}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#33465a;margin-top:40px;border:1px solid #33465a}
+  .meta div{background:var(--ink);padding:14px 18px}
+  .meta dt{font-size:11px;color:#8fa8bd;letter-spacing:.08em;margin-bottom:4px}
+  .meta dd{font-size:14px;color:#fff;font-weight:600}
+
+  /* Section */
+  section{margin-top:52px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:26px}
+  .sec-num{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--copper)}
+  .sec-head h2{font-size:21px;font-weight:800;letter-spacing:-.01em}
+
+  /* Callout */
+  .callout{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--steel);padding:22px 26px;margin-bottom:24px}
+  .callout h3{font-size:14px;letter-spacing:.06em;color:var(--steel);margin-bottom:14px;font-weight:700}
+
+  /* Lists */
+  ul{list-style:none}
+  ul li{position:relative;padding-left:18px;margin-bottom:10px;font-size:15px;color:var(--slate)}
+  ul li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--mute);border-radius:50%}
+  ul li strong{color:var(--ink);font-weight:700}
+  ul.tight li{margin-bottom:6px}
+  .li-doc{float:right;font-size:12px;font-weight:700;color:var(--steel);text-decoration:none;
+    border-bottom:1px solid var(--steel);padding-bottom:1px;margin-left:12px;white-space:nowrap}
+  .li-doc:hover{color:var(--copper);border-bottom-color:var(--copper)}
+  .li-doc:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
+  /* Card grid */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:22px}
+  .cards{align-items:stretch}
+  .card{background:var(--white);border:1px solid var(--line);padding:20px 22px;
+    display:flex;flex-direction:column}
+  .card ul{flex:1}
+  .card .card-link{margin-top:auto;align-self:flex-start}
+  .card h4{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;letter-spacing:.04em}
+  .tag.done{background:var(--green-lt);color:var(--green)}
+  .tag.note{background:var(--copper-lt);color:var(--copper)}
+
+  .card-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 14px;
+    border:1px solid var(--steel);color:var(--steel);text-decoration:none;font-size:13px;font-weight:700;
+    transition:background .15s,color .15s}
+  .card-link:hover{background:var(--steel);color:#fff}
+  .card-link:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
+  /* Stat */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+  .stat{background:var(--white);border:1px solid var(--line);padding:20px;text-align:center}
+  .stat .n{font-size:32px;font-weight:800;color:var(--steel);line-height:1.2}
+  .stat .n small{font-size:15px;font-weight:700;color:var(--mute)}
+  .stat .l{font-size:12px;color:var(--mute);margin-top:6px}
+
+  .stats-lead{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+  .stats-lead .stat .n{color:var(--ink)}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);margin-bottom:22px;font-size:14px}
+  th{background:var(--steel-lt);color:var(--ink);text-align:left;padding:11px 16px;font-weight:700;font-size:13px;letter-spacing:.03em;border-bottom:1px solid var(--line)}
+  td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--slate);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td strong{color:var(--ink)}
+
+  /* Stages */
+  .stage{display:flex;align-items:stretch;gap:0;margin-bottom:22px;flex-wrap:wrap}
+  .st{flex:1;min-width:170px;background:var(--white);border:1px solid var(--line);padding:18px 20px;position:relative}
+  .st.active{border-color:var(--steel);border-width:2px;background:var(--steel-lt)}
+  .st .ph{font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:700;margin-bottom:6px}
+  .st .num{font-size:24px;font-weight:800;color:var(--ink);margin-bottom:4px}
+  .st .d{font-size:12px;color:var(--mute);line-height:1.6}
+  .arrow{display:flex;align-items:center;padding:0 10px;color:var(--line);font-size:20px;font-weight:700}
+
+  /* Ask */
+  .ask{background:var(--ink);color:#fff;padding:28px 32px;margin-top:14px}
+  .ask h3{font-size:17px;font-weight:800;margin-bottom:12px}
+  .ask ul li{color:#c3d3e0}
+  .ask ul li::before{background:var(--copper)}
+  .ask ul li strong{color:#fff}
+
+  /* Sample files (M3) */
+  .sample-files{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .sample-files .lbl{display:block;font-size:12px;color:var(--mute);margin-bottom:8px}
+  .sample-files .file-links{display:flex;gap:10px;flex-wrap:wrap}
+  .file-link{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+    background:var(--steel-lt);border:1px solid var(--steel);color:var(--steel);
+    text-decoration:none;font-size:12.5px;font-weight:700;border-radius:3px;transition:background .15s,color .15s}
+  .file-link:hover{background:var(--steel);color:#fff}
+  .file-link:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media(max-width:640px){
+    .cover h1{font-size:26px}
+    .arrow{display:none}
+    .st{min-width:100%}
+    .stats-lead{grid-template-columns:1fr}
+  }
+
+  .back-btn {
+    position: fixed; top: 15px; left: 15px;
+    padding: 10px 20px; background: #34495e; color: white;
+    text-decoration: none; border-radius: 50px; font-weight: bold;
+    font-size: 14px; z-index: 9999; transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  .back-btn:hover { background: #2c3e50; transform: scale(1.05); }
+  @media (max-width: 600px) { .back-btn { padding: 8px 16px; font-size: 13px; } }
+</style>
+</head>
+<body>
+
+
+
+<div class="cover">
+  <div class="wrap">
+    <div class="eyebrow">資策會數位轉型研究院 · 產業策略智庫</div>
+    <h1>產業策略智庫<br>測試邀請與操作說明</h1>
+    <p class="sub">邀請您實際使用平台的三大核心功能並回報使用感受——三個任務、總負擔約 30 分鐘,隨選隨填、不限順序。</p>
+    <dl class="meta">
+      <div><dt>日期</dt><dd>2026-08-12</dd></div>
+      <div><dt>對象</dt><dd>院內 PM / 顧問</dd></div>
+      <div><dt>負擔</dt><dd>約 30 分鐘</dd></div>
+      <div><dt>文件性質</dt><dd>測試邀請與教學</dd></div>
+    </dl>
+  </div>
+</div>
+
+<div class="wrap">
+
+  
+
+  <section>
+    <div class="sec-head"><span class="sec-num">開始之前</span><h2>這是什麼、請您做什麼</h2></div>
+
+    <p style="font-size:15px;color:var(--slate);margin-bottom:20px">「產業策略智庫」是彙整全台中小企業數位轉型方案與輔導案例的 AI 查詢平台。我們正在進行內部試測,想邀請您以<strong>實際工作情境</strong>走一遍三大核心功能,並回報使用感受——您的回饋將直接決定後續功能調整方向。</p>
+
+    <table>
+      <tr><th style="width:120px">項目</th><th>內容</th></tr>
+      <tr><td><strong>測試網址</strong></td><td><a href="https://solution-finder-gray.vercel.app" target="_blank" rel="noopener" style="color:var(--steel);font-weight:700">solution-finder-gray.vercel.app</a>　免登入、開了即可用</td></tr>
+      <tr><td><strong>範圍</strong></td><td>AI 方案搜尋（首頁）、案例知識庫（知識庫）、AI 分析案例推薦（方案探索）</td></tr>
+      <tr><td><strong>負擔</strong></td><td>三個任務共<strong>約 30 分鐘</strong>,不限順序、可分次完成</td></tr>
+      <tr><td><strong>回報</strong></td><td>每完成一個任務,至線上回報表單提交一次(每次 2–3 分鐘)</td></tr>
+    </table>
+
+    <div class="callout">
+      <h3>測試任務設計：三個任務</h3>
+      <p style="font-size:14px;color:var(--slate);margin-bottom:14px">採隨選隨填，沒有線性順序，測試者完成並回報，總負擔約 30 分鐘。動線涵蓋平台三個核心功能，等同完整走一次全功能。各任務完成後至<a href="https://solution-finder-gray.vercel.app/feedback.html" target="_blank" rel="noopener" style="color:var(--steel);font-weight:700">線上回報表單</a>提交，回報隨填隨送、每次約 2–3 分鐘。</p>
+      <table style="margin-bottom:0">
+        <tr><th style="width:190px">任務</th><th>內容</th><th style="width:230px">回報重點</th></tr>
+        <tr>
+          <td><strong>M1 AI語意辨識與搜尋精準度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 8 分鐘</span></td>
+          <td>從首頁以<strong>自己的話</strong>輸入真實需求進行 AI 搜尋（例：「客戶想導入品檢自動化，預算五十萬內，中部優先」），完成 1 次不同需求的搜尋。<br><span style="font-size:13px;color:var(--mute)">提示：不建議使用單一關鍵字，口語化描述才能發揮語意搜尋效果</span></td>
+          <td>前 5 筆結果中對題的有幾筆？AI 是否理解隱含條件（預算、地區）？</td>
+        </tr>
+        <tr>
+          <td><strong>M2 案例知識庫功能完整度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 10 分鐘</span></td>
+          <td>進入知識庫的案例知識庫分頁，產業別與痛點篩選各操作一次，找一筆自己熟悉領域的案例讀完。</td>
+          <td>資訊完整度足以向客戶說明嗎？（1–5 分）＋ 所讀案例為實績或規劃？</td>
+        </tr>
+        <tr>
+          <td><strong>M3 AI分析與案例推薦精準度測試</strong><br><span style="font-size:12px;color:var(--mute)">約 12 分鐘</span></td>
+          <td>
+            以手上真實客戶（或最熟悉的過往輔導對象）條件，<strong>自選路徑</strong>（AI 搜尋、AI 分析或兩者都用）跑一次完整查找，檢視系統推薦的案例。
+            <div class="sample-files">
+              <span class="lbl">若手邊沒有現成的客戶文件，可先下載以下範例檔案，於「AI 分析」頁面測試上傳功能：</span>
+              <div class="file-links">
+                <a class="file-link" href="https://raw.githubusercontent.com/Pcc329/solution-finder/main/dotzero_ai_assessment.pdf" target="_blank" rel="noopener">📄 範例評量表下載</a>
+                <a class="file-link" href="https://raw.githubusercontent.com/Pcc329/solution-finder/main/dotzero_diagnosis_report.pdf" target="_blank" rel="noopener">📄 範例診斷報告下載</a>
+              </div>
+            </div>
+          </td>
+          <td>①推薦案例中真正相關的有幾筆？②選了哪條路徑、為什麼？③若下週見此客戶，會引用查到的方案或案例嗎？會／不會＋原因</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout" style="border-left-color:var(--copper)">
+      <h3 style="color:var(--copper)">您的回饋會用在哪</h3>
+      <ul class="tight">
+        <li><strong>使用價值（主要）</strong>：搜尋與推薦結果是否有助顧問實務——結果相關性、案例內容深度是否足以引用</li>
+        <li><strong>入口偏好</strong>：顧問在真實情境下傾向哪條路徑（AI 搜尋或 AI 分析），作為後續介面資源配置依據</li>
+        <li><strong>系統承載</strong>：多人使用下的順暢度（後台已有監控,您只要正常使用即可）</li>
+        <li><strong>缺口識別</strong>：您查不到的需求,就是我們下一步要補的案例方向</li>
+      </ul>
+    </div>
+  </section>
+
+  
+
+  
+
+  <footer>
+    <span>資策會數位轉型研究院 · 產業策略智庫專案</span>
+    <span>2026-08-12 · 測試期間有任何問題,請直接聯繫 PM 嘉華</span>
+  </footer>
+
+</div>
+  <script src="nav.js"></script>
+</body>
+</html>
