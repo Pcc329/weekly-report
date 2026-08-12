@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資料庫切換完成報告（2026-08-12）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16233B;--ink-soft:#4A5A74;--paper:#FBFCFE;--card:#FFFFFF;--line:#DCE3EE;
+  --navy:#1F344A;--teal:#0F7B6C;--teal-bg:#EAF5F2;--blue:#35509E;--blue-bg:#EDF1FA;
+  --green:#17A08F;--green-bg:#E7F7F3;--gold:#B08D3E;--gold-bg:#FBF4E8;--warn:#C97A2B;--warn-bg:#FBF3E8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:16px}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px}
+header{border-bottom:3px solid var(--ink);padding:50px 0 32px;background:linear-gradient(180deg,#F1F8F5 0%,var(--paper) 100%)}
+.eyebrow{font-size:13px;letter-spacing:.32em;color:var(--ink-soft);font-weight:900;margin-bottom:14px}
+h1{font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(27px,4.2vw,40px);line-height:1.34;margin-bottom:18px}
+.verdict{display:flex;align-items:flex-start;gap:14px;background:var(--green-bg);border:1px solid #BFE7DC;border-left:6px solid var(--green);border-radius:12px;padding:18px 20px;max-width:760px}
+.verdict .m{font-size:26px;line-height:1;flex:none}
+.verdict .t{font-size:15.5px}.verdict .t b{color:#0B6153}
+.meta{margin-top:18px;font-size:13px;color:var(--ink-soft);display:flex;gap:18px;flex-wrap:wrap}
+.meta span{border-left:3px solid var(--line);padding-left:10px}
+section{padding:36px 0}
+h2{font-family:'Noto Serif TC',serif;font-weight:900;font-size:23px;margin-bottom:6px}
+.sub{color:var(--ink-soft);font-size:14.5px;margin-bottom:20px}
+p{margin:0 0 10px}
+strong{font-weight:900;color:var(--ink)}
+.arch{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:0 8px 20px rgba(22,35,59,.04)}
+.arch-row{display:grid;grid-template-columns:130px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.arch-row:last-child{border-bottom:none}
+.arch-tag{font-weight:900;font-size:14.5px}
+.arch-tag.moved{color:var(--teal)}.arch-tag.stay{color:var(--ink-soft)}
+.arch-d{font-size:14.5px;color:var(--ink-soft)}.arch-d b{color:var(--ink)}
+.flow{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--navy);color:#D6E2EC;border-radius:10px;padding:16px 18px;margin-top:16px;white-space:pre;overflow-x:auto;line-height:1.7}
+.flow .hl{color:#5FD0BE;font-weight:600}
+.callout{background:var(--gold-bg);border:1px solid #E3CFA6;border-left:6px solid var(--gold);border-radius:12px;padding:16px 20px;margin-top:16px}
+.callout b{color:var(--gold)}
+.callout p{font-size:14.5px;color:var(--ink-soft);margin:0}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+thead th{background:var(--navy);color:#fff;font-weight:900;border-bottom:none;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td:first-child{font-weight:700;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:900;background:var(--green-bg);color:#087263;border:1px solid #BFE7DC}
+code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:#EEF2F7;color:#0E2233;padding:1px 6px;border-radius:4px}
+.num-box{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+.nb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.nb .n{font-family:'Noto Serif TC',serif;font-size:26px;font-weight:900}
+.nb .l{font-size:13px;color:var(--ink-soft);margin-top:2px}
+.nb.pri{border-color:#BFE7DC;background:var(--green-bg)}
+.safe{background:var(--blue-bg);border:1px solid #D3DBF0;border-left:6px solid var(--blue);border-radius:12px;padding:16px 20px}
+.safe h3{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;color:var(--blue);margin-bottom:5px}
+.safe p{font-size:14.5px;color:var(--ink-soft);margin:0}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:#fff;font-weight:900;color:var(--ink);font-size:14px;text-decoration:none}
+footer{border-top:1px solid var(--line);padding:24px 0 46px;font-size:13px;color:var(--ink-soft)}
+@media(max-width:600px){.num-box,.arch-row{grid-template-columns:1fr}.arch-row{gap:4px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">產業策略智庫 · 資料庫遷移</div>
+    <h1>資料庫切換完成報告</h1>
+    <div class="verdict">
+      <span class="m">✅</span>
+      <div class="t"><b>切換完成，系統運作正常。</b>Production 資料來源已由 Airtable 正式切換至 Supabase，六項驗收全數通過；前台與 AI 功能運作照舊、使用者無感。回滾機制就緒，零資料損失。</div>
+    </div>
+    <div class="meta">
+      <span>切換日期：2026-08-12（三）上午</span>
+      <span>對象：solutions / companies / cases 三支 API</span>
+      <span>狀態：已進入三個月觀察期</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>一、誰動了、誰沒動</h2>
+    <p class="sub">本次切換只換了「資料從哪來」。前端與 AI 功能本身沒有搬移，仍在原地運作——這是切換對使用者無感的原因。</p>
+    <div class="arch">
+      <div class="arch-row">
+        <div class="arch-tag stay">前端（網頁）</div>
+        <div class="arch-d">沒搬。同一個網站、同一網址；只是取得的資料改由 Supabase 提供，<b>使用者無感</b>。</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-tag moved">API（中間層）</div>
+        <div class="arch-d"><b>改了資料來源。</b>solutions / companies / cases 三支改向 Supabase 撈，不再走 Airtable——這是本次切換的實際內容。</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-tag stay">LLM（AI 功能）</div>
+        <div class="arch-d">本身沒搬，原料換了。AI 一直呼叫 Anthropic API，與資料庫無關；只是分析／推薦時讀的方案資料現在來自 Supabase。</div>
+      </div>
+    </div>
+    <div class="flow">使用者 → 前端（Vercel，沒搬）
+          ↓ 呼叫
+        API（改了來源）→ 現在撈 <span class="hl">Supabase ✅</span>
+          ↓ 提供資料
+        LLM（Claude API，沒搬）→ 拿 Supabase 的資料分析</div>
+    <div class="callout">
+      <b>一句話：</b><p style="display:inline">唯一換掉的是最底層的資料倉庫（Airtable → Supabase）。上層前端、API、LLM 都在原地，只是「進貨來源」換成更穩定、更省成本的 Supabase。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>二、驗收結果（六項全過）</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>驗收項</th><th>結果</th><th>依據</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>資料筆數</td><td><span class="badge">✓ 通過</span></td><td>對外計數 2,463，資料完整</td></tr>
+          <tr><td>2</td><td>切換來源確認</td><td><span class="badge">✓ 通過</span></td><td>API 出現真實統編（Airtable 版恆空），確認已讀 Supabase</td></tr>
+          <tr><td>3</td><td>下架記錄排除</td><td><span class="badge">✓ 通過</span></td><td>盤點下架的 26 筆查詢確認查無</td></tr>
+          <tr><td>4</td><td>前台顯示</td><td><span class="badge">✓ 通過</span></td><td>搜尋、篩選、方案詳情皆正常；AI 方案數 875 與驗收一致</td></tr>
+          <tr><td>5</td><td>companies / cases API</td><td><span class="badge">✓ 通過</span></td><td>皆正常回傳完整資料</td></tr>
+          <tr><td>6</td><td>統計 API</td><td><span class="badge">✓ 通過</span></td><td>total 2,463、AI 875、公司 871，數字自洽</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px;font-size:14px;color:var(--ink-soft)">三處數字交叉一致：AI 方案數 875（統計）＝ 前台搜尋 875 ＝ 切換前驗收 875。</p>
+  </section>
+
+  <section>
+    <h2>三、對外筆數口徑</h2>
+    <p class="sub">系統有兩個都正確、但用途不同的方案計數，對外一律以 2,463 為準。</p>
+    <div class="num-box">
+      <div class="nb pri"><div class="n">2,463</div><div class="l">對外計數（統計 API）— 對外溝通、公告以此為準</div></div>
+      <div class="nb"><div class="n">2,485</div><div class="l">清單原始回傳（list API）— 含少數保留狀態記錄</div></div>
+    </div>
+    <p style="margin-top:12px;font-size:14px;color:var(--ink-soft)">兩者差異來自兩支 API 的計數口徑不同（統計端多濾除部分狀態），非資料問題。皆已排除盤點下架的 26 筆。</p>
+  </section>
+
+  <section>
+    <h2>四、為什麼可以放心</h2>
+    <div class="safe">
+      <h3>可逆設計 + 三個月觀察期</h3>
+      <p>本次切換以資料來源開關實作，可即時回滾；原 Airtable 保留三個月作為保險，確認穩定無虞後才退租。切換後進入密集監看期，持續比對新舊資料。整個過程零資料損失、對使用者無感。</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="migration_acceptance_20260804.html">← 切換前驗收結論</a>
+      <a class="btn" href="db_upgrade_roadmap_20260730.html">資料庫升級路線圖 →</a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">產業策略智庫 Solution Finder · 資料庫切換完成報告 · 2026-08-12 · 已進入三個月觀察期</div>
+</footer>
+
+</body>
+</html>
