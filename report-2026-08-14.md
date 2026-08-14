@@ -26,6 +26,12 @@
 | 🎓 PM 開案方法論教學簡報 | https://pcc329.github.io/weekly-report/methodology_training_20260729.html |
 | 💻 PM 方法論 Kit（GitHub） | https://github.com/Pcc329/pm-ai-workflow-kit |
 
+### 📊 執行進度簡報
+
+| 項目 | 連結 |
+|---|---|
+| 📊 資服產業資料庫 執行進度報告（V10，更新至 08/14） | https://pcc329.github.io/weekly-report/0814_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V10.pptx |
+
 ---
 
 ## 一、本週整體進度
