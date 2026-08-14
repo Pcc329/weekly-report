@@ -28,9 +28,12 @@
 
 ### 📊 執行進度簡報
 
-| 項目 | 連結 |
-|---|---|
-| 📊 資服產業資料庫 執行進度報告（V10，更新至 08/14） | https://pcc329.github.io/weekly-report/0814_%E8%B3%87%E6%9C%8D%E7%94%A2%E6%A5%AD%E8%B3%87%E6%96%99%E5%BA%AB%E7%B0%A1%E5%A0%B1_V10.pptx |
+<iframe 
+  src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fpcc329.github.io%2Fweekly-report%2F0814_%25E8%25B3%2587%25E6%259C%258D%25E7%2594%25A2%25E6%25A5%25AD%25E8%25B3%2587%25E6%2596%2599%25E5%25BA%25AB%25E7%25B0%25A1%25E5%25A0%25B1_V10.pptx" 
+  width="100%" 
+  height="600" 
+  frameborder="0">
+</iframe>
 
 ---
 
