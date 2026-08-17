@@ -1,102 +1,27 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>專案進度即時看板</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
-  <style>
-    :root { --primary: #2c3e50; --teal: #1D9E75; }
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-      background: #f4f7f6; margin: 0; padding: 0;
-    }
-    .back-home-btn {
-      position: fixed; top: 15px; left: 15px;
-      padding: 10px 20px; background: #34495e; color: white;
-      text-decoration: none; border-radius: 50px; font-weight: bold;
-      font-size: 14px; z-index: 9999; transition: all 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .back-home-btn:hover { background: #2c3e50; transform: scale(1.05); }
-    header {
-      background: var(--primary); color: white;
-      padding: 48px 20px 24px; text-align: center;
-    }
-    header h1 { margin: 0 0 6px; font-size: 1.8rem; }
-    header p { margin: 0; opacity: 0.7; font-size: 0.9rem; }
-    .container { width: 95%; max-width: 1000px; margin: 24px auto; }
+# 2026-08-17（週一）即時記事
 
-    .info-bar {
-      background: white; padding: 14px 18px; margin-bottom: 16px;
-      border-radius: 8px; border-left: 5px solid var(--teal);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.9rem; color: #555;
-    }
+## ✅ 今天完成
 
-    .report-card {
-      background: white; border-radius: 10px; padding: 32px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); line-height: 1.8;
-    }
-    .report-card h1 { color: var(--primary); border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
-    .report-card h2 { color: var(--primary); margin-top: 2rem; }
-    .report-card h3 { color: #34495e; }
-    .report-card table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-    .report-card th { background: var(--primary); color: white; padding: 10px; text-align: left; }
-    .report-card td { padding: 9px 10px; border-bottom: 1px solid #eee; }
-    .report-card tr:nth-child(even) td { background: #f9f9f9; }
-    .report-card code { background: #f1f1f1; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
-    .report-card blockquote { border-left: 4px solid var(--teal); margin: 0; padding: 8px 16px; background: #f0faf6; color: #555; }
-    .report-card hr { border: none; border-top: 1px solid #e5e5e5; margin: 24px 0; }
+- **companies.js 已下架記錄過濾修復（PR #124 已 merge）**：延續上週 PR #123 的漏網之魚——`api/companies.js` 的 Airtable 與 Supabase 兩條路徑都補上 `record_status` 過濾，公司層級的方案數／平均評分／標籤不再被已下架的臺灣雲市集記錄污染。Codex 額外把 `solution_count` 改成統一從過濾後的 Solutions 明細重算（原本 Supabase 路徑吃的是可能不同步的 `companies_with_counts` view），比原規格書要求的更徹底。已透過 `raw.githubusercontent.com` 對過實際 commit diff 驗證無誤才 merge。
 
-    .update-time { text-align: right; font-size: 0.75rem; color: #aaa; margin-bottom: 8px; }
-    footer { text-align: center; padding: 24px; color: #aaa; font-size: 0.8rem; }
+- **has_ai None-206（實際262筆）批次標註，Airtable + Supabase 雙資料庫同步完成**：
+  - 套用 `ai_batch_etl_lib.py` 框架，跑 Haiku 批次標註（`temperature=0`，用 monkey-patch 方式覆寫，未修改共用 lib 本身）
+  - 抓到 262 筆（比預期206多56筆，確認為新北輔導匯入那批新方案，數字吻合）
+  - 257 筆成功分類：「有」111 筆（43.2%）、「無」146 筆；5 筆資料不足（新北經發局）留待下次欄位完整性掃描一併處理
+  - 各來源「有AI」比例合理：農業部33.3%／軟採網19.5%／新北經發局94.1%（該計畫本就以AI方案為主打，非誤判）／新創嚴選60%／自有50%
+  - **發現並補上流程缺口**：Airtable → Supabase 沒有自動同步機制，寫完 Airtable 後正式站（讀Supabase）不會反映異動。臨時寫了 Supabase 同步步驟（DRY_RUN→小批次→全批次，含布林值轉換 `有/無`→`true/false`），257 筆全部同步成功並抽查驗證一致
 
-    @media (max-width: 600px) { .report-card { padding: 20px; } }
-  </style>
-</head>
-<body>
-  
-  <header>
-    <h1>📊 專案進度即時看板</h1>
-    <p>Real-time Status Update · 隨手登記大事件</p>
-  </header>
+## 📌 待處理（記錄不遺忘）
 
-  <div class="container">
-    <div class="info-bar">
-      <strong>⚡ 即時記事：</strong>本頁讀取 <code>status.md</code>，隨手記錄專案大事件，週末再整理進正式週報。
-    </div>
-    <div class="update-time" id="update-time"></div>
-    <div class="report-card" id="report-content">
-      <p style="color:#ccc; text-align:center; padding: 40px 0;">載入即時記事中...</p>
-    </div>
-  </div>
+- 5 筆新北經發局方案描述過短，需人工補充後才能分類 `has_ai`
+- 2 筆方案名稱異常（`reckjRYv0Orl2Mf9p` 空白、`recuxAIs6Tuqwg1jP` 顯示「缺」），需與其他欄位完整性掃描一起處理
+- **流程建議**：`ai_batch_etl_lib.py` 之後應把 Supabase 同步步驟正式納入標準流程，避免每次批次任務都要臨時補寫，這次是先用外掛方式處理
 
-  <footer>© 2026 III 產業資料庫專案 · Status Update · 內容每次開啟自動更新</footer>
+## 🔜 進行中
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const statusFile = urlParams.get('status') || 'status.md';
-    if (urlParams.get('status')) {
-      const dateMatch = statusFile.match(/(\d{4}-\d{2}-\d{2})/);
-      document.querySelector('header p').textContent =
-        'Real-time Status Update · 歷史記事 · ' + (dateMatch ? dateMatch[1] : statusFile);
-    }
-    fetch(statusFile + '?t=' + Date.now())
-      .then(r => {
-        if (!r.ok) throw new Error('status.md not found');
-        return r.text();
-      })
-      .then(md => {
-        document.getElementById('report-content').innerHTML = marked.parse(md);
-        document.getElementById('update-time').textContent =
-          '最後讀取：' + new Date().toLocaleString('zh-TW');
-      })
-      .catch(() => {
-        document.getElementById('report-content').innerHTML =
-          '<p style="color:#aaa;text-align:center;padding:40px">status.md 尚未建立，請新增即時記事內容。</p>';
-      });
-  </script>
-  <script src="nav.js"></script>
-</body>
-</html>
+- industry_category 命名衝突拍板
+- 農業部前端欄位對接修復
+
+## 📌 待週末整理進正式週報
+
+上述事項將於本週週報（`report.md`）彙整。
