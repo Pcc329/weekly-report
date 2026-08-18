@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="從一次真實正式站故障，整理成任何專案都能重複使用的事故應變與規格書防呆方法論">
+  <title>從故障到防呆｜事故應變與規格書驗收方法論</title>
+  <style>
+    :root{
+      --ink:#1a2733;
+      --slate:#3d5266;
+      --mute:#6d8296;
+      --line:#dde4ea;
+      --paper:#f6f8fa;
+      --white:#fff;
+      --steel:#2f5d7c;
+      --steel-lt:#e8f0f5;
+      --copper:#b1633a;
+      --copper-lt:#faefe8;
+      --green:#2f6a4f;
+      --green-lt:#e9f2ed;
+      --amber:#8a641e;
+      --amber-lt:#fbf4df;
+      --red:#a83232;
+      --red-lt:#faeaea;
+      --shadow:0 10px 28px rgba(25,39,51,.07);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:var(--paper);
+      line-height:1.75;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit}
+    .wrap{max-width:980px;margin:0 auto;padding:0 24px 96px}
+
+    .back-btn{
+      position:fixed;top:15px;left:15px;z-index:9999;
+      padding:9px 16px;border-radius:999px;
+      background:rgba(26,39,51,.93);color:#fff;text-decoration:none;
+      font-size:13px;font-weight:700;letter-spacing:.02em;
+      box-shadow:0 6px 18px rgba(0,0,0,.16);
+      transition:transform .18s,background .18s;
+    }
+    .back-btn:hover{transform:translateY(-1px);background:var(--copper)}
+    .back-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+    .cover{background:var(--ink);color:#fff;padding:72px 0 58px}
+    .cover .wrap{padding-bottom:0}
+    .eyebrow{font-size:12px;letter-spacing:.18em;color:#8fa8bd;text-transform:uppercase;margin-bottom:20px}
+    .cover h1{font-size:36px;font-weight:850;line-height:1.32;letter-spacing:-.025em;margin-bottom:14px}
+    .cover h1 span{display:block;color:#dce8f1}
+    .cover .sub{font-size:16px;color:#a9becf;max-width:720px}
+    .cover .core{
+      margin-top:26px;padding:17px 20px;border-left:4px solid var(--copper);
+      background:rgba(255,255,255,.055);color:#dce8f1;font-size:15px;max-width:780px;
+    }
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#33465a;margin-top:40px;border:1px solid #33465a}
+    .meta div{background:var(--ink);padding:14px 18px}
+    .meta dt{font-size:11px;color:#8fa8bd;letter-spacing:.08em;margin-bottom:4px}
+    .meta dd{font-size:14px;color:#fff;font-weight:700}
+
+    .jump{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+    .jump .inner{max-width:980px;margin:auto;padding:12px 24px;display:flex;gap:8px;overflow:auto;scrollbar-width:thin}
+    .jump a{flex:0 0 auto;text-decoration:none;font-size:12px;font-weight:700;color:var(--slate);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .jump a:hover{border-color:var(--steel);color:var(--steel);background:var(--steel-lt)}
+
+    section{margin-top:54px;scroll-margin-top:72px}
+    .sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:26px}
+    .sec-num{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--copper)}
+    .sec-head h2{font-size:22px;font-weight:850;letter-spacing:-.015em}
+    .lead{font-size:15px;color:var(--slate);margin:-8px 0 24px;max-width:820px}
+
+    .callout{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--steel);padding:22px 26px;margin-bottom:24px;box-shadow:var(--shadow)}
+    .callout h3{font-size:14px;letter-spacing:.06em;color:var(--steel);margin-bottom:10px;font-weight:800}
+    .callout p{font-size:15px;color:var(--slate)}
+    .callout.emphasis{border-left-color:var(--copper);background:linear-gradient(90deg,var(--copper-lt),#fff 42%)}
+    .callout.emphasis h3{color:var(--copper)}
+    .callout.warn{border-left-color:var(--red);background:linear-gradient(90deg,var(--red-lt),#fff 42%)}
+    .callout.warn h3{color:var(--red)}
+
+    ul{list-style:none}
+    ul li{position:relative;padding-left:18px;margin-bottom:9px;font-size:15px;color:var(--slate)}
+    ul li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;background:var(--mute);border-radius:50%}
+    ul li strong{color:var(--ink);font-weight:750}
+    ul.tight li{margin-bottom:5px}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+    .stat{background:var(--white);border:1px solid var(--line);padding:20px;text-align:center;box-shadow:var(--shadow)}
+    .stat .n{font-size:29px;font-weight:850;color:var(--steel);line-height:1.2}
+    .stat .l{font-size:12px;color:var(--mute);margin-top:6px}
+
+    .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:22px;align-items:stretch}
+    .card{background:var(--white);border:1px solid var(--line);padding:21px 22px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+    .card h3,.card h4{font-size:16px;font-weight:800;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+    .card .index{font-size:11px;letter-spacing:.09em;color:var(--copper);font-weight:850}
+    .card p{font-size:14px;color:var(--slate);margin-bottom:10px}
+    .tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:2px;letter-spacing:.04em}
+    .tag.done{background:var(--green-lt);color:var(--green)}
+    .tag.note{background:var(--copper-lt);color:var(--copper)}
+    .tag.base{background:var(--steel-lt);color:var(--steel)}
+    .tag.warn{background:var(--amber-lt);color:var(--amber)}
+    .tag.danger{background:var(--red-lt);color:var(--red)}
+
+    .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+    .compare .side{background:#fff;border:1px solid var(--line);padding:22px;box-shadow:var(--shadow)}
+    .compare .side.before{border-top:4px solid var(--red)}
+    .compare .side.after{border-top:4px solid var(--green)}
+    .compare h3{font-size:16px;margin-bottom:12px}
+
+    table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);margin-bottom:22px;font-size:14px;box-shadow:var(--shadow)}
+    th{background:var(--steel-lt);color:var(--ink);text-align:left;padding:11px 15px;font-weight:800;font-size:13px;letter-spacing:.02em;border-bottom:1px solid var(--line)}
+    td{padding:12px 15px;border-bottom:1px solid var(--line);color:var(--slate);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    td strong{color:var(--ink)}
+
+    .flow{display:flex;align-items:stretch;gap:0;margin-bottom:24px;flex-wrap:wrap}
+    .flow .step{flex:1;min-width:130px;background:var(--white);border:1px solid var(--line);padding:17px 15px;position:relative;box-shadow:var(--shadow)}
+    .flow .step.highlight{border:2px solid var(--red);background:var(--red-lt)}
+    .flow .ph{font-size:10px;letter-spacing:.1em;color:var(--mute);font-weight:800;margin-bottom:5px}
+    .flow .title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:5px}
+    .flow .desc{font-size:12px;color:var(--mute);line-height:1.55}
+    .arrow{display:flex;align-items:center;padding:0 8px;color:#bec9d2;font-size:19px;font-weight:800}
+
+    .stage{display:flex;align-items:stretch;gap:0;margin-bottom:22px;flex-wrap:wrap}
+    .st{flex:1;min-width:190px;background:var(--white);border:1px solid var(--line);padding:20px;position:relative;box-shadow:var(--shadow)}
+    .st.active{border:2px solid var(--red);background:var(--red-lt)}
+    .st .ph{font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:800;margin-bottom:6px}
+    .st .num{font-size:20px;font-weight:850;color:var(--ink);margin-bottom:4px}
+    .st .d{font-size:12px;color:var(--mute);line-height:1.6}
+
+    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+    .principle{background:#fff;border:1px solid var(--line);padding:20px 18px;box-shadow:var(--shadow)}
+    .principle .icon{font-size:23px;margin-bottom:8px}
+    .principle h3{font-size:15px;margin-bottom:7px}
+    .principle p{font-size:13px;color:var(--slate)}
+
+    details{background:#fff;border:1px solid var(--line);margin-bottom:22px;box-shadow:var(--shadow)}
+    summary{cursor:pointer;padding:17px 20px;font-size:14px;font-weight:800;color:var(--steel);list-style:none}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"＋";float:right;color:var(--copper)}
+    details[open] summary::after{content:"－"}
+    pre{white-space:pre-wrap;word-break:break-word;padding:20px;background:#17232e;color:#dce8f1;font-size:13px;line-height:1.7;overflow:auto}
+
+    .guardrails{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+    .guard{background:#fff;border:1px solid var(--line);padding:20px;box-shadow:var(--shadow)}
+    .guard h3{font-size:15px;margin-bottom:10px;color:var(--copper)}
+    .guard p{font-size:13px;color:var(--slate)}
+
+    .checklist{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);margin-bottom:22px}
+    .checklist li{padding:14px 20px;border-bottom:1px solid var(--line);font-size:14px;color:var(--slate);padding-left:44px}
+    .checklist li:last-child{border-bottom:none}
+    .checklist li::before{content:"☐";position:absolute;left:18px;top:13px;font-size:16px;color:var(--copper);background:none;width:auto;height:auto;border-radius:0}
+    .checklist li strong{color:var(--ink)}
+
+    .ask{background:var(--ink);color:#fff;padding:30px 32px;margin-top:18px;box-shadow:var(--shadow)}
+    .ask h3{font-size:18px;font-weight:850;margin-bottom:12px}
+    .ask p{color:#c3d3e0;font-size:14px;margin-bottom:14px}
+    .ask ul li{color:#c3d3e0}
+    .ask ul li::before{background:var(--copper)}
+    .ask ul li strong{color:#fff}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border:1px solid #8fa8bd;color:#fff;text-decoration:none;font-size:13px;font-weight:800;transition:.18s}
+    .btn:hover{background:#fff;color:var(--ink)}
+    .btn.primary{background:var(--copper);border-color:var(--copper)}
+    .btn.primary:hover{background:#fff;color:var(--copper)}
+
+    footer{margin-top:58px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+    @media(max-width:820px){
+      .stats,.principles{grid-template-columns:repeat(2,1fr)}
+      .guardrails{grid-template-columns:1fr}
+      .cover h1{font-size:30px}
+    }
+    @media(max-width:640px){
+      .wrap{padding-left:18px;padding-right:18px;padding-bottom:72px}
+      .cover{padding-top:78px}
+      .cover h1{font-size:26px}
+      .cover .sub{font-size:15px}
+      .cards,.compare,.stats,.principles{grid-template-columns:1fr}
+      .arrow{display:none}
+      .flow .step,.st{min-width:100%}
+      .sec-head{align-items:flex-start}
+      .sec-head h2{font-size:20px}
+      table{display:block;overflow-x:auto;white-space:normal}
+      .back-btn{font-size:12px;padding:8px 13px}
+    }
+    @media print{
+      .back-btn,.jump{display:none}
+      body{background:#fff}
+      .wrap{max-width:none;padding-bottom:20px}
+      .card,.stat,.callout,.principle,.guard,.side,.step,.st,table,details,.ask,.checklist{box-shadow:none;break-inside:avoid}
+      section{break-inside:auto}
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back-btn" href="index.html#method">← 返回方法論</a>
+
+  <header class="cover">
+    <div class="wrap">
+      <div class="eyebrow">資策會數位轉型研究院 · 可複用方法論</div>
+      <h1>從故障到防呆<span>事故應變與規格書驗收方法論</span></h1>
+      <p class="sub">一次真實的正式站故障，整理成任何專案都能重複使用的檢查機制——目的不是記錄這次發生了什麼，而是讓下一次不必重新踩過同一個坑。</p>
+      <div class="core"><strong>核心觀念：</strong>警訊被寫出來，不等於警訊被擋下來。真正有效的防呆，是把「口頭誠實揭露」變成「結構化、不能跳過的關卡」。</div>
+      <dl class="meta">
+        <div><dt>建立日期</dt><dd>2026-08-18</dd></div>
+        <div><dt>適用對象</dt><dd>專案負責人／AI協作流程使用者</dd></div>
+        <div><dt>文件性質</dt><dd>事故轉化為方法論</dd></div>
+        <div><dt>案例來源</dt><dd>PR #126 正式站故障</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <nav class="jump" aria-label="頁面章節">
+    <div class="inner">
+      <a href="#s1">01 為什麼寫這篇</a>
+      <a href="#s2">02 案例回顧</a>
+      <a href="#s3">03 三個判斷原則</a>
+      <a href="#s4">04 應變四步驟</a>
+      <a href="#s5">05 規格書防呆五關卡</a>
+      <a href="#s6">06 快速檢查清單</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <section id="s1">
+      <div class="sec-head"><span class="sec-num">SECTION 01</span><h2>為什麼寫這篇</h2></div>
+      <p class="lead">絕大多數事故的根因不是沒有人發現問題，而是問題被發現了、被寫下來了，卻沒有一個機制強迫它變成阻擋動作。這份文件要解決的正是這個落差。</p>
+
+      <div class="compare">
+        <div class="side before">
+          <h3>沒有防呆時的狀態</h3>
+          <ul>
+            <li>執行者誠實揭露「只做過簡化測試」，但這句話埋在一大段敘述裡</li>
+            <li>審核者讀到警訊，仍憑當下感覺判斷「應該沒問題」</li>
+            <li>判斷依據是「diff 看起來合理」，而非「有沒有證據」</li>
+            <li>警訊與放行決定之間，沒有任何強制卡點</li>
+          </ul>
+        </div>
+        <div class="side after">
+          <h3>加入防呆後的狀態</h3>
+          <ul>
+            <li><strong>結構化勾選：</strong>驗證方式只能勾一項，不能寫成模糊敘述</li>
+            <li><strong>自動卡關：</strong>勾到「未完整驗證」就代表狀態是「未完成」，不是「風險可接受」</li>
+            <li><strong>止血優先：</strong>正式環境出事，先執行固定動作，不必臨場判斷</li>
+            <li><strong>證據優先：</strong>放行前需要可查核的證據，而非「感覺應該沒問題」</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout emphasis">
+        <h3>一句話定位</h3>
+        <p><strong>把「有沒有踩雷」的判斷，從每次都要重新思考的臨場決定，變成一份不用重新想就能照做的清單。</strong></p>
+      </div>
+    </section>
+
+    <section id="s2">
+      <div class="sec-head"><span class="sec-num">SECTION 02</span><h2>案例回顧：一次正式站故障的時間軸</h2></div>
+      <p class="lead">這份方法論不是憑空寫的規則，而是從一次實際故障逆推出來的。以下是完整時間軸，作為後續所有原則的具體對照。</p>
+
+      <div class="stage">
+        <div class="st"><div class="ph">STAGE 01</div><div class="num">merge</div><div class="d">程式改動 merge 到 main，變更資料庫查詢欄位</div></div>
+        <div class="st active"><div class="ph">STAGE 02</div><div class="num">故障</div><div class="d">正式站對外 API 全面回傳錯誤，前端顯示載入失敗</div></div>
+        <div class="st"><div class="ph">STAGE 03</div><div class="num">根因</div><div class="d">查詢語句引用了資料庫裡實際不存在的欄位</div></div>
+        <div class="st"><div class="ph">STAGE 04</div><div class="num">關鍵</div><div class="d">執行端已誠實寫下「只做過簡化測試」，但這句話沒有變成阻擋動作</div></div>
+        <div class="st"><div class="ph">STAGE 05</div><div class="num">止血</div><div class="d">立即回滾到上一個正常版本，數秒內恢復</div></div>
+        <div class="st"><div class="ph">STAGE 06</div><div class="num">修復</div><div class="d">另開乾淨分支修復，三層驗證後才 merge</div></div>
+      </div>
+
+      <div class="callout warn">
+        <h3>核心教訓一句話</h3>
+        <p><strong>警訊被寫出來了，但沒有轉成阻擋動作。誠實揭露本身沒有問題，問題在於揭露之後缺乏強制卡點。</strong></p>
+      </div>
+    </section>
+
+    <section id="s3">
+      <div class="sec-head"><span class="sec-num">SECTION 03</span><h2>三個判斷原則</h2></div>
+      <p class="lead">從案例逆推出來、可以套用在任何專案的通用判斷原則。</p>
+
+      <div class="principles">
+        <div class="principle"><div class="icon">🚨</div><h3>止血優先於診斷</h3><p>正式環境出事，第一動作永遠是恢復服務，不是先查原因。診斷可以等，停機不能等。</p></div>
+        <div class="principle"><div class="icon">☑</div><h3>結構化勾選優於散文警語</h3><p>一句埋在敘述裡的警語容易被略讀過去；一個必填的勾選項不會。把判斷依據做成表單，而非期待對方讀完全文。</p></div>
+        <div class="principle"><div class="icon">🧪</div><h3>簡化測試不等於已驗證</h3><p>用假資料或模擬環境測試，永遠測不出「真實環境裡這個欄位到底存不存在」這類問題。凡涉及外部依賴（資料庫欄位、API 回應），必須有真實環境的證據。</p></div>
+        <div class="principle"><div class="icon">📊</div><h3>先查資料現況再動工</h3><p>「把某個顯示功能補回來」這類需求，動工前先確認資料本身是否有值。資料本來就是空的，不是程式碼問題。</p></div>
+      </div>
+    </section>
+
+    <section id="s4">
+      <div class="sec-head"><span class="sec-num">SECTION 04</span><h2>事故應變四步驟</h2></div>
+      <p class="lead">正式環境出現故障時，依序執行，不需要臨場重新判斷順序。</p>
+
+      <div class="flow" aria-label="事故應變流程">
+        <div class="step highlight"><div class="ph">STEP 01</div><div class="title">立即止血</div><div class="desc">回滾到上一個確認正常的版本，不先查原因</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 02</div><div class="title">確認恢復</div><div class="desc">用工具或人工確認服務真的恢復正常，不只是「看起來」恢復</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 03</div><div class="title">查真實根因</div><div class="desc">用可查核的方式（如直接查詢資料庫結構）確認問題，不用猜的</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 04</div><div class="title">另開乾淨分支修復</div><div class="desc">不疊加在壞掉的分支上，避免夾帶未發現的其他問題</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 05</div><div class="title">三層驗證</div><div class="desc">程式差異核對、核心邏輯未被觸碰、真實環境呼叫成功</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ph">STEP 06</div><div class="title">收尾確認</div><div class="desc">確認主分支本身已修復，不只是暫時繞開的狀態</div></div>
+      </div>
+
+      <div class="callout">
+        <h3>為什麼「止血」必須排第一</h3>
+        <p>先查原因再決定要不要恢復服務，會讓正式環境多承受不必要的停機時間。診斷永遠可以事後做，而使用者正在經歷的中斷不行。這個順序不是臨場判斷，是固定規則。</p>
+      </div>
+
+      <div class="callout warn">
+        <h3>止血之後，事情還沒結束</h3>
+        <p>回滾只是讓對外服務暫時指向舊版本，<strong>造成問題的那個版本本身仍然是壞的</strong>。如果之後有人不小心重新部署，或系統自動觸發部署，會再次踩到同一個雷。必須盡快完成正式修復，讓主分支本身回到健康狀態，不能只依賴回滾這個暫時繞開的狀態。</p>
+      </div>
+    </section>
+
+    <section id="s5">
+      <div class="sec-head"><span class="sec-num">SECTION 05</span><h2>規格書防呆五關卡</h2></div>
+      <p class="lead">與其事後補救，不如在委派任務的規格書裡預先設下強制檢查點。以下五項可以直接套用進任何專案的任務規格書模板。</p>
+
+      <div class="cards">
+        <article class="card">
+          <h3><span class="index">關卡 01</span>外部依賴存在性驗證 <span class="tag danger">必填</span></h3>
+          <p>凡任務涉及讀取外部系統（資料庫欄位、第三方 API 回應），執行前必須附上「該依賴確實存在」的證據——查詢結構清單，或真實環境的成功呼叫紀錄。</p>
+          <p><strong>只用模擬／假資料測試，不算完成此項。</strong></p>
+        </article>
+        <article class="card">
+          <h3><span class="index">關卡 02</span>結構快照比對 <span class="tag base">執行前</span></h3>
+          <p>維護一份外部依賴的現況快照（例如資料庫欄位清單），任務執行前先比對要用到的項目是否存在於快照中。找不到就先標記「需人工二次確認」，不假設它存在。</p>
+        </article>
+        <article class="card">
+          <h3><span class="index">關卡 03</span>驗證方式聲明 <span class="tag warn">結構化</span></h3>
+          <p>回報驗證結果時，用「只能勾一項」的結構化選項取代自由敘述：已在真實環境驗證／僅完成模擬驗證。勾到後者，狀態自動視為「未完成」，不能作為放行依據。</p>
+        </article>
+        <article class="card">
+          <h3><span class="index">關卡 04</span>資料填寫率預查 <span class="tag note">動工前</span></h3>
+          <p>「恢復顯示某個欄位」這類需求，動工前先查該欄位在受影響資料範圍內的非空值比例。填寫率過低，代表這是資料補值問題，不是顯示邏輯問題，應先轉為獨立任務排入待辦，而非直接寫程式碼。</p>
+        </article>
+        <article class="card">
+          <h3><span class="index">關卡 05</span>優雅降級（單欄失敗容錯） <span class="tag danger">架構層</span></h3>
+          <p>業界標準名稱：<strong>Graceful Degradation（優雅降級）</strong>／<strong>Fault Isolation（容錯隔離）</strong>。新增欄位的讀取須獨立、可個別失敗，不得與既有欄位綁在同一個「全部成功才算成功」的邏輯裡。</p>
+          <p>驗收時須刻意讓新欄位讀取失敗一次，確認其餘既有欄位與整體功能不受影響——這正是 PR #126 事故最根本的架構缺口：一個不存在的欄位，拖垮了整支查詢裡所有原本正常的欄位。</p>
+        </article>
+      </div>
+
+      <details>
+        <summary>展開：可直接複製進規格書模板的檢查點文字</summary>
+        <pre>【外部依賴存在性驗證】任何涉及讀取外部系統欄位／資料的任務，
+執行前須附上下列其中一項證據，不得留白：
+□ 已查詢外部系統結構，確認欄位／資料確實存在（附查詢結果）
+□ 已在真實環境呼叫過一次，確認回應成功（附回應內容）
+※ 僅使用模擬或假資料測試，不算完成本項驗證。
+
+【優雅降級（單欄失敗容錯）】新增顯示欄位時，該欄位的讀取須獨立、
+可個別失敗，不得與既有欄位綁在同一個「全部成功才算成功」的邏輯裡；
+新欄位失敗時應顯示為空值或預設文字，其餘既有欄位不受影響。
+驗收須附上「刻意讓新欄位失敗、確認其餘欄位正常」的測試結果。
+
+【驗證方式聲明】驗證方式只能勾選一項：
+□ 已在真實環境驗證，證據如上
+□ 僅完成模擬／假資料驗證，尚未真實環境驗證
+※ 勾選第二項者，此任務狀態為「未完成」，
+   下一步只能是「安排真實環境驗證」，不得直接放行。
+
+【資料填寫率預查】若任務是「恢復／新增顯示某欄位」，
+動工前須先確認該欄位在受影響資料範圍內的非空值比例；
+比例過低（例如低於二成），應先與負責人確認是否轉為
+資料補值任務，而非顯示邏輯任務。</pre>
+      </details>
+    </section>
+
+    <section id="s6">
+      <div class="sec-head"><span class="sec-num">SECTION 06</span><h2>快速檢查清單</h2></div>
+      <p class="lead">趕時間時可以直接照著做的精簡版本，不需要重新讀完整篇。</p>
+
+      <ul class="checklist">
+        <li><strong>正式環境掛了</strong>——先回滾，不先查原因。查原因永遠可以晚一步做。</li>
+        <li><strong>回滾後</strong>——確認服務真的恢復（實際打一次確認，不只是看起來正常）。</li>
+        <li><strong>查根因</strong>——用可查核的方式確認問題（例如直接查詢資料庫結構），不要用猜的。</li>
+        <li><strong>正式修復</strong>——另開乾淨分支，不疊加在壞掉的分支上。</li>
+        <li><strong>merge 前</strong>——一定要有「真實環境驗證成功」的證據，只做過模擬測試就是還沒做完，不是可以商量的灰色地帶。</li>
+        <li><strong>收尾</strong>——確認主分支本身已經修復，不是只靠暫時繞開的狀態撐著。</li>
+      </ul>
+
+      <div class="guardrails">
+        <div class="guard"><h3>事實責任</h3><p>執行端可以誠實揭露限制，但是否可以放行，責任在審核端有沒有把警訊變成強制卡點，而不是憑感覺判斷。</p></div>
+        <div class="guard"><h3>證據優先</h3><p>「diff 看起來合理」不是放行的充分理由。放行需要的是可查核的證據，不是主觀印象。</p></div>
+        <div class="guard"><h3>環境限制不是例外理由</h3><p>若執行環境本身無法完成真實驗證，應由人在有權限的環境完成，而不是因為「這次有限制」就跳過這一關。</p></div>
+      </div>
+
+      <div class="ask">
+        <h3>延伸閱讀：完整事故記錄與規格書模板</h3>
+        <p>本頁是方法論的精簡呈現版本；若需要完整的事故時間軸細節，或是可直接複製使用的完整任務規格書模板，請參考以下原始文件。</p>
+        <ul>
+          <li><strong>完整版：</strong>含事故詳細時間軸、每一步驟的具體操作方式</li>
+          <li><strong>規格書模板：</strong>已內建本頁四項防呆關卡的可填寫版本，可直接複製使用</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="https://github.com/Pcc329/weekly-report/blob/main/incident_SOP_20260818.md" target="_blank" rel="noopener noreferrer">查看完整事故記錄 ↗</a>
+          <a class="btn" href="https://github.com/Pcc329/weekly-report/blob/main/codex_%E8%A6%8F%E6%A0%BC%E6%9B%B8%E7%AF%84%E6%9C%AC_v2.md" target="_blank" rel="noopener noreferrer">查看規格書模板 v2 ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>資策會數位轉型研究院 · 事故應變與規格書防呆方法論</span>
+      <span>2026-08-18 · weekly-report</span>
+    </footer>
+  </main>
+</body>
+</html>
