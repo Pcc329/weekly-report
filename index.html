@@ -125,6 +125,45 @@
  /* 置頂兩張卡略微加重，與分頁內容區隔 */
  .pinned .nav-card { box-shadow: 0 3px 12px rgba(44,62,80,0.11); }
 
+ /* 資料更新（近 7 天，GitHub commit 來源） */
+ .update-section {
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(44,62,80,0.11); overflow: hidden;
+  margin-bottom: 14px;
+  border: 1.5px dashed var(--teal);
+ }
+ .update-header {
+  background: #f4fbf8; padding: 12px 18px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid #eef6f2;
+ }
+ .update-header .u-icon { color: var(--teal); font-size: 0.95rem; }
+ .update-header .u-title { font-size: 0.86rem; font-weight: 700; color: var(--primary); }
+ .update-header .u-badge {
+  font-size: 0.68rem; font-weight: 700; padding: 2px 9px;
+  border-radius: 20px; background: #e8f8f2; color: var(--teal);
+ }
+ .update-header .u-more {
+  margin-left: auto; font-size: 0.76rem; color: var(--teal);
+  text-decoration: none; display: flex; align-items: center; gap: 2px;
+  flex-shrink: 0;
+ }
+ .update-header .u-more:hover { text-decoration: underline; }
+ .update-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 11px 18px; border-bottom: 1px solid #f4f4f4;
+  text-decoration: none; color: inherit;
+ }
+ .update-item:last-child { border-bottom: none; }
+ .update-item:hover { background: #fafffd; }
+ .update-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--teal); margin-top: 6px; flex-shrink: 0;
+ }
+ .update-text { flex: 1; min-width: 0; font-size: 0.8rem; color: var(--primary); line-height: 1.5; }
+ .update-time { font-size: 0.7rem; color: #bbb; flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
+ .update-empty { padding: 16px 18px; font-size: 0.78rem; color: #bbb; }
+
  /* 歷程區塊 */
  .log-section {
   background: white; border-radius: 12px;
@@ -174,6 +213,7 @@
  .no-js .tabbar-outer { display: none; }
  .no-js .panel[hidden] { display: block; }
  .no-js .panel-intro { display: none; }
+ .no-js .update-section { display: none; }
 
  @media (max-width: 480px) {
   header { padding: 22px 18px 18px; }
@@ -191,6 +231,8 @@
   .log-header { padding: 12px 16px; }
   .log-header small { display: none; }
   .log-hint { padding: 10px 16px 14px; }
+  .update-header { padding: 10px 14px; flex-wrap: wrap; }
+  .update-item { padding: 10px 14px; }
  }
  @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -225,6 +267,19 @@
   </div>
   <span class="card-badge" style="background:#fdecea; color:#c0392b;">隨時更新</span>
  </a>
+
+ <!-- 資料更新：近 7 天 GitHub commit 摘要（程式碼/功能變更），JS 動態載入 -->
+ <div class="update-section">
+  <div class="update-header">
+   <span class="u-icon">🔄</span>
+   <span class="u-title">資料更新</span>
+   <span class="u-badge" id="update-badge">近 7 天</span>
+   <a href="https://github.com/Pcc329/solution-finder/commits/main" target="_blank" rel="noopener noreferrer" class="u-more">查看全部 ›</a>
+  </div>
+  <div id="data-updates">
+   <div class="log-loading"><span class="spinner"></span>載入更新中...</div>
+  </div>
+ </div>
 </div>
 
 <!-- ══ 分頁列（吸頂．可橫向滑動） ══ -->
@@ -668,6 +723,72 @@ async function loadEtlHistory() {
 // 啟動
 loadReportHistory();
 loadEtlHistory();
+</script>
+
+<!-- ══ 資料更新：近 7 天 GitHub commit（solution-finder 主程式 repo，程式碼/功能變更） ══ -->
+<script>
+(function () {
+  const UPDATE_REPO = 'Pcc329/solution-finder';
+  const UPDATE_BRANCH = 'main';
+  const UPDATE_DAYS = 7;
+  const UPDATE_MAX_ITEMS = 5;
+
+  // 把 commit 訊息第一行的常見前綴（fix: feat: chore: 等）拿掉，只留人看得懂的敘述
+  function cleanMessage(raw) {
+    const firstLine = raw.split('\n')[0].trim();
+    return firstLine.replace(/^(fix|feat|chore|docs|refactor|hotfix|style|test)(\([^)]*\))?:\s*/i, '');
+  }
+
+  // 相對時間：今天 / 昨天 / N 天前
+  function relativeDay(isoDate) {
+    const commitDate = new Date(isoDate);
+    const now = new Date();
+    const startOfCommit = new Date(commitDate.getFullYear(), commitDate.getMonth(), commitDate.getDate());
+    const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((startOfNow - startOfCommit) / 86400000);
+    if (diffDays <= 0) return '今天';
+    if (diffDays === 1) return '昨天';
+    return diffDays + ' 天前';
+  }
+
+  async function loadDataUpdates() {
+    const container = document.getElementById('data-updates');
+    const badge = document.getElementById('update-badge');
+    try {
+      const since = new Date(Date.now() - UPDATE_DAYS * 86400000).toISOString();
+      const url = `https://api.github.com/repos/${UPDATE_REPO}/commits?sha=${UPDATE_BRANCH}&since=${since}&per_page=20`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('GitHub API ' + res.status);
+      const commits = await res.json();
+
+      if (badge) badge.textContent = `近 ${UPDATE_DAYS} 天 ${commits.length} 筆`;
+
+      if (!Array.isArray(commits) || commits.length === 0) {
+        container.innerHTML = '<div class="update-empty">近 7 天沒有程式碼更新。</div>';
+        return;
+      }
+
+      const items = commits.slice(0, UPDATE_MAX_ITEMS);
+      container.innerHTML = items.map(c => {
+        const msg = cleanMessage(c.commit.message);
+        const when = relativeDay(c.commit.author.date);
+        const url = c.html_url;
+        return `
+          <a href="${url}" target="_blank" rel="noopener noreferrer" class="update-item">
+            <div class="update-dot"></div>
+            <div class="update-text">${msg}</div>
+            <div class="update-time">${when}</div>
+          </a>
+        `;
+      }).join('');
+    } catch (e) {
+      if (badge) badge.textContent = '近 7 天';
+      container.innerHTML = '<div class="update-empty">更新載入失敗，請稍後再試。</div>';
+    }
+  }
+
+  loadDataUpdates();
+})();
 </script>
 </body>
 </html>
