@@ -1,3 +1,51 @@
+# 2026-08-20（週四）即時記事
+
+## ✅ 今天完成
+
+- **PR #130（stats.js 遷移 Supabase 雙軌讀取）已合併進 main，dashboard.html 資料來源正式跟上 8/12 切換**
+
+<details>
+<summary>展開細節</summary>
+<p>api/stats.js 補齊 DB_SOURCE_SOLUTIONS／DB_SOURCE_COMPANIES 雙軌判斷，兩張表皆套用已下架排除條件；Airtable Companies 改用 JavaScript 端過濾避免中文 Single Select 篩選風險。過程中連續發現並修正三個問題：①誤用 Solutions 表的 record_status 欄位名稱查 Companies 表，導致 42703 錯誤，查證後改用正確欄位 company_status；②本機 CSV 顯示870筆空白，但堅持不採信、要求 Supabase 真實查詢，結果只有「暫停營業」「正常營業」兩個值，證實 CSV 是過期快照；③newThisMonth 等於 total 導致數字失真，查明根因是 created_at 記錄的是 8/12 批次遷移時間而非方案真實發布時間，決策不追溯原始時間，改為誠實調整標籤為「本月寫入資料庫」。合併後正式站網域自動正確跟上（無需額外 Promote），commit cb2ab98。</p>
+</details>
+
+- **順手修正 dashboard.html 過時文案，避免資訊誤導**
+
+<details>
+<summary>展開細節</summary>
+<p>頁面上「資料來源：Airtable，每次載入即時更新」這句話寫於 8/12 切換前，已過時。改為「資料來源：即時讀取，每次載入更新」，刻意不指名具體資料庫供應商，避免未來資料源再變動時這句話又要重改一次。</p>
+</details>
+
+- **發現一項低優先技術債，記錄但不主動處理**
+
+<details>
+<summary>展開細節</summary>
+<p>Vercel 部署日誌出現警告：api/ 下所有 serverless function 都是從 ESM 編譯成 CommonJS，若在 package.json 加上 "type": "module" 可省略這個轉譯步驟。純屬建置時間的毫秒級優化，不影響現況運作。但這是全域設定，一改會同時影響 ask.js／cases.js／companies.js／solutions.js／stats.js 等全部 API，風險是「全部同時故障」等級，不是能單獨測試就代表安全的改動。價值低、風險相對高，暫不主動排程，留存紀錄供未來參考。</p>
+</details>
+
+## 📌 待處理（記錄不遺忘）
+
+- 5 筆新北經發局方案描述過短，待補充分類（延續 8/17）
+- 2 筆方案名稱異常記錄（延續 8/17）
+- 案例知識庫 16 筆缺口：決策已定案（不回補 Airtable），industry_code 分類尚未動手（延續 8/17、8/19）
+- Airtable↔Supabase 雙向同步機制缺失，待設計正式規則（延續 8/17）
+- ai_batch_etl_lib.py 建議納入 Supabase 同步步驟（延續 8/17）
+- 定期海巡機制：商業署 Colab 腳本 v1 已完成，尚未實際首次執行建立基準值（新增 8/19）
+- 產發署海巡腳本：需額外處理 __doPostBack 分頁機制（新增 8/19）
+- package.json ESM/CommonJS 轉譯設定（新增 8/20，極低優先，見上方今日記事）
+
+## 🔜 明天預定（8/21）
+
+- 商業署海巡腳本首次執行
+- 16 筆案例補 industry_code
+- Pilot 測試回饋收集、方法論教程會議成果彙整（已連續延後三天，建議優先排入）
+
+## 📌 待週末整理進正式週報
+
+上述事項將於本週週報（`report.md`）彙整。
+
+---
+
 # 2026-08-19（週三）即時記事
 
 ## ✅ 今天完成
