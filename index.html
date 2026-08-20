@@ -18,35 +18,25 @@
   background: var(--bg); min-height: 100vh; padding-bottom: 48px;
   -webkit-text-size-adjust: 100%;
  }
-
- /* ── 頁首：手機上壓縮高度，把空間讓給內容 ── */
  header {
   background: var(--primary); color: white;
   padding: 26px 20px 22px; text-align: center;
  }
  header h1 { font-size: 1.55rem; margin-bottom: 4px; letter-spacing: .5px; }
  header p { opacity: 0.6; font-size: 0.85rem; }
-
  .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
-
- /* ── 常駐置頂區：週報 + 重大事項，不隨分頁切換 ── */
  .pinned { padding-top: 18px; }
  .pinned-label {
   font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
   color: #aab2bd; margin-bottom: 10px; padding-left: 4px;
  }
-
- /* ── 分頁列：吸頂 + 橫向捲動 ── */
  .tabbar-outer {
   position: sticky; top: 0; z-index: 50;
   background: var(--bg);
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   margin-top: 20px;
  }
- .tabbar-inner {
-  max-width: 780px; margin: 0 auto;
-  position: relative;
- }
+ .tabbar-inner { max-width: 780px; margin: 0 auto; position: relative; }
  .tabbar {
   display: flex; gap: 6px;
   overflow-x: auto; overflow-y: hidden;
@@ -79,30 +69,24 @@
   display: inline-block; margin-left: 6px;
   font-size: 0.72rem; opacity: .55; font-weight: 700;
  }
- /* 右緣漸層：暗示還有分頁可滑 */
  .tabbar-inner::after {
   content: ""; position: absolute; top: 0; right: 0;
   width: 28px; height: 100%;
   background: linear-gradient(90deg, rgba(240,242,245,0) 0%, var(--bg) 80%);
   pointer-events: none;
  }
-
- /* ── 分頁內容 ── */
  .panel { padding-top: 20px; }
  .panel[hidden] { display: none; }
  .panel-intro {
   font-size: 0.82rem; color: #98a1ac;
   margin-bottom: 14px; padding-left: 4px; line-height: 1.6;
  }
-
  .section-title {
   font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; color: #999;
   margin: 26px 0 12px; padding-left: 4px;
  }
  .section-title:first-child { margin-top: 0; }
-
- /* 卡片 */
  .nav-card {
   display: flex; align-items: center; gap: 16px;
   background: white; border-radius: 12px; padding: 20px 24px;
@@ -122,10 +106,7 @@
   font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
   border-radius: 20px; background: #e8f8f2; color: var(--teal); flex-shrink: 0;
  }
- /* 置頂兩張卡略微加重，與分頁內容區隔 */
  .pinned .nav-card { box-shadow: 0 3px 12px rgba(44,62,80,0.11); }
-
- /* 資料更新（近 7 天，GitHub commit 來源） */
  .update-section {
   background: #fff; border-radius: 12px;
   box-shadow: 0 3px 12px rgba(44,62,80,0.11); overflow: hidden;
@@ -163,8 +144,6 @@
  .update-text { flex: 1; min-width: 0; font-size: 0.8rem; color: var(--primary); line-height: 1.5; }
  .update-time { font-size: 0.7rem; color: #bbb; flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
  .update-empty { padding: 16px 18px; font-size: 0.78rem; color: #bbb; }
-
- /* 歷程區塊 */
  .log-section {
   background: white; border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
@@ -197,7 +176,6 @@
  .log-tag.pending { background: #f5f5f5; color: #bbb; }
  .log-tag.warn { background: #fef9e7; color: #d68910; }
  .log-hint { font-size: 0.78rem; color: #bbb; padding: 12px 24px 16px; border-top: 1px dashed #eee; }
-
  .log-loading { padding: 24px; text-align: center; color: #ccc; font-size: 0.85rem; }
  .log-loading .spinner {
   display: inline-block; width: 16px; height: 16px;
@@ -206,15 +184,11 @@
   margin-right: 8px; vertical-align: middle;
  }
  @keyframes spin { to { transform: rotate(360deg); } }
-
  footer { text-align: center; padding: 32px 20px 0; color: #bbb; font-size: 0.78rem; }
-
- /* 無 JS 時：分頁列隱藏，所有內容展開，不開天窗 */
  .no-js .tabbar-outer { display: none; }
  .no-js .panel[hidden] { display: block; }
  .no-js .panel-intro { display: none; }
  .no-js .update-section { display: none; }
-
  @media (max-width: 480px) {
   header { padding: 22px 18px 18px; }
   header h1 { font-size: 1.3rem; }
@@ -246,7 +220,6 @@
  <p>專案報告中心 · 數位轉型研究院</p>
 </header>
 
-<!-- ══ 常駐置頂：任何分頁都看得到 ══ -->
 <div class="container pinned">
  <div class="pinned-label">最新動態</div>
 
@@ -268,7 +241,6 @@
   <span class="card-badge" style="background:#fdecea; color:#c0392b;">隨時更新</span>
  </a>
 
- <!-- 資料更新：近 7 天 GitHub commit 摘要（程式碼/功能變更），JS 動態載入 -->
  <div class="update-section">
   <div class="update-header">
    <span class="u-icon">🔄</span>
@@ -282,7 +254,6 @@
  </div>
 </div>
 
-<!-- ══ 分頁列（吸頂．可橫向滑動） ══ -->
 <div class="tabbar-outer">
  <div class="tabbar-inner">
   <div class="tabbar" role="tablist" aria-label="報告分類">
@@ -296,7 +267,6 @@
 
 <div class="container">
 
- <!-- ── 分頁 1：開發進度 ── -->
  <section class="panel" id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" data-panel="progress">
   <p class="panel-intro">系統目前的功能狀態、策略評估，以及對外開放測試的進行情形。</p>
 
@@ -339,7 +309,6 @@
   </a>
  </section>
 
- <!-- ── 分頁 2：資料庫升級 ── -->
  <section class="panel" id="panel-database" role="tabpanel" aria-labelledby="tab-database" data-panel="database" hidden>
   <p class="panel-intro">Airtable 遷移至 Supabase 的評估、驗收與資安基線。依閱讀順序排列：為什麼升級 → 怎麼驗收 → 切換結果 → 切換後如何維護。</p>
 
@@ -391,7 +360,6 @@
   </a>
  </section>
 
- <!-- ── 分頁 3：方法論 ── -->
  <section class="panel" id="panel-method" role="tabpanel" aria-labelledby="tab-method" data-panel="method" hidden>
   <p class="panel-intro">可複用於其他專案的工作方法與流程教學。歡迎直接取用。</p>
 
@@ -441,7 +409,6 @@
   </a>
  </section>
 
- <!-- ── 分頁 4：歷史封存 ── -->
  <section class="panel" id="panel-archive" role="tabpanel" aria-labelledby="tab-archive" data-panel="archive" hidden>
   <p class="panel-intro">已封存的週報與資料來源檢查紀錄，自動從 GitHub 讀取。</p>
 
@@ -476,13 +443,66 @@
     每次完成 ETL 分析，將報告存為 etl-report-YYYY-MM-DD.html 上傳，此處自動出現。
    </div>
   </div>
+
+  <!-- 資料新鮮度稽核（Data Freshness Audit）：靜態區塊，暫不比照ETL自動掃描，
+       因目前紀錄都寫在status.md，未拆分成獨立報告檔案。若未來想改成自動掃描，
+       可另立規格書仿照loadEtlHistory()的邏輯處理。 -->
+  <div class="section-title">資料新鮮度稽核</div>
+  <div class="log-section">
+   <div class="log-header">
+    <span>🔍 資料新鮮度稽核紀錄</span>
+    <small>Data Freshness Audit</small>
+   </div>
+   <div class="log-list">
+
+    <a href="statusUpdate.html?status=status-2026-08-20.md" class="log-item">
+     <div class="log-dot done"></div>
+     <div class="log-body">
+      <div class="log-title">臺灣雲市集(tcloud.gov.tw)全站停止服務發現與標記</div>
+      <div class="log-meta">2026-08-20 · 影響1222筆(佔全庫近半) · 153筆高信心+1069筆推定信心分層標記</div>
+     </div>
+     <span class="log-tag done">已標記</span>
+    </a>
+
+    <a href="statusUpdate.html?status=status-2026-08-20.md" class="log-item">
+     <div class="log-dot pending"></div>
+     <div class="log-body">
+      <div class="log-title">商業服務業專區(商業署) — 117筆存活狀態複核</div>
+      <div class="log-meta">2026-08-20 · service-ai.php精選頁不可靠改用官方入選名單PDF · 解析改善中</div>
+     </div>
+     <span class="log-tag warn">Codex執行中</span>
+    </a>
+
+    <a href="statusUpdate.html?status=status-2026-08-20.md" class="log-item">
+     <div class="log-dot done"></div>
+     <div class="log-body">
+      <div class="log-title">雲市集工業館 / 政府軟體採購網 / 新創嚴選網 — 存活健檢</div>
+      <div class="log-meta">2026-08-20 · 三者皆確認存活，無異常</div>
+     </div>
+     <span class="log-tag done">已確認</span>
+    </a>
+
+    <div class="log-item disabled">
+     <div class="log-dot pending"></div>
+     <div class="log-body">
+      <div class="log-title">雲市集工業館(329筆) — 是否受臺灣雲市集停站牽連</div>
+      <div class="log-meta">待排程 · 初步判斷是獨立平台，需另立稽核確認</div>
+     </div>
+     <span class="log-tag pending">尚未執行</span>
+    </div>
+
+   </div>
+   <div class="log-hint">
+    每次完成一輪資料新鮮度稽核，在此新增一筆，點擊可查看 statusUpdate.html 當日詳細記錄。跟上方「資料 ETL 歷程」的差異：ETL 是新資料匯入前的檢查，這裡是既有資料事後回頭驗證是否仍與來源一致。
+   </div>
+  </div>
+
  </section>
 
 </div>
 
 <footer>III 產業資料庫專案 · 數位轉型研究院 · 2026</footer>
 
-<!-- ══ 分頁切換 ══ -->
 <script>
 (function () {
   document.body.classList.remove('no-js');
@@ -515,11 +535,9 @@
   tabs.forEach(function (t) {
     t.addEventListener('click', function () {
       activate(t.dataset.tab);
-      // 切換後把分頁列帶回視線內，避免停在半空中
       var top = bar.getBoundingClientRect().top;
       if (top < 0) bar.scrollIntoView({ block: 'start', behavior: 'smooth' });
     });
-    // 鍵盤左右鍵切換
     t.addEventListener('keydown', function (e) {
       var i = tabs.indexOf(t);
       var next = null;
@@ -533,7 +551,6 @@
     activate(location.hash.replace('#', ''));
   });
 
-  // 初始：有 hash 就開那頁，沒有就開第一頁（且不寫 hash，保持網址乾淨）
   var initial = location.hash.replace('#', '');
   if (initial && valid.indexOf(initial) !== -1) {
     activate(initial, { updateHash: false });
@@ -549,10 +566,8 @@ const REPO = 'Pcc329/weekly-report';
 const API = `https://api.github.com/repos/${REPO}/contents/`;
 const RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
 
-// 從 md 檔案前幾行抽摘要
 function extractSummary(text) {
  const lines = text.split('\n').filter(l => l.trim());
- // 跳過 h1 標題，找第一段有意義的文字
  for (const line of lines.slice(1, 10)) {
   const clean = line.replace(/^#+\s*/, '').replace(/[*_`]/g, '').trim();
   if (clean.length > 10 && !clean.startsWith('|') && !clean.startsWith('-')) {
@@ -562,9 +577,7 @@ function extractSummary(text) {
  return '點擊查看完整內容';
 }
 
-// 從檔名解析日期顯示
 function parseDate(filename) {
- // 支援 report-2026-05-29.md 或 report-2026-W22.md
  const m = filename.match(/(\d{4}-\d{2}-\d{2})/);
  if (m) return m[1];
  const w = filename.match(/(\d{4}-W\d+)/);
@@ -572,23 +585,20 @@ function parseDate(filename) {
  return filename.replace(/^report-/, '').replace(/\.md$/, '');
 }
 
-// 渲染週報歷史
 async function loadReportHistory() {
  const container = document.getElementById('report-history');
  try {
   const res = await fetch(API);
   const files = await res.json();
-  // 過濾 report-*.md（排除 report.md 本身）
   const reports = files
    .filter(f => /^report-.+\.md$/.test(f.name))
-   .sort((a, b) => b.name.localeCompare(a.name)); // 新到舊
+   .sort((a, b) => b.name.localeCompare(a.name));
 
   if (reports.length === 0) {
    container.innerHTML = '<div class="log-loading">尚無歷史週報，每週五封存後自動出現。</div>';
    return;
   }
 
-  // 抓每份內容取摘要
   const items = await Promise.all(reports.map(async (f) => {
    try {
     const r = await fetch(RAW + f.name);
@@ -614,28 +624,22 @@ async function loadReportHistory() {
  }
 }
 
-// 渲染 ETL 歷程（改版：從報告內文抽取 <title> 與副標，取代單純用檔名日期當標題）
 async function loadEtlHistory() {
  const container = document.getElementById('etl-history');
  try {
   const res = await fetch(API);
   const files = await res.json();
-  // 過濾 etl-report*.html（排除 etl-report.html 本身）
   const etls = files
    .filter(f => /^etl-report-.+\.html$/.test(f.name))
    .sort((a, b) => b.name.localeCompare(a.name));
 
-  // 永遠把 etl-report.html 放第一筆（最新，維持原有寫死的共構平台組摘要，不變動）
   const latest = files.find(f => f.name === 'etl-report.html');
 
-  // 固定標籤對照（用檔名關鍵字判斷狀態）
   const tagMap = {
    '軟採': { label: '⏳ 等待年份', cls: 'warn' },
    'default': { label: '已完成', cls: 'done' },
   };
 
-  // 從報告 HTML 內文抽取 <title> 與 <div class="sub">…</div> 當顯示文字
-  // 抓不到就退回用檔名日期組字串，不會整筆壞掉
   async function extractDisplay(filename) {
    const dateLabel = parseDate(filename);
    try {
@@ -664,7 +668,6 @@ async function loadEtlHistory() {
 
   let html = '';
 
-  // 最新（共構平台組軟採網）維持原樣，不受這次改版影響
   if (latest) {
    html += `
     <a href="${latest.name}" class="log-item">
@@ -678,7 +681,6 @@ async function loadEtlHistory() {
    `;
   }
 
-  // 其餘依日期新到舊，標題／副標改用報告內文抓到的內容
   html += datedItems.map(item => {
    const tag = Object.entries(tagMap).find(([k]) => item.file.name.includes(k))?.[1] || tagMap.default;
    return `
@@ -695,7 +697,6 @@ async function loadEtlHistory() {
 
   container.innerHTML = html;
 
-  // 加入佔位的待執行項目（維持不變）
   container.innerHTML += `
    <div class="log-item disabled">
     <div class="log-dot pending"></div>
@@ -720,12 +721,10 @@ async function loadEtlHistory() {
  }
 }
 
-// 啟動
 loadReportHistory();
 loadEtlHistory();
 </script>
 
-<!-- ══ 資料更新：近 7 天 GitHub commit（solution-finder 主程式 repo，程式碼/功能變更） ══ -->
 <script>
 (function () {
   const UPDATE_REPO = 'Pcc329/solution-finder';
@@ -733,13 +732,11 @@ loadEtlHistory();
   const UPDATE_DAYS = 7;
   const UPDATE_MAX_ITEMS = 5;
 
-  // 把 commit 訊息第一行的常見前綴（fix: feat: chore: 等）拿掉，只留人看得懂的敘述
   function cleanMessage(raw) {
     const firstLine = raw.split('\n')[0].trim();
     return firstLine.replace(/^(fix|feat|chore|docs|refactor|hotfix|style|test)(\([^)]*\))?:\s*/i, '');
   }
 
-  // 相對時間：今天 / 昨天 / N 天前
   function relativeDay(isoDate) {
     const commitDate = new Date(isoDate);
     const now = new Date();
