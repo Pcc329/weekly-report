@@ -1,173 +1,32 @@
-# 2026-08-20（週四）即時記事
+# 2026-08-20
 
-## ✅ 今天完成
+## 🔴 重大發現：臺灣雲市集(tcloud.gov.tw)全站停止服務
 
-- **PR #130（stats.js 遷移 Supabase 雙軌讀取）已合併進 main，dashboard.html 資料來源正式跟上 8/12 切換**
+- 起因：進行資料新鮮度稽核（比對DB快照 vs 來源網站現況），從商業署117筆比對意外發現異常
+- 搜尋確認 tcloud.gov.tw / www.tcloud.gov.tw 全站已顯示「因應計畫結束及政策調整」公告，查無明確停止日期與繼任平台
+- 影響範圍：`program_type = 臺灣雲市集` 共 **1222筆**（全庫2487筆的近半），是目前最大宗來源
+- 已完成分層標記寫入（Supabase）：
+  - 153筆（有website_url可逐筆驗證）→ `record_status = 已下架_平台停止服務`
+  - 1069筆（無website_url無法逐筆驗證）→ `record_status = 疑似已下架_平台停止服務未逐筆驗證`
+- 雲市集工業館（329筆）**不受影響**，已確認是獨立平台，網站正常存活
 
-<details>
-<summary>展開細節</summary>
-<p>api/stats.js 補齊 DB_SOURCE_SOLUTIONS／DB_SOURCE_COMPANIES 雙軌判斷，兩張表皆套用已下架排除條件；Airtable Companies 改用 JavaScript 端過濾避免中文 Single Select 篩選風險。過程中連續發現並修正三個問題：①誤用 Solutions 表的 record_status 欄位名稱查 Companies 表，導致 42703 錯誤，查證後改用正確欄位 company_status；②本機 CSV 顯示870筆空白，但堅持不採信、要求 Supabase 真實查詢，結果只有「暫停營業」「正常營業」兩個值，證實 CSV 是過期快照；③newThisMonth 等於 total 導致數字失真，查明根因是 created_at 記錄的是 8/12 批次遷移時間而非方案真實發布時間，決策不追溯原始時間，改為誠實調整標籤為「本月寫入資料庫」。合併後正式站網域自動正確跟上（無需額外 Promote），commit cb2ab98。</p>
-</details>
+## 🟡 方法論教訓：商業署 service-ai.php 清單頁不可靠
 
-- **順手修正 dashboard.html 過時文案，避免資訊誤導**
+- 商業署 smebiz.org.tw 的 service-ai.php 頁面實測只有18筆「精選」內容，不是完整目錄（無分頁、無動態載入）
+- 拿DB完整117筆去比對這頁，會產生大量假性「查無」，不能當作下架判斷依據
+- 111筆「查無」中，62.8%可歸因於臺灣雲市集停站的連帶效應，其餘16家經查證仍正常，只是精選頁沒收錄
+- 未來若要查證商業署方案存活狀態，應改用官方「入選名單」PDF公告（`getfile.php?k=news&f=2&c=...`），不要用 service-ai.php
 
-<details>
-<summary>展開細節</summary>
-<p>頁面上「資料來源：Airtable，每次載入即時更新」這句話寫於 8/12 切換前，已過時。改為「資料來源：即時讀取，每次載入更新」，刻意不指名具體資料庫供應商，避免未來資料源再變動時這句話又要重改一次。</p>
-</details>
+## ✅ 今日其他健檢結果
 
-- **發現一項低優先技術債，記錄但不主動處理**
+- 雲市集工業館(keid.nat.gov.tw)：存活，有即時訪客數
+- 政府軟體採購網(gsmarket.adi.gov.tw)：存活，公告更新至8/11
+- 新創嚴選網(startup.sme.gov.tw)：存活（robots.txt擋自動化，非新問題）
+- SME AI平台：間接確認存活（主辦單位TISSA 2026年初仍在辦上架說明會），建議手動再點一次連結確認
 
-<details>
-<summary>展開細節</summary>
-<p>Vercel 部署日誌出現警告：api/ 下所有 serverless function 都是從 ESM 編譯成 CommonJS，若在 package.json 加上 "type": "module" 可省略這個轉譯步驟。純屬建置時間的毫秒級優化，不影響現況運作。但這是全域設定，一改會同時影響 ask.js／cases.js／companies.js／solutions.js／stats.js 等全部 API，風險是「全部同時故障」等級，不是能單獨測試就代表安全的改動。價值低、風險相對高，暫不主動排程，留存紀錄供未來參考。</p>
-</details>
+## 🔜 待辦（依重要性）
 
-## 📌 待處理（記錄不遺忘）
-
-- 5 筆新北經發局方案描述過短，待補充分類（延續 8/17）
-- 2 筆方案名稱異常記錄（延續 8/17）
-- 案例知識庫 16 筆缺口：決策已定案（不回補 Airtable），industry_code 分類尚未動手（延續 8/17、8/19）
-- Airtable↔Supabase 雙向同步機制缺失，待設計正式規則（延續 8/17）
-- ai_batch_etl_lib.py 建議納入 Supabase 同步步驟（延續 8/17）
-- 定期海巡機制：商業署 Colab 腳本 v1 已完成，尚未實際首次執行建立基準值（新增 8/19）
-- 產發署海巡腳本：需額外處理 __doPostBack 分頁機制（新增 8/19）
-- package.json ESM/CommonJS 轉譯設定（新增 8/20，極低優先，見上方今日記事）
-
-## 🔜 明天預定（8/21）
-
-- 商業署海巡腳本首次執行
-- 16 筆案例補 industry_code
-- Pilot 測試回饋收集、方法論教程會議成果彙整（已連續延後三天，建議優先排入）
-
-## 📌 待週末整理進正式週報
-
-上述事項將於本週週報（`report.md`）彙整。
-
----
-
-# 2026-08-19（週三）即時記事
-
-## ✅ 今天完成
-
-- **PR #127、PR #128 皆已合併進 main，正式站恢復完全健康**
-
-<details>
-<summary>展開細節</summary>
-<p>PR #127 移除引發 8/18 事故的欄位 solution_category，保留 data_source/src 輸出；經 Diff 核對、Supabase schema 查詢、Preview 驗證三項確認後 merge（commit 97115aa）。PR #128 把 data_source 移出核心查詢、改獨立補查，失敗時不拖累其他欄位；經正常情況驗證與反向測試（故意讓欄位失效，取得真實環境的 HTTP 200／空字串／Function Logs 三項證據）後 merge（commit 0fa134c）。</p>
-</details>
-
-- **回顧：8/18 事故根因是查詢邏輯「全欄位綁一起，一個失敗全部失敗」**
-
-<details>
-<summary>展開細節</summary>
-<p>Supabase select 語句加入不存在的欄位 solution_category，PostgREST 回 42703 錯誤，導致整支 /api/solutions 連帶其餘正常欄位一併失效。當下以 Vercel Instant Rollback 止血，數分鐘內恢復。</p>
-</details>
-
-- **今日最大發現：Instant Rollback 不會自動解除，已寫入方法論文件**
-
-<details open>
-<summary>展開細節</summary>
-<p>merge PR #127 後 main 已健康，但正式站網域持續指向 8/18 rollback 當時選定的舊版本，未自動跟隨新的 merge——落差維持超過一天沒被發現，因前端 fallback 邏輯剛好蓋住異常。透過比對 Vercel 部署頁「Domains」欄位抓出問題，執行 Promote 正式解除。已寫入 incident_prevention_playbook_20260818.html 與 incident_SOP_20260818.md，列為未來事故處理的固定檢查項。</p>
-</details>
-
-- **PR #128 分支歷史分歧已排除**
-
-<details>
-<summary>展開細節</summary>
-<p>PR #127 以 squash 方式併入 main，導致 PR #128 分支與 main 產生歷史分歧（mergeable: false）。本機 merge 確認無衝突、未復原已移除的欄位、優雅降級邏輯完整；因本機 Git push 受阻，改用 GitHub 網頁 Update branch 完成同步。</p>
-</details>
-
-- **FarmiSpace 顯示異常確認修復**（銜接 8/17 待處理項）
-
-<details>
-<summary>展開細節</summary>
-<p>src 欄位修復並上線後，manufacturing.html 上 FarmiSpace 四筆方案來源標籤與分類皆正確顯示。非獨立 bug，是 8/18 事故的連鎖影響，隨根因修復一併解決。</p>
-</details>
-
-## 📌 待處理（記錄不遺忘）
-
-- 5 筆新北經發局方案描述過短，待補充分類（延續 8/17）
-- 2 筆方案名稱異常記錄（延續 8/17）
-- 案例知識庫 16 筆缺口，待決策是否補寫回 Airtable（延續 8/17）
-- Airtable↔Supabase 雙向同步機制缺失，待設計正式規則（延續 8/17）
-- ai_batch_etl_lib.py 建議納入 Supabase 同步步驟（延續 8/17）
-- **新增**：stats.js 尚未遷移至 Supabase 雙軌讀取，預計 **8/21（週五）前**完成
-- **新增**：DB_SOURCE_COMPANIES／DB_SOURCE_CASES 未補 Preview 環境變數（非緊急）
-
-## 🔜 明天預定（8/20）
-
-- Pilot 測試回饋收集（延續自 8/18 因事故暫緩）
-- 方法論教程會議成果彙整（延續自 8/18 因事故暫緩）
-- Program_Promotions 有效期間確認（等新北經發局回覆）
-
-## 📌 待週末整理進正式週報
-
-上述事項將於本週週報（`report.md`）彙整。
-
----
-
-# 2026-08-17（週一）即時記事
-
-## ✅ 今天完成
-
-- **companies.js 已下架記錄過濾修復（PR #124 已 merge）**
-
-<details>
-<summary>展開細節</summary>
-<p>延續上週 PR #123 的漏網之魚——api/companies.js 的 Airtable 與 Supabase 兩條路徑都補上 record_status 過濾，公司層級的方案數／平均評分／標籤不再被已下架的臺灣雲市集記錄污染。Codex 額外把 solution_count 改成統一從過濾後的 Solutions 明細重算，比原規格書要求更徹底。已透過 raw.githubusercontent.com 對過實際 commit diff 驗證無誤才 merge。</p>
-</details>
-
-- **has_ai 262 筆批次標註，Airtable + Supabase 雙資料庫同步完成**
-
-<details>
-<summary>展開細節</summary>
-<p>套用 ai_batch_etl_lib.py 框架跑 Haiku 批次標註（temperature=0）。抓到 262 筆（比預期 206 多 56 筆，確認為新北輔導匯入那批新方案）。257 筆成功分類：「有」111 筆（43.2%）、「無」146 筆；5 筆資料不足留待補描述。各來源「有AI」比例合理：農業部 33.3%／軟採網 19.5%／新北經發局 94.1%／新創嚴選 60%／自有 50%。發現並補上流程缺口：Airtable → Supabase 沒有自動同步機制，臨時寫了同步步驟，257 筆全部同步成功並抽查驗證一致。</p>
-</details>
-
-- **Cases 表 industry_category 改名為 industry_code（PR #125 已 merge）**
-
-<details>
-<summary>展開細節</summary>
-<p>解決與 Solutions.industry_category（功能分類）同名異義的命名衝突。只改 Cases，Solutions 完全未動；Supabase 直接透傳，Airtable 保留向後相容轉換；dashboard.html／manufacturing.html 讀取點皆已更新。</p>
-</details>
-
-- **Solutions API 補回 data_source／solution_category 欄位輸出（PR #126 已 merge）**
-
-<details>
-<summary>展開細節</summary>
-<p>根因是 API 抓了欄位卻沒放進回傳物件。新增 src／sc 兩個簡稱欄位，manufacturing.html 四處顯示點全部補上 fallback 邏輯。第一輪漏了列表卡片，diff 比對抓出後第二輪補齊。FarmiSpace 異常已排查程式碼邏輯面，因環境限制待可連線環境最終驗證。</p>
-</details>
-
-- **查明 45 vs 29 筆案例落差的根因**
-
-<details>
-<summary>展開細節</summary>
-<p>Supabase SQL 查詢確認，多出的 16 筆是 8/13–8/14 案例收錄補完那批真實案例，當時直接寫入 Supabase、沒有同步回 Airtable。這 16 筆 airtable_rec_id／industry_code 皆為空值，待決策是否補寫回 Airtable。</p>
-</details>
-
-- **Companies 清理殘留完成**
-
-<details>
-<summary>展開細節</summary>
-<p>①42837620 複查結果乾淨，無孤兒殘留，結案。②82800070（睿思創新）重複方案排查：寫 Colab 全庫引用掃描腳本，逐筆比對後刪除 3 筆真重複（SOL-0966、SOL-0487、SOL-0483），另 3 組確認為合法雙上架維持不動。Airtable 與 Supabase 已同步刪除，雙庫一致。</p>
-</details>
-
-## 📌 待處理（記錄不遺忘）
-
-- 5 筆新北經發局方案描述過短，需人工補充後才能分類 has_ai
-- 2 筆方案名稱異常記錄
-- ~~FarmiSpace 異常：待可連線環境核對~~ → **已於 8/19 確認修復**
-- 案例知識庫 16 筆缺口：是否補寫回 Airtable；industry_code 空值需補分類
-- 系統性問題：Airtable↔Supabase 雙向同步機制缺失，建議認真設計一套規則
-- ai_batch_etl_lib.py 建議正式納入 Supabase 同步步驟
-
-## 🔜 明天預定（8/18）
-
-- Pilot 測試回饋收集
-- 方法論教程會議成果彙整
-- Program_Promotions 有效期間確認
-
-## 📌 待週末整理進正式週報
-
-上述事項將於本週週報（`report.md`）彙整。
+1. 商業署117筆是否改用入選名單PDF重新比對 — 待評估
+2. PR#130（company_status vs record_status命名衝突）— 仍卡著
+3. 前端manufacturing.html/dashboard.html對新增的兩個record_status值呈現邏輯 — 待檢查
+4. 建立正式的「資料來源查證方法論」文件 — 待評估是否需要獨立文件化
