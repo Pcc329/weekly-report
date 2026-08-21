@@ -10,6 +10,8 @@
   --primary: #2c3e50;
   --teal: #1D9E75;
   --bg: #f0f2f5;
+  --amber: #d68910;
+  --red: #c0392b;
  }
  * { box-sizing: border-box; margin: 0; padding: 0; }
  html { scroll-behavior: smooth; }
@@ -27,8 +29,10 @@
  .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
  .pinned { padding-top: 18px; }
  .pinned-label {
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
-  color: #aab2bd; margin-bottom: 10px; padding-left: 4px;
+  font-size: 1.05rem; font-weight: 700; color: var(--primary);
+  margin-bottom: 12px; padding-left: 10px;
+  border-left: 4px solid var(--primary); border-radius: 2px;
+  line-height: 1.3;
  }
  .tabbar-outer {
   position: sticky; top: 0; z-index: 50;
@@ -78,13 +82,14 @@
  .panel { padding-top: 20px; }
  .panel[hidden] { display: none; }
  .panel-intro {
-  font-size: 0.82rem; color: #98a1ac;
-  margin-bottom: 14px; padding-left: 4px; line-height: 1.6;
+  font-size: 0.98rem; color: #6b7684; font-weight: 500;
+  margin-bottom: 16px; padding-left: 4px; line-height: 1.65;
  }
  .section-title {
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: #999;
-  margin: 26px 0 12px; padding-left: 4px;
+  font-size: 1.02rem; font-weight: 700; color: var(--primary);
+  margin: 28px 0 12px; padding-left: 10px;
+  border-left: 4px solid var(--teal); border-radius: 2px;
+  line-height: 1.3;
  }
  .section-title:first-child { margin-top: 0; }
  .nav-card {
@@ -107,6 +112,84 @@
   border-radius: 20px; background: #e8f8f2; color: var(--teal); flex-shrink: 0;
  }
  .pinned .nav-card { box-shadow: 0 3px 12px rgba(44,62,80,0.11); }
+
+ .weekly-summary {
+  background: white; border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(44,62,80,0.11); overflow: hidden;
+  margin-bottom: 10px;
+ }
+ .weekly-summary-header {
+  background: var(--primary); color: white;
+  padding: 12px 20px; display: flex; align-items: center; gap: 8px;
+  cursor: pointer; user-select: none; list-style: none;
+ }
+ .weekly-summary-header::-webkit-details-marker { display: none; }
+ .weekly-summary-header .ws-title { font-size: 0.88rem; font-weight: 700; }
+ .weekly-summary-header .ws-date { font-size: 0.7rem; opacity: 0.6; }
+ .weekly-summary-header .ws-mini-dots { display: flex; gap: 4px; margin-left: auto; }
+ .weekly-summary-header .ws-mini-dot { width: 7px; height: 7px; border-radius: 50%; }
+ .weekly-summary-header .ws-mini-dot.green { background: #6fd4ac; }
+ .weekly-summary-header .ws-mini-dot.amber { background: #f4c869; }
+ .weekly-summary-header .ws-mini-dot.red { background: #ec8b83; }
+ .weekly-summary-header .ws-caret {
+  font-size: 0.7rem; opacity: 0.6; transition: transform 0.15s; margin-left: 4px;
+ }
+ .weekly-summary[open] .ws-caret { transform: rotate(90deg); }
+ .weekly-summary-body { padding: 16px 20px; }
+ .ws-conclusion {
+  font-size: 0.86rem; color: var(--primary); line-height: 1.7;
+  padding: 10px 14px; background: #f4fbf8; border-left: 3px solid var(--teal);
+  border-radius: 0 6px 6px 0; margin-bottom: 14px;
+ }
+ .ws-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid #f4f4f4; font-size: 0.82rem;
+ }
+ .ws-item:last-child { border-bottom: none; }
+ .ws-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+ .ws-dot.green { background: var(--teal); }
+ .ws-dot.amber { background: var(--amber); }
+ .ws-dot.red { background: var(--red); }
+ .ws-item-name { flex: 1; color: var(--primary); font-weight: 600; }
+ .ws-item-pct { color: #999; font-size: 0.78rem; flex-shrink: 0; }
+ .ws-more { margin-top: 12px; text-align: center; }
+ .ws-more a { font-size: 0.78rem; color: var(--teal); text-decoration: none; }
+ .ws-more a:hover { text-decoration: underline; }
+
+ .decisions {
+  background: white; border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(192,57,43,0.13); overflow: hidden;
+  margin-bottom: 14px;
+  border: 1.5px solid #f5c6c0;
+ }
+ .decisions-header {
+  background: #fdf1ef; padding: 11px 20px;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; user-select: none; list-style: none;
+ }
+ .decisions-header::-webkit-details-marker { display: none; }
+ .decisions-header .d-icon { font-size: 0.95rem; }
+ .decisions-header .d-title { font-size: 0.85rem; font-weight: 700; color: var(--red); }
+ .decisions-header .d-badge {
+  font-size: 0.68rem; font-weight: 700; padding: 2px 9px;
+  border-radius: 20px; background: var(--red); color: white;
+ }
+ .decisions-header .d-caret {
+  font-size: 0.7rem; color: var(--red); opacity: 0.6; transition: transform 0.15s; margin-left: auto;
+ }
+ .decisions[open] .d-caret { transform: rotate(90deg); }
+ .decision-item {
+  padding: 12px 20px; border-bottom: 1px solid #f9f1ef;
+  font-size: 0.82rem;
+ }
+ .decision-item:last-child { border-bottom: none; }
+ .decision-item .d-name { color: var(--primary); font-weight: 600; margin-bottom: 3px; }
+ .decision-item .d-meta { color: #999; font-size: 0.76rem; }
+ .decision-item .d-who {
+  display: inline-block; margin-top: 5px; font-size: 0.7rem; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px; background: #fdecea; color: var(--red);
+ }
+
  .update-section {
   background: #fff; border-radius: 12px;
   box-shadow: 0 3px 12px rgba(44,62,80,0.11); overflow: hidden;
@@ -144,6 +227,7 @@
  .update-text { flex: 1; min-width: 0; font-size: 0.8rem; color: var(--primary); line-height: 1.5; }
  .update-time { font-size: 0.7rem; color: #bbb; flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
  .update-empty { padding: 16px 18px; font-size: 0.78rem; color: #bbb; }
+
  .log-section {
   background: white; border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
@@ -176,6 +260,7 @@
  .log-tag.pending { background: #f5f5f5; color: #bbb; }
  .log-tag.warn { background: #fef9e7; color: #d68910; }
  .log-hint { font-size: 0.78rem; color: #bbb; padding: 12px 24px 16px; border-top: 1px dashed #eee; }
+
  .log-loading { padding: 24px; text-align: center; color: #ccc; font-size: 0.85rem; }
  .log-loading .spinner {
   display: inline-block; width: 16px; height: 16px;
@@ -184,11 +269,14 @@
   margin-right: 8px; vertical-align: middle;
  }
  @keyframes spin { to { transform: rotate(360deg); } }
+
  footer { text-align: center; padding: 32px 20px 0; color: #bbb; font-size: 0.78rem; }
+
  .no-js .tabbar-outer { display: none; }
  .no-js .panel[hidden] { display: block; }
  .no-js .panel-intro { display: none; }
  .no-js .update-section { display: none; }
+
  @media (max-width: 480px) {
   header { padding: 22px 18px 18px; }
   header h1 { font-size: 1.3rem; }
@@ -207,6 +295,8 @@
   .log-hint { padding: 10px 16px 14px; }
   .update-header { padding: 10px 14px; flex-wrap: wrap; }
   .update-item { padding: 10px 14px; }
+  .weekly-summary-body { padding: 14px 16px; }
+  .decision-item { padding: 10px 16px; }
  }
  @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -222,6 +312,75 @@
 
 <div class="container pinned">
  <div class="pinned-label">最新動態</div>
+
+ <details class="weekly-summary">
+  <summary class="weekly-summary-header">
+   <span class="ws-title">📋 本週摘要</span>
+   <span class="ws-date">2026-08-21</span>
+   <span class="ws-mini-dots">
+    <span class="ws-mini-dot green"></span>
+    <span class="ws-mini-dot green"></span>
+    <span class="ws-mini-dot green"></span>
+    <span class="ws-mini-dot green"></span>
+   </span>
+   <span class="ws-caret">▶</span>
+  </summary>
+  <div class="weekly-summary-body">
+   <div class="ws-conclusion">
+    本週完成臺灣雲市集停站事件的全面標記與商業署資料驗證，主要任務全數收斂，唯一未決事項是「疑似已下架」1069筆的長期處理方向，需要下週拍板（見下方待決策）。
+   </div>
+   <div class="ws-item">
+    <div class="ws-dot green"></div>
+    <div class="ws-item-name">臺灣雲市集停站標記（1222筆）</div>
+    <div class="ws-item-pct">100%</div>
+   </div>
+   <div class="ws-item">
+    <div class="ws-dot green"></div>
+    <div class="ws-item-name">商業署117筆PDF重新比對</div>
+    <div class="ws-item-pct">100%</div>
+   </div>
+   <div class="ws-item">
+    <div class="ws-dot green"></div>
+    <div class="ws-item-name">PR#131 record_status過濾修正</div>
+    <div class="ws-item-pct">100%</div>
+   </div>
+   <div class="ws-item">
+    <div class="ws-dot green"></div>
+    <div class="ws-item-name">Cases 16筆industry_code補值</div>
+    <div class="ws-item-pct">100%</div>
+   </div>
+   <div class="ws-more">
+    <a href="freshness-audit.html">查看完整稽核紀錄 →</a>
+   </div>
+  </div>
+ </details>
+
+ <details class="decisions">
+  <summary class="decisions-header">
+   <span class="d-icon">⚠️</span>
+   <span class="d-title">待決策事項</span>
+   <span class="d-badge">3</span>
+   <span class="d-caret">▶</span>
+  </summary>
+
+  <div class="decision-item">
+   <div class="d-name">「疑似已下架」1069筆最終處理方式</div>
+   <div class="d-meta">目前暫緩顯示，無明確升級為正式下架的判斷標準</div>
+   <span class="d-who">需要 PPC 決策</span>
+  </div>
+
+  <div class="decision-item">
+   <div class="d-name">industry_code 欄位是否改陣列型態</div>
+   <div class="d-meta">目前2筆跨產業案例（駐龍科技/允昌國際）用暫定主分類權宜處理</div>
+   <span class="d-who">需要 PPC 評估工作量</span>
+  </div>
+
+  <div class="decision-item">
+   <div class="d-name">駐龍科技/允昌國際實際主力業務查證</div>
+   <div class="d-meta">用於修正上述暫定分類，需查公司登記資料或聯繫窗口確認</div>
+   <span class="d-who">需要 PPC 查證</span>
+  </div>
+ </details>
 
  <a href="weekly.html" class="nav-card">
   <span class="card-icon">📰</span>
@@ -444,9 +603,6 @@
    </div>
   </div>
 
-  <!-- 資料新鮮度稽核（Data Freshness Audit）：靜態區塊，暫不比照ETL自動掃描，
-       因目前紀錄都寫在status.md，未拆分成獨立報告檔案。若未來想改成自動掃描，
-       可另立規格書仿照loadEtlHistory()的邏輯處理。 -->
   <div class="section-title">資料新鮮度稽核</div>
   <div class="log-section">
    <div class="log-header">
@@ -475,7 +631,7 @@
 
    </div>
    <div class="log-hint">
-    每次完成一輪資料新鮮度稽核，在此新增一筆，點擊可查看 statusUpdate.html 當日詳細記錄。跟上方「資料 ETL 歷程」的差異：ETL 是新資料匯入前的檢查，這裡是既有資料事後回頭驗證是否仍與來源一致。
+    每次完成一輪資料新鮮度稽核，在此新增一筆，點擊可查看 freshness-audit.html 詳細記錄。跟上方「資料 ETL 歷程」的差異：ETL 是新資料匯入前的檢查，這裡是既有資料事後回頭驗證是否仍與來源一致。
    </div>
   </div>
 
