@@ -755,7 +755,8 @@ async function loadReportHistory() {
    }
   }));
 
-  container.innerHTML = items.map(item => `
+  const VISIBLE_COUNT = 5;
+  const renderItem = (item) => `
    <a href="reader.html?file=${item.name}" class="log-item">
     <div class="log-dot done"></div>
     <div class="log-body">
@@ -764,7 +765,39 @@ async function loadReportHistory() {
     </div>
     <span class="log-tag done">已封存</span>
    </a>
-  `).join('');
+  `;
+
+  const visibleItems = items.slice(0, VISIBLE_COUNT);
+  const hiddenItems = items.slice(VISIBLE_COUNT);
+
+  let html = visibleItems.map(renderItem).join('');
+
+  if (hiddenItems.length > 0) {
+   html += `
+    <div id="report-history-hidden" style="display:none;">
+     ${hiddenItems.map(renderItem).join('')}
+    </div>
+    <button id="report-history-toggle" type="button" style="
+     width:100%; margin-top:8px; padding:10px;
+     background:#f4f7f6; border:1px solid #dde2e8; border-radius:8px;
+     color:var(--primary); font-weight:700; font-size:0.85rem; cursor:pointer;
+    ">顯示更多（還有 ${hiddenItems.length} 筆）▾</button>
+   `;
+  }
+
+  container.innerHTML = html;
+
+  const toggleBtn = document.getElementById('report-history-toggle');
+  if (toggleBtn) {
+   toggleBtn.addEventListener('click', () => {
+    const hiddenBlock = document.getElementById('report-history-hidden');
+    const isHidden = hiddenBlock.style.display === 'none';
+    hiddenBlock.style.display = isHidden ? 'block' : 'none';
+    toggleBtn.textContent = isHidden
+     ? '收合 ▴'
+     : `顯示更多（還有 ${hiddenItems.length} 筆）▾`;
+   });
+  }
  } catch (e) {
   container.innerHTML = '<div class="log-loading">載入失敗，請稍後再試。</div>';
  }
