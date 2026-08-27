@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產業資料庫｜資料健康度評估與升級規劃</title>
+<style>
+  :root {
+    --primary: #2c3e50;
+    --teal: #1D9E75;
+    --amber: #C98A2C;
+    --red: #C0392B;
+    --slate: #5D6D7E;
+    --bg: #f4f7f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg); margin: 0; padding: 0; color: #2c3e50;
+  }
+  header {
+    background: var(--primary); color: white;
+    padding: 48px 20px 28px; text-align: center;
+  }
+  header .eyebrow {
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 8px;
+  }
+  header h1 { margin: 0 0 8px; font-size: 1.9rem; }
+  header p { margin: 0; opacity: 0.75; font-size: 0.95rem; }
+
+  .container { width: 92%; max-width: 980px; margin: 28px auto; }
+
+  .summary-bar {
+    background: white; border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 28px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .summary-item { text-align: center; }
+  .summary-item .num { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+  .summary-item .label { font-size: 0.8rem; color: var(--slate); margin-top: 2px; }
+
+  section.block {
+    background: white; border-radius: 12px; padding: 28px 30px;
+    margin-bottom: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  section.block h2 {
+    color: var(--primary); font-size: 1.25rem; margin: 0 0 6px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  section.block .subtitle { color: var(--slate); font-size: 0.88rem; margin: 0 0 18px; }
+
+  .risk-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .risk-table th {
+    background: #f0f3f2; color: var(--primary); text-align: left;
+    padding: 10px 12px; font-weight: 600;
+  }
+  .risk-table td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .risk-table tr:last-child td { border-bottom: none; }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 0.76rem; font-weight: 600; color: white;
+  }
+  .tag.high { background: var(--red); }
+  .tag.mid { background: var(--amber); }
+  .tag.low { background: var(--slate); }
+
+  .phase-timeline { position: relative; margin: 24px 0 8px; padding-left: 28px; }
+  .phase-timeline::before {
+    content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px;
+    width: 2px; background: #dfe6e4;
+  }
+  .phase {
+    position: relative; margin-bottom: 26px; padding-left: 18px;
+  }
+  .phase::before {
+    content: ""; position: absolute; left: -28px; top: 4px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: white; border: 3px solid var(--teal);
+  }
+  .phase.risk::before { border-color: var(--amber); }
+  .phase .phase-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .phase h3 { margin: 0; font-size: 1.05rem; color: var(--primary); }
+  .phase .dates { font-size: 0.82rem; color: var(--slate); font-weight: 600; white-space: nowrap; }
+  .phase .goal { font-size: 0.88rem; color: #444; margin: 6px 0 10px; }
+  .phase ul { margin: 0; padding-left: 20px; font-size: 0.86rem; color: #333; }
+  .phase li { margin-bottom: 5px; }
+  .done-def {
+    margin-top: 10px; background: #f0faf6; border-left: 3px solid var(--teal);
+    padding: 8px 12px; font-size: 0.82rem; color: #2c5c4a; border-radius: 0 6px 6px 0;
+  }
+
+  .note-box {
+    background: #fdf6ec; border-left: 4px solid var(--amber);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 0.86rem;
+    color: #6b4d16; margin-top: 16px;
+  }
+
+  .ongoing-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px;
+  }
+  .ongoing-item {
+    background: #f7f9f8; border-radius: 8px; padding: 14px 16px;
+  }
+  .ongoing-item .title { font-weight: 700; color: var(--primary); font-size: 0.9rem; margin-bottom: 4px; }
+  .ongoing-item .freq { font-size: 0.8rem; color: var(--teal); font-weight: 600; }
+
+  footer {
+    text-align: center; padding: 28px; color: #aaa; font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .summary-bar { grid-template-columns: repeat(2, 1fr); }
+    .ongoing-grid { grid-template-columns: 1fr; }
+    section.block { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Data Health Review · 2026-08-27</div>
+  <h1>產業資料庫｜資料健康度評估與升級規劃</h1>
+  <p>依循資料庫維運治理原則盤點現況，提出分階段強化路線圖</p>
+</header>
+
+<div class="container">
+
+  <div class="summary-bar">
+    <div class="summary-item"><div class="num">6</div><div class="label">已知未結案項目</div></div>
+    <div class="summary-item"><div class="num">4</div><div class="label">評估面向</div></div>
+    <div class="summary-item"><div class="num">4</div><div class="label">執行階段</div></div>
+    <div class="summary-item"><div class="num">~8週</div><div class="label">預估完成期程</div></div>
+  </div>
+
+  <section class="block">
+    <h2>📋 現況盤點：已知但未結案的項目</h2>
+    <p class="subtitle">分散於各次任務中發現、尚未正式結案的資料品質問題</p>
+    <table class="risk-table">
+      <tr><th>項目</th><th>現況</th><th>風險</th></tr>
+      <tr>
+        <td>Supabase Solutions同步落差約14筆</td>
+        <td>2026-08-06發現，至今未查證根因</td>
+        <td><span class="tag high">中高</span></td>
+      </tr>
+      <tr>
+        <td>新創嚴選5筆「疑似已下架」</td>
+        <td>2026-08-27標記，尚未實際核對官網現況</td>
+        <td><span class="tag mid">中</span></td>
+      </tr>
+      <tr>
+        <td>季河資訊、萬物智通疑似重複公司</td>
+        <td>證據不足，暫緩處理，已標記不影響現況</td>
+        <td><span class="tag low">低</span></td>
+      </tr>
+      <tr>
+        <td>has_ai欄位5筆資料不足（新北輔導）</td>
+        <td>2026-08-17標記待補描述</td>
+        <td><span class="tag low">低</span></td>
+      </tr>
+      <tr>
+        <td>SOL-0680捷人科技內容待補</td>
+        <td>官網有真實方案內容尚未回填，刻意擱置</td>
+        <td><span class="tag low">低</span></td>
+      </tr>
+      <tr>
+        <td>睿力智能運動登記業務與方案內容不符</td>
+        <td>已記錄未查證</td>
+        <td><span class="tag low">低</span></td>
+      </tr>
+    </table>
+  </section>
+
+  <section class="block">
+    <h2>🔍 四個面向的結構性觀察</h2>
+    <p class="subtitle">以資料庫建置與日常維運的角度，評估目前架構層面可精進之處</p>
+
+    <details>
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); margin-bottom:8px;">A. 資料品質——技術債分散、缺乏單一追蹤清單</summary>
+      <p style="font-size:0.88rem; color:#444; margin-top:10px;">上表6個項目分散於不同時間點的對話與記錄中發現，目前沒有一份集中維護的清單，需靠回顧歷史記錄才能掌握全貌。</p>
+    </details>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); margin-bottom:8px;">B. Schema設計——分類欄位存在正規化問題</summary>
+      <ul style="font-size:0.88rem; color:#444; margin-top:10px;">
+        <li><code>industry_code</code>欄位將「代碼」與「中文全名」存於同一文字欄位，未來任何拼寫落差都會導致篩選失準（近期已發生兩起實例）</li>
+        <li>企業跨產業經營時，現行單一值欄位無法完整反映實務狀況（已有多筆案例佐證）</li>
+        <li><code>company_type</code>等欄位填寫率偏低，屬於「有欄位、缺資料」的閒置設計</li>
+        <li>核心表之間尚未確認是否已建立正式外鍵約束，跨表關聯目前仍仰賴人工查核</li>
+      </ul>
+    </details>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); margin-bottom:8px;">C. 治理流程——已具備良好基礎，缺一份資料字典</summary>
+      <p style="font-size:0.88rem; color:#444; margin-top:10px;">DRY_RUN三階段驗證、mark-don't-delete原則、規格書驅動開發、事故與稽核SOP已建立並落實。缺口在於：各欄位合法值（受控詞彙）沒有一份單一文件記錄，每次確認都需要重新查詢資料庫。</p>
+    </details>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); margin-bottom:8px;">D. 維運安全——備份與權限尚待驗證</summary>
+      <ul style="font-size:0.88rem; color:#444; margin-top:10px;">
+        <li>每週備份已建立固定排程，但尚未進行過還原演練驗證備份可用性</li>
+        <li>核心資料表（solutions／companies／cases）的RLS政策覆蓋範圍尚待逐表確認</li>
+        <li>GitHub治理v3（多人+緊急回復帳號）測試鏈預計於觀察期（11/12）結束前完成</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2>🗺️ 分階段執行路線圖</h2>
+    <p class="subtitle">每階段設有明確完成標準，前一階段完成後才進入下一階段</p>
+
+    <div class="phase-timeline">
+
+      <div class="phase">
+        <div class="phase-head">
+          <h3>第一階段：止血</h3>
+          <span class="dates">08/27 – 09/10</span>
+        </div>
+        <p class="goal">將已知技術債收斂為單一清單，優先排除風險最高項目</p>
+        <ul>
+          <li>建立 <code>known_issues.md</code>，彙整6項未結案問題並放上網站</li>
+          <li>查證 Supabase Solutions 同步落差14筆之根因</li>
+          <li>實際核對新創嚴選5筆「疑似已下架」項目之現況</li>
+        </ul>
+        <div class="done-def">完成標準：技術債不再分散於對話記錄中；風險等級「中高」項目降為已查證狀態</div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <h3>第二階段：建立資料字典</h3>
+          <span class="dates">09/10 – 09/24</span>
+        </div>
+        <p class="goal">讓欄位合法值的確認方式，從「查資料庫」變成「查文件」</p>
+        <ul>
+          <li>盤點 Solutions／Companies／Cases／data_sources 四張表全欄位定義</li>
+          <li>列出所有 ENUM／受控詞彙欄位的合法值清單</li>
+          <li>文件上架至 weekly-report 網站，與現有SOP並列</li>
+        </ul>
+        <div class="done-def">完成標準：新增資料或撰寫規格書前，可直接查文件取得欄位合法值，不需臨時查詢資料庫</div>
+      </div>
+
+      <div class="phase risk">
+        <div class="phase-head">
+          <h3>第三階段：Schema結構性修正</h3>
+          <span class="dates">09/24 – 10/24</span>
+        </div>
+        <p class="goal">解決資料模型本身的設計問題（風險最高、時程彈性最大的階段）</p>
+        <ul>
+          <li>建立官方行業分類代碼對照表，<code>industry_code</code>欄位改存代碼、前端顯示時JOIN取得全名</li>
+          <li>評估跨產業案例的分類欄位是否改為陣列型態，並制定主/次分類判斷原則</li>
+          <li>盤點孤兒資料後，補強核心表之間的外鍵約束</li>
+        </ul>
+        <div class="done-def">完成標準：分類欄位資料一致性問題不再發生；跨表資料完整性由資料庫層級強制保障</div>
+        <div class="note-box">⚠️ 本階段涉及資料庫結構異動，需完整走過驗證流程才能上線，實際時程可能因驗證結果而調整。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>🔁 第四階段：常態化維運（非一次性任務，即日起並行啟動）</h2>
+    <p class="subtitle">讓資料庫維護成為例行公事，而非發現問題才臨時處理</p>
+    <div class="ongoing-grid">
+      <div class="ongoing-item">
+        <div class="title">資料新鮮度稽核（海巡）</div>
+        <div class="freq">建議頻率：每月排定1–2個來源</div>
+      </div>
+      <div class="ongoing-item">
+        <div class="title">RLS政策全表覆蓋確認</div>
+        <div class="freq">一次性盤點後納入新表建置checklist</div>
+      </div>
+      <div class="ongoing-item">
+        <div class="title">備份還原演練</div>
+        <div class="freq">建議頻率：每季至少1次</div>
+      </div>
+      <div class="ongoing-item">
+        <div class="title">known_issues.md 定期回顧</div>
+        <div class="freq">建議頻率：每次週報整理時同步更新</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>📌 總結</h2>
+    <p style="font-size:0.92rem; color:#333; line-height:1.8;">
+      整體規劃預估 <strong>8週（約2個月）</strong> 可完成前三階段，第四階段為持續性維運節奏，
+      自第一階段起即並行啟動，無明確結束時點。第三階段涉及資料庫結構異動，
+      風險與時程彈性皆高於前兩階段，建議保留調整空間。
+    </p>
+  </section>
+
+</div>
+
+<footer>© 2026 III 產業資料庫專案 · 資料健康度評估與升級規劃 · 2026-08-27</footer>
+
+</body>
+</html>
