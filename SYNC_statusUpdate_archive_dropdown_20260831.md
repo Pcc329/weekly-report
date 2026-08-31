@@ -75,3 +75,61 @@ PR 建立後的完整 GitHub diff：
 前兩個功能 commit：
 - `f3f8f15f1ce518d6df18f8bd83b44d1371ea0485` — `feat(status): add archive dropdown navigation`
 - `499648e0fe43f0457ce6d68423adb0bb221b7a3f` — `feat(status): add archive index`
+
+
+---
+
+# 補充：weekly.html 歷史週報下拉選單與 status 索引補正
+
+## 實際改動
+
+### `report_archive_index.json`（新增）
+
+新增 14 筆、由新到舊的既有週報檔案索引，最前為 `report-2026-08-28.md`，最後為 `report-2026-05-29.md`。
+
+### `weekly.html`
+
+- 在 KPI 數字列與週報內容之間新增 `#archive-selector`。
+- 新增 `loadReport(reportFile)`，保留既有 `marked.parse(md)` 週報渲染行為。
+- 成功讀到 `report_archive_index.json` 才建立 `本週進行中` + 14 筆封存週報的 select。
+- `?report=report-2026-08-14.md` 會選中同名選項。
+- 切換時以 `history.pushState` 改變 `?report=`，並呼叫 `loadReport()`，不重整整頁。
+- 索引 fetch 失敗時選單維持隱藏；週報讀取與 KPI 仍照原本流程可用。
+- KPI 的 `api/stats` fetch 區塊已和 `main` 逐字比對，未修改。
+
+### `status_archive_index.json`（補正）
+
+保持原有順序，在陣列末端新增：
+
+```json
+{
+  "period": "2026-08-20 前後",
+  "file": "status-2026-08-20.md"
+}
+```
+
+結果為 3 筆：8/31–09/04、8/25–8/29、8/20 前後。
+
+## 完整程式碼 Diff
+
+完整 PR diff：
+`https://github.com/Pcc329/weekly-report/compare/main...feat/status-archive-dropdown-2026-08-31`
+
+本次補充涉及的三個檔案：
+- `weekly.html`
+- `report_archive_index.json`
+- `status_archive_index.json`
+
+## 驗證
+
+- [x] 14 筆週報索引 JSON 可解析，並按 2026-08-28 到 2026-05-29 排序。
+- [x] 全部 14 個 report 檔案與 `status-2026-08-20.md` 均已存在於分支。
+- [x] `status_archive_index.json` 可解析，且現為 3 筆。
+- [x] `weekly.html` 使用 `fetch('report_archive_index.json?t=' + Date.now())`。
+- [x] 固定選項為 `本週進行中`（`report.md`）。
+- [x] query 更新與同頁切換由 `history.pushState` + `loadReport(reportFile)` 實作。
+- [x] 索引失敗 fallback 存在。
+- [x] KPI 區塊與 `main` 相同。
+- [x] 無新增排程、GitHub Action、後端 API、伺服器端邏輯；本次仍是純靜態頁面 + JSON。
+
+GitHub Pages 沒有 branch preview；畫面截圖與實際部署 URL 驗收需在 PR 合併至 `main` 後進行。
