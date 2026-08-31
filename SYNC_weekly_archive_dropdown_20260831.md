@@ -1,64 +1,76 @@
-# SYNC：weekly.html 歷史週報下拉選單
+# SYNC：歷史封存下拉選單改為 GitHub API 自動偵測
 
 - 日期：2026-08-31
 - Repo：`Pcc329/weekly-report`
 - 分支：`feat/weekly-archive-dropdown-2026-08-31`
-- Base：`main`
+- PR：https://github.com/Pcc329/weekly-report/pull/3
 
 ## 實際改動
 
-### `report_archive_index.json`（新增）
-
-新增 14 筆、由新到舊的既有週報封存檔案索引：
-
-- 最前：`report-2026-08-28.md`
-- 最後：`report-2026-05-29.md`
-
-每筆以能確定的單一日期加「週報」顯示，未推測週期區間。
-
 ### `weekly.html`
 
-- 新增 `#archive-selector`，位置在 KPI 數字列與週報內容之間。
-- 成功讀取 `report_archive_index.json` 才建立下拉選單。
-- 選單包含固定的 `本週進行中`（`report.md`）與 14 筆週報封存選項。
-- `?report=report-2026-08-14.md` 會選中對應選項。
-- 切換時使用 `history.pushState` 更新 `?report=`，並呼叫 `loadReport(reportFile)` 以同一份既有 fetch + `marked.parse(md)` 流程更新內容，沒有整頁重新整理。
-- 索引讀取失敗時 select 保持隱藏；KPI 與既有週報讀取仍可運作。
-- 原有 KPI `api/stats` 區塊未修改。
+- 下拉選單來源由手動的 `report_archive_index.json` 改為 GitHub Contents API：
+  `https://api.github.com/repos/Pcc329/weekly-report/contents/`
+- 使用 `/^report-.+\.md$/` 過濾週報封存檔。
+- 使用 `b.name.localeCompare(a.name)` 以檔名字串由新到舊排序。
+- 選項文字從檔名取日期，顯示為 `YYYY-MM-DD 週報`。
+- 保留既有的 `loadReport(reportFile)`、`history.pushState`、`?report=` 與無整頁重整的切換方式。
+- GitHub API 失敗或回傳非陣列時，選單保持隱藏；既有 KPI 與週報讀取不受影響。
+- KPI 的 `api/stats` 區塊與 `main` 相同，未修改。
 
-### `status_archive_index.json`（補正）
+### `statusUpdate.html`
 
-在既有兩筆尾端補上最早的封存：
+- 下拉選單來源由 `status_archive_index.json` 改為同一個 GitHub Contents API。
+- 使用：
+  ```js
+  /^status[-_]\d{4}[-_]?\d{2}[-_]?\d{2}.*\.md$/
+  ```
+  過濾封存檔。
+- 以檔名中的日期轉成日期物件排序，處理三種歷史命名格式混用時仍能由新到舊：
+  1. `status_20260831-0904.md`
+  2. `status_20260825_final.md`
+  3. `status-2026-08-20.md`
+- `status.md` 不匹配上述模式，不會被放入歷史清單。
+- 保留 `loadStatus(statusFile)`、`history.pushState`、`?status=` 與優雅降級行為。
 
-```json
-{
-  "period": "2026-08-20 前後",
-  "file": "status-2026-08-20.md"
-}
-```
+### 已刪除的手動索引
 
-因此 status 索引合計 3 筆，排序為最新至最舊。
+- `report_archive_index.json`
+- `status_archive_index.json`
 
-## 靜態驗證
+未來只要新增符合命名規則的封存 Markdown 檔，重新載入頁面後即會自動出現在下拉選單，不需要額外更新索引。
 
-- [x] `report_archive_index.json` 可由 `JSON.parse` 讀取，合計 14 筆、日期新到舊。
-- [x] 14 個 report 檔案與 `status-2026-08-20.md` 已存在於 repo。
-- [x] `status_archive_index.json` 可由 `JSON.parse` 讀取，合計 3 筆。
-- [x] `weekly.html` 有 `fetch('report_archive_index.json?t=' + Date.now())`。
-- [x] 固定選項是 `new Option('本週進行中', 'report.md')`。
-- [x] 切換使用 `history.pushState` 與 `loadReport(reportFile)`，沒有整頁 reload。
-- [x] 索引失敗時 catch 僅隱藏下拉，不影響週報讀取。
-- [x] KPI 區塊已與 `main` 比對，內容相同。
+## 完整程式碼 Diff
 
-## 完整 Diff 與部署驗收
+完整 GitHub diff：
+https://github.com/Pcc329/weekly-report/compare/main...feat/weekly-archive-dropdown-2026-08-31
 
-完整 diff 請見 PR 的 Files changed。GitHub Pages 僅由 `main` 發布，沒有 branch preview；合併後需以 GitHub Pages 的 `weekly.html` 及 `?report=report-2026-08-14.md` 做畫面截圖驗收。
+本次相對 `main` 的功能檔：
+- `weekly.html`
+- `statusUpdate.html`
+- 刪除 `report_archive_index.json`
+- 刪除 `status_archive_index.json`
 
-## Pull Request
+## 驗證
 
-- Draft PR：https://github.com/Pcc329/weekly-report/pull/3
+- [x] `weekly.html` 不再引用 `report_archive_index.json`，並使用 Contents API 與 report regex。
+- [x] `statusUpdate.html` 不再引用 `status_archive_index.json`，並使用 Contents API 與 status regex。
+- [x] 三種 status 封存檔均匹配：
+  - `status_20260831-0904.md` → 2026-08-31
+  - `status_20260825_final.md` → 2026-08-25
+  - `status-2026-08-20.md` → 2026-08-20
+- [x] `status.md` 不匹配。
+- [x] 實際排序結果：`status_20260831-0904.md` → `status_20260825_final.md` → `status-2026-08-20.md`。
+- [x] 兩個手動索引檔已從分支刪除。
+- [x] 兩頁 GitHub API 錯誤時皆 catch，選單不顯示但頁面的既有內容 fetch 仍可用。
+- [x] 未新增排程、GitHub Action、後端 API 或伺服器端邏輯。
 
-## 範圍聲明
+## 注意事項
 
-本次沒有新增排程、GitHub Action、後端 API 或伺服器端邏輯；僅為靜態 HTML、靜態 JSON 與既有前端 fetch 流程。
+未登入 GitHub Contents API 的速率限制為每小時 60 次。這是本 repo 的 `index.html` 既有模式；本次沿用相同風險模型。若未來需要更高頻率使用，應另行評估快取或後端代理。
 
+GitHub Pages 沒有 branch preview；合併後需實際驗收：
+- `weekly.html`
+- `weekly.html?report=report-2026-08-14.md`
+- `statusUpdate.html`
+- `statusUpdate.html?status=status_20260825_final.md`
