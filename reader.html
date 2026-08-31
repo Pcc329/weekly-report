@@ -166,10 +166,29 @@
     return;
   }
 
-  // 解析日期顯示
-  const dateMatch = file.match(/(\d{4}-\d{2}-\d{2})/);
-  label.textContent = dateMatch ? `週報 ${dateMatch[1]}` : file;
-  document.title    = dateMatch ? `週報 ${dateMatch[1]} — III 產業資料庫` : '週報 — III 產業資料庫';
+  function parseFileMeta(fileName) {
+    let typeLabel = '';
+    if (fileName.startsWith('report')) typeLabel = '週報';
+    else if (fileName.startsWith('status')) typeLabel = '重大事項記事';
+
+    let dateStr = null;
+    const dashed = fileName.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (dashed) {
+      dateStr = `${dashed[1]}-${dashed[2]}-${dashed[3]}`;
+    } else {
+      const compact = fileName.match(/(\d{4})(\d{2})(\d{2})/);
+      if (compact) dateStr = `${compact[1]}-${compact[2]}-${compact[3]}`;
+    }
+
+    return { typeLabel, dateStr };
+  }
+
+  const { typeLabel, dateStr } = parseFileMeta(file);
+  const displayText = dateStr
+    ? (typeLabel ? `${typeLabel} ${dateStr}` : dateStr)
+    : file;
+  label.textContent = displayText;
+  document.title = `${displayText} — III 產業資料庫`;
 
   try {
     const RAW = `https://raw.githubusercontent.com/Pcc329/weekly-report/main/${file}`;
