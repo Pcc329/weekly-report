@@ -602,6 +602,22 @@
    </div>
   </div>
 
+  <div class="section-title">重大事項更新歷史</div>
+  <div class="log-section">
+   <div class="log-header">
+    <span>重大事項更新紀錄</span>
+    <small>系統異常、緊急進度、臨時公告 · 平日隨手記事，週五封存</small>
+   </div>
+   <div class="log-list" id="status-history">
+    <div class="log-loading">
+     <span class="spinner"></span>載入重大事項紀錄中...
+    </div>
+   </div>
+   <div class="log-hint">
+    平日：status.md 隨手記事累積；週五：另存為 status_YYYYMMDD-MMDD.md 封存，此處自動出現。
+   </div>
+  </div>
+
   <div class="section-title">資料 ETL 歷程</div>
   <div class="log-section">
    <div class="log-header">
@@ -819,6 +835,100 @@ async function loadReportHistory() {
  }
 }
 
+function getStatusArchiveDate(fileName) {
+ const compactMatch = fileName.match(/(\d{4})(\d{2})(\d{2})/);
+ if (compactMatch) {
+  return new Date(compactMatch[1] + '-' + compactMatch[2] + '-' + compactMatch[3] + 'T00:00:00');
+ }
+
+ const dashedMatch = fileName.match(/(\d{4})-(\d{2})-(\d{2})/);
+ if (dashedMatch) {
+  return new Date(dashedMatch[1] + '-' + dashedMatch[2] + '-' + dashedMatch[3] + 'T00:00:00');
+ }
+
+ return new Date(0);
+}
+
+function formatStatusArchiveDate(fileName) {
+ const date = getStatusArchiveDate(fileName);
+ return date.getTime() === 0 ? fileName : date.toLocaleDateString('sv-SE');
+}
+
+async function loadStatusHistory() {
+ const container = document.getElementById('status-history');
+ try {
+  const res = await fetch(API);
+  if (!res.ok) throw new Error('status history not available');
+  const files = await res.json();
+  const statuses = files
+   .filter(f => /^status[-_]\d{4}[-_]?\d{2}[-_]?\d{2}.*\.md$/.test(f.name))
+   .sort((a, b) => {
+    const dateDifference = getStatusArchiveDate(b.name) - getStatusArchiveDate(a.name);
+    return dateDifference || b.name.localeCompare(a.name);
+   });
+
+  if (statuses.length === 0) {
+   container.innerHTML = '<div class="log-loading">尚無重大事項封存紀錄。</div>';
+   return;
+  }
+
+  const items = await Promise.all(statuses.map(async (f) => {
+   try {
+    const r = await fetch(RAW + f.name);
+    const text = await r.text();
+    return { name: f.name, summary: extractSummary(text) };
+   } catch {
+    return { name: f.name, summary: '點擊查看完整內容' };
+   }
+  }));
+
+  const VISIBLE_COUNT = 5;
+  const renderItem = (item) => `
+   <a href="reader.html?file=${item.name}" class="log-item">
+    <div class="log-dot done"></div>
+    <div class="log-body">
+     <div class="log-title">${formatStatusArchiveDate(item.name)}</div>
+     <div class="log-meta">${item.summary}</div>
+    </div>
+    <span class="log-tag done">已封存</span>
+   </a>
+  `;
+
+  const visibleItems = items.slice(0, VISIBLE_COUNT);
+  const hiddenItems = items.slice(VISIBLE_COUNT);
+  let html = visibleItems.map(renderItem).join('');
+
+  if (hiddenItems.length > 0) {
+   html += `
+    <div id="status-history-hidden" style="display:none;">
+     ${hiddenItems.map(renderItem).join('')}
+    </div>
+    <button id="status-history-toggle" type="button" style="
+     width:100%; margin-top:8px; padding:10px;
+     background:#f4f7f6; border:1px solid #dde2e8; border-radius:8px;
+     color:var(--primary); font-weight:700; font-size:0.85rem; cursor:pointer;
+    ">顯示更多（還有 ${hiddenItems.length} 筆）▾</button>
+   `;
+  }
+
+  container.innerHTML = html;
+
+  const toggleBtn = document.getElementById('status-history-toggle');
+  if (toggleBtn) {
+   toggleBtn.addEventListener('click', () => {
+    const hiddenBlock = document.getElementById('status-history-hidden');
+    const isHidden = hiddenBlock.style.display === 'none';
+    hiddenBlock.style.display = isHidden ? 'block' : 'none';
+    toggleBtn.textContent = isHidden
+     ? '收合 ▴'
+     : `顯示更多（還有 ${hiddenItems.length} 筆）▾`;
+   });
+  }
+ } catch (e) {
+  container.innerHTML = '<div class="log-loading">載入重大事項紀錄失敗，請稍後再試。</div>';
+ }
+}
+
 async function loadEtlHistory() {
  const container = document.getElementById('etl-history');
  try {
@@ -917,6 +1027,7 @@ async function loadEtlHistory() {
 }
 
 loadReportHistory();
+loadStatusHistory();
 loadEtlHistory();
 </script>
 
