@@ -60,9 +60,20 @@
     .update-time { text-align: right; font-size: 0.75rem; color: #aaa; margin-bottom: 8px; }
     footer { text-align: center; padding: 24px; color: #aaa; font-size: 0.8rem; }
 
+    .archive-selector {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 16px; color: #555; font-size: 0.9rem;
+    }
+    .archive-selector select {
+      min-width: 220px; padding: 8px 10px; border: 1px solid #d6e3df;
+      border-radius: 6px; background: white; color: var(--primary); font: inherit;
+    }
+
     @media (max-width: 600px) {
       .kpi-row { grid-template-columns: repeat(2, 1fr); }
       .report-card { padding: 20px; }
+      .archive-selector { align-items: flex-start; flex-direction: column; }
+      .archive-selector select { width: 100%; }
     }
   </style>
 </head>
@@ -95,6 +106,7 @@
     </div>
 
     <!-- 週報內容（讀 report.md）-->
+    <div class="archive-selector" id="archive-selector" hidden></div>
     <div class="update-time" id="update-time"></div>
     <div class="report-card" id="report-content">
       <p style="color:#ccc; text-align:center; padding: 40px 0;">載入週報中...</p>
@@ -121,26 +133,93 @@
       });
 
     // 2. 讀 report.md 並渲染
-    const urlParams = new URLSearchParams(window.location.search);
-const reportFile = urlParams.get('report') || 'report.md';
-if (urlParams.get('report')) {
-  const dateMatch = reportFile.match(/(\d{4}-\d{2}-\d{2})/);
-  document.querySelector('header p').textContent =
-    'III 內部進度看板 · 歷史週報 · ' + (dateMatch ? dateMatch[1] : reportFile);
-}
-fetch(reportFile + '?t=' + Date.now())
+    const archiveSelector = document.getElementById('archive-selector');
+    const reportContent = document.getElementById('report-content');
+    const updateTime = document.getElementById('update-time');
+    const headerSubtitle = document.querySelector('header p');
+
+    function updateHeaderSubtitle(reportFile) {
+      if (reportFile === 'report.md') {
+        headerSubtitle.textContent = 'III 內部進度看板 · 每週更新';
+        return;
+      }
+
+      const dateMatch = reportFile.match(/(\d{4}-\d{2}-\d{2})/);
+      headerSubtitle.textContent =
+        'III 內部進度看板 · 歷史週報 · ' + (dateMatch ? dateMatch[1] : reportFile);
+    }
+
+    function loadReport(reportFile) {
+      updateHeaderSubtitle(reportFile);
+      fetch(reportFile + '?t=' + Date.now())
+        .then(r => {
+          if (!r.ok) throw new Error('report.md not found');
+          return r.text();
+        })
+        .then(md => {
+          reportContent.innerHTML = marked.parse(md);
+          updateTime.textContent = '最後讀取：' + new Date().toLocaleString('zh-TW');
+        })
+        .catch(() => {
+          reportContent.innerHTML =
+            '<p style="color:#aaa;text-align:center;padding:40px">report.md 尚未建立，請上傳本週週報內容。</p>';
+        });
+    }
+
+    function updateReportUrl(reportFile) {
+      const url = new URL(window.location.href);
+      if (reportFile === 'report.md') {
+        url.searchParams.delete('report');
+      } else {
+        url.searchParams.set('report', reportFile);
+      }
+      window.history.pushState({}, '', url);
+    }
+
+    function renderArchiveSelector(archives, activeFile) {
+      const label = document.createElement('label');
+      label.htmlFor = 'report-archive-select';
+      label.textContent = '查閱週報：';
+
+      const select = document.createElement('select');
+      select.id = 'report-archive-select';
+      select.setAttribute('aria-label', '選擇歷史週報');
+      select.add(new Option('本週進行中', 'report.md'));
+
+      archives.forEach(archive => {
+        if (archive && archive.period && archive.file) {
+          select.add(new Option(archive.period, archive.file));
+        }
+      });
+
+      select.value = activeFile;
+      if (select.value !== activeFile) select.value = 'report.md';
+
+      select.addEventListener('change', () => {
+        const reportFile = select.value;
+        updateReportUrl(reportFile);
+        loadReport(reportFile);
+      });
+
+      archiveSelector.replaceChildren(label, select);
+      archiveSelector.hidden = false;
+    }
+
+    const initialReportFile = new URLSearchParams(window.location.search).get('report') || 'report.md';
+    loadReport(initialReportFile);
+
+    fetch('report_archive_index.json?t=' + Date.now())
       .then(r => {
-        if (!r.ok) throw new Error('report.md not found');
-        return r.text();
+        if (!r.ok) throw new Error('report archive index not found');
+        return r.json();
       })
-      .then(md => {
-        document.getElementById('report-content').innerHTML = marked.parse(md);
-        document.getElementById('update-time').textContent =
-          '最後讀取：' + new Date().toLocaleString('zh-TW');
+      .then(archives => {
+        if (Array.isArray(archives)) {
+          renderArchiveSelector(archives, initialReportFile);
+        }
       })
       .catch(() => {
-        document.getElementById('report-content').innerHTML =
-          '<p style="color:#aaa;text-align:center;padding:40px">report.md 尚未建立，請上傳本週週報內容。</p>';
+        // The current weekly report reader remains usable when the optional archive index is unavailable.
       });
   </script>
   <script src="nav.js"></script>
