@@ -78,7 +78,20 @@
       border-radius: 0 6px 6px 0; font-size: 0.88rem; color: #555;
     }
 
-    @media (max-width: 600px) { .report-card { padding: 20px; } }
+    .archive-selector {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 16px; color: #555; font-size: 0.9rem;
+    }
+    .archive-selector select {
+      min-width: 220px; padding: 8px 10px; border: 1px solid #d6e3df;
+      border-radius: 6px; background: white; color: var(--primary); font: inherit;
+    }
+
+    @media (max-width: 600px) {
+      .report-card { padding: 20px; }
+      .archive-selector { align-items: flex-start; flex-direction: column; }
+      .archive-selector select { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -93,6 +106,7 @@
       <strong>⚡ 即時記事：</strong>本頁讀取 <code>status.md</code>，隨手記錄專案大事件，週末再整理進正式週報。
     </div>
 
+    <div class="archive-selector" id="archive-selector" hidden></div>
     <div class="update-time" id="update-time"></div>
     <div class="report-card" id="report-content">
       <p style="color:#ccc; text-align:center; padding: 40px 0;">載入即時記事中...</p>
@@ -102,26 +116,93 @@
   <footer>© 2026 III 產業資料庫專案 · Status Update · 內容每次開啟自動更新</footer>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const statusFile = urlParams.get('status') || 'status.md';
-    if (urlParams.get('status')) {
+    const archiveSelector = document.getElementById('archive-selector');
+    const reportContent = document.getElementById('report-content');
+    const updateTime = document.getElementById('update-time');
+    const headerSubtitle = document.querySelector('header p');
+
+    function updateHeaderSubtitle(statusFile) {
+      if (statusFile === 'status.md') {
+        headerSubtitle.textContent = 'Real-time Status Update · 隨手登記大事件';
+        return;
+      }
+
       const dateMatch = statusFile.match(/(\d{4}-\d{2}-\d{2})/);
-      document.querySelector('header p').textContent =
+      headerSubtitle.textContent =
         'Real-time Status Update · 歷史記事 · ' + (dateMatch ? dateMatch[1] : statusFile);
     }
-    fetch(statusFile + '?t=' + Date.now())
+
+    function loadStatus(statusFile) {
+      updateHeaderSubtitle(statusFile);
+      fetch(statusFile + '?t=' + Date.now())
+        .then(r => {
+          if (!r.ok) throw new Error('status.md not found');
+          return r.text();
+        })
+        .then(md => {
+          reportContent.innerHTML = marked.parse(md);
+          updateTime.textContent = '最後讀取：' + new Date().toLocaleString('zh-TW');
+        })
+        .catch(() => {
+          reportContent.innerHTML =
+            '<p style="color:#aaa;text-align:center;padding:40px">status.md 尚未建立，請新增即時記事內容。</p>';
+        });
+    }
+
+    function updateStatusUrl(statusFile) {
+      const url = new URL(window.location.href);
+      if (statusFile === 'status.md') {
+        url.searchParams.delete('status');
+      } else {
+        url.searchParams.set('status', statusFile);
+      }
+      window.history.pushState({}, '', url);
+    }
+
+    function renderArchiveSelector(archives, activeFile) {
+      const label = document.createElement('label');
+      label.htmlFor = 'status-archive-select';
+      label.textContent = '查閱週份：';
+
+      const select = document.createElement('select');
+      select.id = 'status-archive-select';
+      select.setAttribute('aria-label', '選擇歷史封存週份');
+      select.add(new Option('本週進行中', 'status.md'));
+
+      archives.forEach(archive => {
+        if (archive && archive.period && archive.file) {
+          select.add(new Option(archive.period, archive.file));
+        }
+      });
+
+      select.value = activeFile;
+      if (select.value !== activeFile) select.value = 'status.md';
+
+      select.addEventListener('change', () => {
+        const statusFile = select.value;
+        updateStatusUrl(statusFile);
+        loadStatus(statusFile);
+      });
+
+      archiveSelector.replaceChildren(label, select);
+      archiveSelector.hidden = false;
+    }
+
+    const initialStatusFile = new URLSearchParams(window.location.search).get('status') || 'status.md';
+    loadStatus(initialStatusFile);
+
+    fetch('status_archive_index.json?t=' + Date.now())
       .then(r => {
-        if (!r.ok) throw new Error('status.md not found');
-        return r.text();
+        if (!r.ok) throw new Error('status archive index not found');
+        return r.json();
       })
-      .then(md => {
-        document.getElementById('report-content').innerHTML = marked.parse(md);
-        document.getElementById('update-time').textContent =
-          '最後讀取：' + new Date().toLocaleString('zh-TW');
+      .then(archives => {
+        if (Array.isArray(archives)) {
+          renderArchiveSelector(archives, initialStatusFile);
+        }
       })
       .catch(() => {
-        document.getElementById('report-content').innerHTML =
-          '<p style="color:#aaa;text-align:center;padding:40px">status.md 尚未建立，請新增即時記事內容。</p>';
+        // The current status reader remains usable when the optional archive index is unavailable.
       });
   </script>
   <script src="nav.js"></script>
