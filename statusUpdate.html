@@ -191,18 +191,49 @@
     const initialStatusFile = new URLSearchParams(window.location.search).get('status') || 'status.md';
     loadStatus(initialStatusFile);
 
-    fetch('status_archive_index.json?t=' + Date.now())
+    const GITHUB_CONTENTS_API = 'https://api.github.com/repos/Pcc329/weekly-report/contents/';
+
+    function getStatusArchiveDate(fileName) {
+      const compactMatch = fileName.match(/(\d{4})(\d{2})(\d{2})/);
+      if (compactMatch) {
+        return new Date(compactMatch[1] + '-' + compactMatch[2] + '-' + compactMatch[3] + 'T00:00:00');
+      }
+
+      const dashedMatch = fileName.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (dashedMatch) {
+        return new Date(dashedMatch[1] + '-' + dashedMatch[2] + '-' + dashedMatch[3] + 'T00:00:00');
+      }
+
+      return new Date(0);
+    }
+
+    function formatStatusArchive(fileName) {
+      const date = getStatusArchiveDate(fileName);
+      if (date.getTime() === 0) return fileName;
+      return date.toLocaleDateString('sv-SE') + ' 封存';
+    }
+
+    fetch(GITHUB_CONTENTS_API)
       .then(r => {
-        if (!r.ok) throw new Error('status archive index not found');
+        if (!r.ok) throw new Error('status archive list not available');
         return r.json();
       })
-      .then(archives => {
-        if (Array.isArray(archives)) {
-          renderArchiveSelector(archives, initialStatusFile);
-        }
+      .then(files => {
+        if (!Array.isArray(files)) throw new Error('status archive list is invalid');
+        const archives = files
+          .filter(file => /^status[-_]\d{4}[-_]?\d{2}[-_]?\d{2}.*\.md$/.test(file.name))
+          .sort((a, b) => {
+            const dateDifference = getStatusArchiveDate(b.name) - getStatusArchiveDate(a.name);
+            return dateDifference || b.name.localeCompare(a.name);
+          })
+          .map(file => ({
+            period: formatStatusArchive(file.name),
+            file: file.name,
+          }));
+        renderArchiveSelector(archives, initialStatusFile);
       })
       .catch(() => {
-        // The current status reader remains usable when the optional archive index is unavailable.
+        // The current status reader remains usable when the optional archive list is unavailable.
       });
   </script>
   <script src="nav.js"></script>

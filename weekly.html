@@ -208,18 +208,31 @@
     const initialReportFile = new URLSearchParams(window.location.search).get('report') || 'report.md';
     loadReport(initialReportFile);
 
-    fetch('report_archive_index.json?t=' + Date.now())
+    const GITHUB_CONTENTS_API = 'https://api.github.com/repos/Pcc329/weekly-report/contents/';
+
+    function formatReportArchive(fileName) {
+      const dateMatch = fileName.match(/(\d{4}-\d{2}-\d{2})/);
+      return (dateMatch ? dateMatch[1] : fileName.replace(/^report-/, '').replace(/\.md$/, '')) + ' 週報';
+    }
+
+    fetch(GITHUB_CONTENTS_API)
       .then(r => {
-        if (!r.ok) throw new Error('report archive index not found');
+        if (!r.ok) throw new Error('report archive list not available');
         return r.json();
       })
-      .then(archives => {
-        if (Array.isArray(archives)) {
-          renderArchiveSelector(archives, initialReportFile);
-        }
+      .then(files => {
+        if (!Array.isArray(files)) throw new Error('report archive list is invalid');
+        const archives = files
+          .filter(file => /^report-.+\.md$/.test(file.name))
+          .sort((a, b) => b.name.localeCompare(a.name))
+          .map(file => ({
+            period: formatReportArchive(file.name),
+            file: file.name,
+          }));
+        renderArchiveSelector(archives, initialReportFile);
       })
       .catch(() => {
-        // The current weekly report reader remains usable when the optional archive index is unavailable.
+        // The current weekly report reader remains usable when the optional archive list is unavailable.
       });
   </script>
   <script src="nav.js"></script>
