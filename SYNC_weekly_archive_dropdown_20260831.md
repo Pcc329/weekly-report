@@ -54,6 +54,10 @@
 
 完整 diff 請見 PR 的 Files changed。GitHub Pages 僅由 `main` 發布，沒有 branch preview；合併後需以 GitHub Pages 的 `weekly.html` 及 `?report=report-2026-08-14.md` 做畫面截圖驗收。
 
+## Pull Request
+
+- Draft PR：https://github.com/Pcc329/weekly-report/pull/3
+
 ## 範圍聲明
 
 本次沒有新增排程、GitHub Action、後端 API 或伺服器端邏輯；僅為靜態 HTML、靜態 JSON 與既有前端 fetch 流程。
