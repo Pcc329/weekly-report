@@ -69,6 +69,9 @@ PR 建立後的完整 GitHub diff：
 
 ## Git
 
+- PR（Draft）：https://github.com/Pcc329/weekly-report/pull/2
+- 最新分支 commit（本 SYNC）：`1ecfaf0bc353d7ba9405377333c44ee6ec5259b3`
+
 前兩個功能 commit：
 - `f3f8f15f1ce518d6df18f8bd83b44d1371ea0485` — `feat(status): add archive dropdown navigation`
 - `499648e0fe43f0457ce6d68423adb0bb221b7a3f` — `feat(status): add archive index`
