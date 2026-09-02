@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資服業者領域能量資料庫｜收斂提案(2026-09-01)</title>
+<style>
+:root{
+  --ink:#2b2b28; --ink2:#5f5e5a; --ink3:#8b8a83;
+  --line:#e2e0d8; --bg:#faf9f5; --card:#fff;
+  --teal:#0f6e56; --tealbg:#e4f5ef;
+  --purple:#4f46a8; --purplebg:#eeedfc;
+  --coral:#993c1d; --coralbg:#faece7;
+  --amber:#7d4a08; --amberbg:#faeeda;
+  --graybg:#f1efe8;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.7;font-size:16px;}
+.wrap{max-width:900px;margin:0 auto;padding:0 26px 90px;}
+.topbar{background:var(--ink);color:#f3f1ea;font-size:13px;letter-spacing:.08em;padding:10px 0;margin-bottom:40px;}
+.topbar .wrap{padding:0 26px;}
+h1{font-size:30px;font-weight:600;line-height:1.4;margin:0 0 6px;}
+.h1sub{font-size:16.5px;color:var(--ink2);margin:0 0 20px;}
+h2{font-size:21px;font-weight:600;margin:52px 0 12px;padding-top:20px;border-top:2px solid var(--ink);}
+h2 .num{color:var(--ink3);font-weight:400;margin-right:10px;}
+h3{font-size:16.5px;font-weight:600;margin:26px 0 6px;}
+h4{font-size:15px;font-weight:600;margin:18px 0 6px;}
+p{margin:10px 0;}
+.sub{color:var(--ink2);font-size:14.5px;}
+.meta{color:var(--ink3);font-size:13px;margin-top:14px;}
+
+/* 三點重點 */
+.key{list-style:none;padding:0;margin:0;counter-reset:k;}
+.key > li{counter-increment:k;position:relative;padding:12px 0 12px 46px;
+  border-bottom:1px solid var(--line);font-size:16.5px;line-height:1.62;}
+.key > li:last-child{border-bottom:none}
+.key > li::before{content:counter(k);position:absolute;left:0;top:12px;
+  width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;
+  font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.key .note{display:block;font-size:14px;color:var(--ink2);margin-top:3px;}
+
+ul.b{list-style:none;padding-left:0;margin:8px 0;}
+ul.b li{position:relative;padding-left:18px;margin:5px 0;}
+ul.b li::before{content:"";position:absolute;left:3px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--ink3);}
+ul.b.t li{margin:3px 0;font-size:14.5px;}
+ol{padding-left:22px;margin:8px 0} ol li{margin:6px 0}
+
+/* 收合 */
+details{margin:14px 0 0;border:1px solid var(--line);border-radius:10px;background:var(--card);overflow:hidden;}
+details > summary{list-style:none;cursor:pointer;padding:11px 18px;font-size:14px;font-weight:600;
+  color:var(--ink2);background:var(--graybg);user-select:none;display:flex;align-items:center;gap:8px;}
+details > summary::-webkit-details-marker{display:none}
+details > summary::before{content:"＋";font-size:15px;color:var(--ink3);width:16px;}
+details[open] > summary::before{content:"－"}
+details[open] > summary{border-bottom:1px solid var(--line)}
+.dbody{padding:16px 20px 20px;}
+.dbody > *:first-child{margin-top:0}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:var(--card);}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
+th{background:var(--graybg);font-weight:600;}
+td ul.b{margin:0} td ul.b li{margin:2px 0;font-size:13.5px;padding-left:15px}
+td ul.b li::before{top:9px;width:4px;height:4px}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.warn{color:#a32d2d;font-weight:600} .good{color:var(--teal);font-weight:600}
+
+.grid{display:grid;gap:12px;margin:14px 0;}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:780px){.g3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+.card h4{margin:0 0 4px;font-size:14.5px}
+.tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;margin-bottom:6px;font-weight:600;}
+.t-teal{background:var(--tealbg);color:var(--teal)} .t-amber{background:var(--amberbg);color:var(--amber)}
+.t-coral{background:var(--coralbg);color:var(--coral)} .t-gray{background:var(--graybg);color:var(--ink2)}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin:16px 0;}
+.figure svg{width:100%;height:auto;display:block}
+.cap{font-size:12.5px;color:var(--ink3);margin-top:8px;text-align:center}
+.pull{background:var(--amberbg);border:1px solid #e8d3a8;border-radius:10px;padding:14px 18px;margin:16px 0;}
+.pull .pt{font-weight:600;color:var(--amber);margin:0 0 6px}
+.pull ul.b li::before{background:#c9a35e}
+.hero{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink);padding:18px 24px;margin:20px 0 10px;}
+.hero .one{font-size:18px;font-weight:600;margin:0 0 10px;line-height:1.5}
+.ask{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:14px 0}
+.ask .item{padding:12px 20px;border-bottom:1px solid var(--line)}
+.ask .item:last-child{border-bottom:none}
+.ask .q{font-weight:600;margin-bottom:4px}
+.ask ul.b li{font-size:14.5px;color:var(--ink2);margin:2px 0}
+.base{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+  border-radius:0 10px 10px 0;padding:18px 22px;margin:34px 0 0;}
+.base ul.b t li{font-size:14.5px}
+.recap{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:22px 26px;margin:16px 0 0;}
+.recap .rone{font-size:17.5px;font-weight:600;line-height:1.55;margin:0 0 18px;}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+@media(max-width:780px){.rgrid{grid-template-columns:1fr}}
+.rcell{background:var(--graybg);border-radius:8px;padding:12px 14px;}
+.rcell .rn{font-size:22px;font-weight:600;color:var(--teal);line-height:1.2;}
+.rcell .rl{font-size:13.5px;color:var(--ink2);margin-top:4px;line-height:1.5;}
+.rcell .rl span{color:var(--ink3);font-size:12.5px;}
+.rsec{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+.rsec .rh{font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:2px;}
+.rfoot{font-size:13.5px;color:var(--ink2);background:var(--tealbg);border-radius:8px;
+  padding:12px 16px;margin:16px 0 0;line-height:1.6;}
+.split{display:flex;align-items:center;gap:14px;margin:64px 0 8px;}
+.split .sl{flex:1;height:1px;background:var(--line);}
+.split span{font-size:13px;color:var(--ink3);white-space:nowrap;}
+.foot{margin-top:56px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3)}
+.timer{display:inline-block;font-size:12px;color:var(--ink3);border:1px solid var(--line);
+  border-radius:20px;padding:1px 10px;margin-left:10px;vertical-align:middle;font-weight:400;}
+@media print{details{display:block} details > summary{display:none} .dbody{padding-top:0}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">資策會數位轉型研究院｜內部提案文件．討論用</div></div>
+<div class="wrap">
+
+<h1>資服業者領域能量資料庫：收斂提案</h1>
+<p class="h1sub">從「查得到廠商」到「洞察產業脈絡」——12 月結案前的聚焦路徑</p>
+
+<div class="hero">
+<p class="one">依初步檢視，目前資料不缺廣度，應加強深度。</p>
+<ul class="key">
+<li><b>廣度已具備</b>：資料源涵蓋公司登記、財務、能量登錄、採購、拓銷、風險、問卷等七類
+<span class="note">其中約九成為公開登記資料，取得管道與外部一致</span></li>
+<li><b>深度尚待補強</b>：署與資策會獨有的政策關係資料目前以標籤形式存在，未成為分析主軸
+<span class="note">能量登錄、獎補助、採購得標、海外拓銷、訪談問卷——這些是外部無法重建的資料</span></li>
+<li><b>建議調整投放重心</b>：由「覆蓋全體稅籍母體」改為鎖定核心觀測名單，12 月交付具分析能力的系統本體
+<span class="note">系統以 AI 輔助分析整合資料、持續產出判斷依據；在既定人力與時程下，深度需以範圍收斂換取</span></li>
+</ul>
+<p class="sub" style="margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px;">
+本文件依倒三角順序編排：<b>一至三章為建議與待討論事項，末附「回到重點」一頁總結</b>，可先行閱讀；
+<b>四至六章為判斷依據</b>，想知道細節時可以展開。</p>
+<ul style="display:none">
+</ul>
+</div>
+<p class="meta">提案人：嘉華　｜　2026-09-01　｜　依據：8/31 週會簡報 v2、與主任電話討論、114 年 landscape 檔案實測、現行產業資料庫實作經驗</p>
+
+
+<div class="base">
+<h3 style="margin:0 0 4px;font-size:16.5px;">既有基礎：本提案為在現有成果上的順序調整</h3>
+<p class="sub" style="margin:0 0 10px;">以下為 8/31 週會簡報所呈現、已完成或已具備的工作項目。本提案不涉及推翻，
+調整的是資料納入與功能開發的先後順序。</p>
+<div class="grid g2" style="margin:0">
+<div>
+<ul class="b t">
+<li><b>資料源盤點完整</b>：正文與附件合計盤點 20 項以上來源，橫跨公司登記、財務、能量登錄、採購、拓銷、風險、問卷七類</li>
+<li><b>已建立可信度揭露機制</b>：每項資料源標示可信度（高／中／低），前端並以游標顯示來源可信度</li>
+<li><b>已設計關聯序計分</b>：以 +1／0／−1 區分資料與署務的關聯強度，為本提案選樣標準的直接依據</li>
+<li><b>更新頻率已逐項定義</b>：各來源分別訂有來源更新頻率與系統抓取頻率</li>
+</ul>
+</div>
+<div>
+<ul class="b t">
+<li><b>需求調查已完成</b>：組內 10 份有效問卷，涵蓋業務類型、資料顆粒度、輸出格式與追蹤警示需求</li>
+<li><b>114 年欄位盤點完整</b>：22 個欄位皆附說明與來源標註</li>
+<li><b>V1.1 已於 8 月上線</b>：智慧搜尋、地圖分布、技術分布、公司完整資訊頁等功能已可操作</li>
+<li><b>權限架構已完整設計</b>：群組角色、欄位級控管、審核流程與 API Key 權限均已規劃</li>
+</ul>
+</div>
+</div>
+<p class="sub" style="margin:10px 0 0;border-top:1px solid var(--line);padding-top:10px;">
+本提案的三個轉向，皆建立在上述成果之上：<b>選樣標準沿用既有的關聯序計分</b>；
+<b>第三層資料源取自簡報第 10 頁「持續納入」清單</b>；
+<b>五個政策問題取自組內需求調查的自由題回應</b>。均非新增項目。</p>
+</div>
+
+<h2><span class="num">一</span>建議：三個轉向<span class="timer">約 3 分鐘</span></h2>
+<ul class="key">
+<li><b>從「覆蓋全體稅籍母體」→ 鎖定核心觀測名單</b>（約 500–800 家）
+<span class="note">此名單涵蓋 100% 的政策關係事件——不是抽樣，是完整母體</span></li>
+<li><b>從「資料搬運」→ 以政策關係資料為主軸</b>，改為三層結構
+<span class="note">第一層取得容易，資料加值發生在第二、三層；第三層為簡報第 10 頁既有規劃、尚未接入</span></li>
+<li><b>從「查找工具」→ 以五個政策問題定義核心功能</b>
+<span class="note">這五題能否回答，決定資料顆粒度要做到多細</span></li>
+</ul>
+
+<details>
+<summary>展開轉向一：核心觀測名單怎麼選</summary>
+<div class="dbody">
+<p class="sub" style="margin-top:0">名單組成如下。<b>六份名單皆為 8/31 週會簡報既有規劃的資料源，非新增項目</b>；
+本提案調整的是納入順序——政策關係類往前，公開登記類往後。</p>
+<table>
+<thead><tr><th style="width:26%">名單</th><th class="n" style="width:12%">筆數</th><th style="width:20%">提供單位</th><th>簡報出處與現況</th></tr></thead>
+<tbody>
+<tr><td>能量登錄核定<br><span class="sub">6 類合計</span></td><td class="n">175 家次</td><td>數產署</td><td>第 9 頁「115 年資料來源」<br><span class="good">已列入本年度來源</span></td></tr>
+<tr><td>Digit+ 獎補助名單</td><td class="n">139</td><td>數產署</td><td rowspan="5">第 10 頁「115 年持續納入資料」<br><span class="sub">標示為「接其他系統」，尚未接入</span></td></tr>
+<tr><td>政府採購得標</td><td class="n">540</td><td>行政院採購網</td></tr>
+<tr><td>海外拓銷團參團名單</td><td class="n">314</td><td>數產署</td></tr>
+<tr><td>研發投抵申請</td><td class="n">未列</td><td>數產署</td></tr>
+<tr><td>MIC 訪談問卷</td><td class="n">未列</td><td>資策會</td></tr>
+</tbody>
+</table>
+<ul class="b">
+<li><b>規模</b>：去重後粗估 500–800 家</li>
+<li><b>核心邏輯</b>：凡與署有過政策接觸的業者，必然落在這幾份名單內——<b>不是抽樣，是完整母體</b></li>
+<li><b>其餘母體</b>：維持名錄層，可查得到基本資料，不投入深度整理</li>
+<li><b>與既有資產規模一致</b>：114 年 landscape 檔案實測為 437 家，與此名單規模同一量級</li>
+</ul>
+<p class="sub">效果：維護對象少二十倍，資料深度可一次提升一個量級；「顆粒度不夠細緻」隨之解決，因為成本被集中投放。</p>
+</div>
+</details>
+
+<details>
+<summary>展開轉向二：三層資料結構</summary>
+<div class="dbody">
+<table>
+<thead><tr><th style="width:20%">層</th><th style="width:44%">內容</th><th>對應資料源</th></tr></thead>
+<tbody>
+<tr><td><b>一層　業者主檔</b></td>
+<td><ul class="b t"><li>統編、資本額、員工數</li><li>成立年、登記地</li><li>規模級距</li></ul></td>
+<td>財政部、經濟部、公開財報<br><span class="sub">簡報第 9 頁，已列入本年度來源</span></td></tr>
+<tr><td><b>二層　能量與產品</b></td>
+<td><ul class="b t"><li>能量登錄類別、服務領域</li><li>產品服務內容</li><li>技術來源型態（自研／代理／代理加值）</li><li>AI 應用型態（基礎模型／應用整合）</li></ul></td>
+<td>能量登錄名單、問卷、官網<br><span class="sub">簡報第 9、10 頁；技術來源型態與 AI 應用型態為新增欄位</span></td></tr>
+<tr><td><b>三層　政策關係事件</b><br><span class="tag t-teal">關鍵</span></td>
+<td><ul class="b t"><li>每一次與署的接觸紀錄</li><li>得標、獲補助、參與拓銷</li><li>研發投抵、受輔導</li><li>含年度、金額、案名</li></ul></td>
+<td>採購網、Digit+、拓銷團、投抵、署內計畫紀錄<br><span class="sub">簡報第 10 頁「持續納入」清單，尚未接入</span></td></tr>
+</tbody>
+</table>
+<h4 style="margin-top:22px">三層的工作性質不同，難度也不同</h4>
+<table>
+<thead><tr><th style="width:16%">層</th><th style="width:22%">資料模型角色</th><th style="width:14%">工作性質</th><th>價值產生的方式</th></tr></thead>
+<tbody>
+<tr><td><b>一層</b><br>業者主檔</td><td>維度主檔<br><span class="sub">master data</span></td>
+<td class="good">難度低<br><span class="sub">可自動化</span></td>
+<td>來源皆為公開 API 或登記查詢，ETL 排程寫好即可定期更新。
+<b>此層的價值不在資料本身，而在提供統一編號作為 join key</b>——沒有它，第三層的事件無法掛回公司</td></tr>
+<tr><td><b>二層</b><br>能量與產品</td><td>屬性維度<br><span class="sub">taxonomy／標註</span></td>
+<td>難度中<br><span class="sub">需領域判斷</span></td>
+<td>把自由文字的產品描述，轉為受控的分類值（自研／代理／代理加值等）。
+<b>價值來自分類標準一致</b>，業者之間才具可比性；此層可用 AI 批次標註加速，但分類軸須人工定義</td></tr>
+<tr><td><b>三層</b><br>政策關係事件</td><td>事實表<br><span class="sub">粒度：公司 × 單次事件</span></td>
+<td class="warn">難度中高<br><span class="sub">需跨單位協調</span></td>
+<td>以統編把分散在各名單的事件掛回同一家公司。
+<b>價值來自關聯後才出現的衍生指標</b>，任何單一名單都看不出來</td></tr>
+</tbody>
+</table>
+
+<div class="pull">
+<p class="pt">三層組合後可產生的衍生指標（單一名單無法得出）</p>
+<ul class="b">
+<li><b>接觸強度</b>：一家業者累計參與過幾次政策事件、橫跨幾個年度</li>
+<li><b>資源集中度</b>：補助與得標金額在業者間的分布，是否集中於少數幾家</li>
+<li><b>重複補助偵測</b>：同一業者在相近期間取得多項資源的情形</li>
+<li><b>層級 × 資源交叉</b>：龍頭、中堅、新銳各層級實際接觸到的資源比例</li>
+<li><b>能量供給缺口</b>：各應用領域的業者家數與能量登錄類別的落差</li>
+</ul>
+</div>
+
+<ul class="b t">
+<li><b>第一層取得容易，但完整率決定三層能否組合</b>——landscape 檔案 65% 缺統編，即為此層完整率不足的實例</li>
+<li><b>資料加值主要發生在第二、三層</b>：一層是搬運，二層是標註，三層是關聯</li>
+<li>第三層讓資料庫從「這家公司是什麼樣子」進化到「這家公司和政策之間發生過什麼」</li>
+</ul>
+
+<p class="sub"><b>技術注意事項：</b>能量登錄的 175 為「家次」而非「家數」，六個類別分開統計會重複計算。
+第三層須建為事件粒度的事實表（一次事件一列），而非將名單直接合併；
+合併會混淆粒度，導致家數與次數的統計皆失準。</p>
+</div>
+</details>
+
+<details>
+<summary>展開轉向三：五個政策問題</summary>
+<div class="dbody">
+<p class="sub">核心功能的定位是：由系統以 AI 輔助整合分散的資料，將查詢結果轉為有價值的資訊，而非人工彙整成單次報告。
+以下五題直接對應簡報中組內需求調查的自由題回應：</p>
+<table>
+<thead><tr><th style="width:6%">　</th><th style="width:48%">政策問題</th><th>需要的交叉</th></tr></thead>
+<tbody>
+<tr><td><b>Q1</b></td><td>署的政策資源實際落在哪些業者？是否過度集中或重複補助？</td><td>補助 × 得標 × 拓銷 × 業者規模</td></tr>
+<tr><td><b>Q2</b></td><td>五大應用領域（製造／醫療／金融／零售／餐飲）的本土供給缺口在哪？</td><td>服務領域 × 業者家數 × 能量登錄類別</td></tr>
+<tr><td><b>Q3</b></td><td>各領域的龍頭、中堅、新銳分別是誰？各層級接觸到的政策資源分布如何？</td><td>營收級距 × 員工數 × 政策關係次數</td></tr>
+<tr><td><b>Q4</b></td><td>資服業的 AI 能力是自研還是代理？進展到哪一階段？</td><td>AI 應用型態 × 技術來源型態 × 年度</td></tr>
+<tr><td><b>Q5</b></td><td>哪些業者存在風險（陸資關聯、重複補助、績效落後、負面事件）？</td><td>陸資名錄 × 補助紀錄 × 負面新聞</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+
+<h2><span class="num">二</span>收斂後的專案定義與時程<span class="timer">約 2 分鐘</span></h2>
+<ul class="key">
+<li><b>人與事</b>：先服務內部 PM 與顧問，用五個政策問題支撐計畫規劃與政策說明
+<span class="note">跨計畫 API、細顆粒權限列為第二順位</span></li>
+<li><b>時與物</b>：9–11 月三個月衝刺，<b>以交付系統為優先任務</b>
+<span class="note">若有餘力，可再製作產業報告，例如《資服業能量盤點報告》</span></li>
+<li><b>明確不做四件事</b>：不做全體母體深度整理、權限暫停擴充、不新增資料源、不做對外 API
+<span class="note">以時間換取深度；未執行項目寫入次年規劃，保留延續性</span></li>
+</ul>
+
+<details>
+<summary>展開：人事時地物與月度路徑</summary>
+<div class="dbody">
+<table>
+<thead><tr><th style="width:7%">構面</th><th style="width:36%">收斂後的定義</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><b>人</b></td><td><ul class="b t"><li>第一順位：內部 PM 與顧問</li><li>第二順位：署內承辦</li></ul></td>
+<td>先服務單一明確族群並做到好，再擴大</td></tr>
+<tr><td><b>事</b></td><td><ul class="b t"><li>回答五個政策問題</li><li>支撐計畫規劃、資源配置與政策說明</li></ul></td>
+<td>由「查找廠商」轉為「判斷產業」；查找功能保留，不列為主要用途</td></tr>
+<tr><td><b>時</b></td><td><ul class="b t"><li>時機：9–11 月三個月衝刺</li><li>時間：12 月結案</li></ul></td>
+<td>時間壓力下唯一可行的策略是縮小範圍、集中火力</td></tr>
+<tr><td><b>地</b></td><td><ul class="b t"><li>系統定位：署內共用資料資產，非單一計畫工具</li><li>資料落地：哪些欄位可跨計畫提供</li></ul></td>
+<td>定位為共用資產，代表使用對象不只本計畫承辦，欄位設計需預留跨計畫取用的空間；但取用範圍應在資料層收斂完成後再逐步開放，本期先確認哪些欄位可提供、哪些需限制</td></tr>
+<tr><td><b>物</b></td><td><ul class="b t"><li><b>系統本體（必要）</b></li><li>可交接的資料資產與 ETL 管道（必要）</li><li>《115 年資服業能量盤點報告》（選擇性）</li></ul></td>
+<td>時程吃緊，交付主體為資訊系統。盤點報告依賴三層資料庫完成後才具備立論基礎，列為加值項目；若 11 月資料層如期完成，再評估是否產出</td></tr>
+</tbody>
+</table>
+
+<h4>三個月收斂路徑</h4>
+<div class="figure">
+<svg viewBox="0 0 680 250" role="img" aria-label="三個月收斂路徑時間軸">
+<title>三個月收斂路徑</title>
+<desc>九月建立核心名單與欄位規格、十月串接政策關係事件層、十一月分析與視覺化、十二月結案交付</desc>
+<defs><marker id="tar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#8b8a83" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<g>
+<rect x="40" y="46" width="135" height="152" rx="10" fill="#fff" stroke="#c9c7be" stroke-width="0.6"/>
+<text x="52" y="70" font-size="15" font-weight="600" fill="#2b2b28">9 月</text>
+<text x="52" y="98" font-size="11.5" fill="#5f5e5a">核心名單建立去重</text>
+<text x="52" y="117" font-size="11.5" fill="#5f5e5a">三層結構定案</text>
+<text x="52" y="136" font-size="11.5" fill="#5f5e5a">欄位需求反推</text>
+<line x1="52" y1="152" x2="163" y2="152" stroke="#e2e0d8"/>
+<text x="52" y="172" font-size="11.5" font-weight="600" fill="#0f6e56">名單＋欄位規格書</text>
+</g>
+<line x1="177" y1="122" x2="193" y2="122" stroke="#8b8a83" stroke-width="1.4" marker-end="url(#tar)"/>
+
+<g>
+<rect x="195" y="46" width="135" height="152" rx="10" fill="#fff" stroke="#c9c7be" stroke-width="0.6"/>
+<text x="207" y="70" font-size="15" font-weight="600" fill="#2b2b28">10 月</text>
+<text x="207" y="98" font-size="11.5" fill="#5f5e5a">關係事件層串接</text>
+<text x="207" y="117" font-size="11.5" fill="#5f5e5a">規模分層標記</text>
+<text x="207" y="136" font-size="11.5" fill="#5f5e5a">技術來源型態標記</text>
+<line x1="207" y1="152" x2="318" y2="152" stroke="#e2e0d8"/>
+<text x="207" y="172" font-size="11.5" font-weight="600" fill="#0f6e56">三層資料庫</text>
+</g>
+<line x1="332" y1="122" x2="348" y2="122" stroke="#8b8a83" stroke-width="1.4" marker-end="url(#tar)"/>
+
+<g>
+<rect x="350" y="46" width="135" height="152" rx="10" fill="#fff" stroke="#c9c7be" stroke-width="0.6"/>
+<text x="362" y="70" font-size="15" font-weight="600" fill="#2b2b28">11 月</text>
+<text x="362" y="98" font-size="11.5" fill="#5f5e5a">五題分析與視覺化</text>
+<text x="362" y="117" font-size="11.5" fill="#5f5e5a">前端呈現調整</text>
+<text x="362" y="136" font-size="11.5" fill="#5f5e5a">署內檢視</text>
+<line x1="362" y1="152" x2="473" y2="152" stroke="#e2e0d8"/>
+<text x="362" y="172" font-size="11.5" font-weight="600" fill="#0f6e56">儀表板 v1</text>
+</g>
+<line x1="487" y1="122" x2="503" y2="122" stroke="#8b8a83" stroke-width="1.4" marker-end="url(#tar)"/>
+
+<g>
+<rect x="505" y="46" width="135" height="152" rx="10" fill="#e4f5ef" stroke="#1d9e75" stroke-width="0.6"/>
+<text x="517" y="70" font-size="15" font-weight="600" fill="#085041">12 月</text>
+<text x="517" y="98" font-size="11.5" fill="#0f6e56">依回饋修正</text>
+<text x="517" y="117" font-size="11.5" fill="#0f6e56">結案交付</text>
+<line x1="517" y1="152" x2="628" y2="152" stroke="#bfe3d6"/>
+<text x="517" y="172" font-size="11.5" font-weight="600" fill="#085041">系統＋資料交接</text>
+</g>
+
+<line x1="656" y1="38" x2="656" y2="210" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="656" y="30" font-size="11.5" font-weight="600" fill="#c0392b" text-anchor="middle">結案</text>
+
+<text x="40" y="228" font-size="11.5" fill="#8b8a83">綠色列為各月產出</text>
+</svg>
+<div class="cap">三個月收斂路徑：每月皆有可檢視的產出，不留到結案前才呈現</div>
+</div>
+
+<table>
+<thead><tr><th style="width:10%">時程</th><th style="width:46%">工作</th><th>產出</th></tr></thead>
+<tbody>
+<tr><td><b>9 月</b></td><td><ul class="b t"><li>核心觀測名單建立與去重</li><li>三層資料結構定案</li><li>由五個政策問題反推欄位需求</li></ul></td><td>核心名單（500–800 家）＋ 欄位規格書</td></tr>
+<tr><td><b>10 月</b></td><td><ul class="b t"><li>政策關係事件層資料整理與串接</li><li>規模分層、技術來源型態標記</li></ul></td><td>可交叉查詢的三層資料庫</td></tr>
+<tr><td><b>11 月</b></td><td><ul class="b t"><li>五個政策問題的分析與視覺化</li><li>前端呈現調整、署內檢視</li></ul></td><td>儀表板 v1<br><span class="sub">行有餘力再產出盤點報告初稿</span></td></tr>
+<tr><td><b>12 月</b></td><td><ul class="b t"><li>依回饋修正</li><li>結案交付</li></ul></td><td>系統 ＋ 資料資產交接</td></tr>
+</tbody>
+</table>
+
+<h4>建議明確「不做」的項目</h4>
+<ul class="b">
+<li><b>不追求全體稅籍母體的深度整理</b>：名錄層保留基本資料即可</li>
+<li><b>權限機制暫停擴充</b>：待有跨計畫實際使用者再啟動</li>
+<li><b>不再新增資料源</b>：本期只做與五個政策問題直接相關者</li>
+<li><b>不做對外 API</b>：尚無確定介接需求方，屬需求觸發項目</li>
+</ul>
+</div>
+</details>
+
+
+<h2><span class="num">三</span>討論調整的方向<span class="timer">約 2 分鐘</span></h2>
+
+<div class="ask">
+<div class="item"><div class="q">一、開發主軸修正：由「覆蓋率」改為「核心觀測名單」</div>
+<ul class="b t"><li>此為所有後續工作的前提</li><li>方向確認後，9 月第一週即可著手名單去重與規格定案</li></ul></div>
+
+<div class="item"><div class="q">二、資料取得：政策關係資料的名單來源<span class="warn">（建議優先討論）</span></div>
+<ul class="b t">
+<li>範圍：採購得標、獎補助、拓銷、研發投抵、署內計畫紀錄</li>
+<li>這是三層架構第三層的資料來源</li>
+<li><b>此項屬行政協調工作，非工程工作</b>——可自動取得的資料，門檻是技術，對所有單位一致；
+這批資料的門檻是承辦身分與職權，工程端無法自行解決，需協助洽詢資料權責單位</li>
+<li>若部分名單取得需要時間，可先就已有名單啟動，其餘分批納入</li>
+</ul></div>
+
+<div class="item"><div class="q">三、交付物範圍：本期以資訊系統為交付主體</div>
+<ul class="b t"><li>時程吃緊，建議先確保系統本體與資料資產如期完成</li><li>洞察由系統以 AI 輔助分析持續產生，不需以人工報告作為呈現形式</li><li>《115 年資服業能量盤點報告》列為選擇性加值項目，11 月資料層完成後再評估</li></ul></div>
+
+<div class="item"><div class="q">四、分析主題：五個政策問題的增補與調整</div>
+<ul class="b t"><li>這五題決定資料顆粒度要做到多細，是欄位規格的直接依據</li><li>建議逐題看過，補上遺漏或替換不合適者</li></ul></div>
+</div>
+
+
+<h2><span class="num">結</span>回到重點<span class="timer">約 1 分鐘</span></h2>
+
+<div class="recap">
+<p class="rone">取得門檻決定含金量。資源應從「人人可得的公開資料」轉向「僅本會與署可得的政策關係資料」。</p>
+
+<div class="rgrid">
+<div class="rcell"><div class="rn">九成</div><div class="rl">現行資料源為公開登記資料<br><span>取得門檻是技術，對各單位一致</span></div></div>
+<div class="rcell"><div class="rn">500–800</div><div class="rl">核心觀測名單家數<br><span>涵蓋 100% 政策關係事件</span></div></div>
+<div class="rcell"><div class="rn">3 個月</div><div class="rl">9–11 月收斂衝刺<br><span>12 月交付系統與資料資產</span></div></div>
+</div>
+
+<div class="rsec">
+<div class="rh">要做的三件事</div>
+<ul class="b t">
+<li><b>鎖定名單</b>：用既有的關聯序計分挑出核心觀測名單，其餘維持名錄層</li>
+<li><b>補第三層</b>：把政策關係事件建成事實表，以統編串起分散名單</li>
+<li><b>定義五題</b>：以五個政策問題決定欄位顆粒度與系統功能</li>
+</ul>
+</div>
+
+<div class="rsec">
+<div class="rh">需要協助的一件事</div>
+<ul class="b t">
+<li>政策關係名單的取得屬<b>行政協調</b>，非工程工作，需協助洽詢資料權責單位</li>
+</ul>
+</div>
+
+<p class="rfoot">本提案接續既有成果：選樣標準沿用簡報既有的關聯序計分，第三層資料源取自「持續納入」清單，
+五個政策問題取自組內需求調查。調整的是順序與重心，不是方向。</p>
+</div>
+
+<div class="split">
+<div class="sl"></div><span>以下為上述建議的判斷依據，視討論需要展開</span><div class="sl"></div>
+</div>
+<h2><span class="num">四</span>依據①：站在哪一個高度<span class="timer">約 1 分鐘</span></h2>
+<ul class="key">
+<li><b>署／政策層</b>：這個資料庫要成為資服業政策的決策底稿
+<span class="note">回答「資源投對地方了嗎、能量缺口在哪、哪些隊伍值得扶植」——決定要收什麼、收多細</span></li>
+<li><b>院／計畫層</b>：交付一套能以 AI 輔助分析、整合分散資料並產出判斷依據的系統
+<span class="note">洞察由系統持續產生，不以單次報告為目的——決定功能與欄位的優先順序</span></li>
+<li><b>使用者層</b>：內部 PM 與顧問幾分鐘內找到有把握的答案
+<span class="note">目前規劃停在這一層，且偏重「查找」而非「判斷」</span></li>
+</ul>
+
+<details>
+<summary>展開：為什麼要從最上層回推</summary>
+<div class="dbody">
+<div class="figure">
+<svg viewBox="0 0 680 300" role="img" aria-label="三個層次的目的">
+<g><rect x="40" y="20" width="600" height="76" rx="12" fill="#faeeda" stroke="#c9a35e" stroke-width="0.5"/>
+<text x="62" y="46" font-size="15" font-weight="600" fill="#7d4a08">署／政策層：成為資服業政策的決策底稿</text>
+<text x="62" y="70" font-size="13.5" fill="#8a6224">政策資源投對地方了嗎？能量缺口在哪？哪些隊伍值得扶植？</text>
+<text x="62" y="88" font-size="13" fill="#a08246">回推：決定要收什麼資料、收到多細</text></g>
+<path d="M340 96 L340 116" stroke="#8b8a83" stroke-width="1.5"/>
+<g><rect x="40" y="118" width="600" height="76" rx="12" fill="#eeedfc" stroke="#7f77dd" stroke-width="0.5"/>
+<text x="62" y="144" font-size="15" font-weight="600" fill="#3c3489">院／計畫層：交付能以 AI 輔助分析並產出判斷依據的系統</text>
+<text x="62" y="168" font-size="13.5" fill="#534ab7">洞察由系統持續產生，不以單次報告為目的</text>
+<text x="62" y="186" font-size="13" fill="#6b63c4">回推：決定交付物的形式</text></g>
+<path d="M340 194 L340 214" stroke="#8b8a83" stroke-width="1.5"/>
+<g><rect x="40" y="216" width="600" height="66" rx="12" fill="#e4f5ef" stroke="#1d9e75" stroke-width="0.5"/>
+<text x="62" y="242" font-size="15" font-weight="600" fill="#085041">使用者層：內部 PM 與顧問幾分鐘內找到有把握的答案</text>
+<text x="62" y="266" font-size="13.5" fill="#0f6e56">目前規劃停留在這一層，且偏重「查找」而非「判斷」</text></g>
+</svg>
+<div class="cap">規格應由最上層回推，而非由資料源往上堆疊</div>
+</div>
+<ul class="b">
+<li><b>目前的敘事起點</b>：有哪些資料源可以接 → 往上推導出系統與權限</li>
+<li><b>建議調整為</b>：署需要回答哪些政策問題 → 往下推導出資料與欄位</li>
+<li><b>兩者做出來的東西不同</b>：前者是名錄，後者是底稿</li>
+</ul>
+</div>
+</details>
+
+
+<h2><span class="num">五</span>依據②：三個落差<span class="timer">約 2 分鐘</span></h2>
+<p class="sub" style="margin-top:0">此節說明的是現階段尚待補強之處，前提是既有基礎已完成（見文件前段）；三項皆為順序與重心的問題，非執行品質問題。</p>
+<ul class="key">
+<li><b>資料組成落差</b>：九成是公開資料，獨有的政策關係資料只當標籤用
+<span class="note">取得門檻決定稀缺性：公開資料的門檻是技術，人人可跨；政策關係資料的門檻是身分與職權</span></li>
+<li><b>產出層次落差</b>：停在「資料」，未到「資訊」與「洞察」
+<span class="note">查得到 ≠ 看得出脈絡。三個使用案例都屬查找型，使用者拿到名單仍缺少判斷依據</span></li>
+<li><b>既有資產實測</b>：114 年 landscape 檔 894 列去重後<b>只有 437 家</b>，65% 缺統編
+<span class="note">「粗糙」是可量化的；且 437 家說明這專案原本就是在數百家規模做深度整理</span></li>
+</ul>
+
+<details>
+<summary>展開 ①：資料組成——廣而雜，獨有資料佔比過低</summary>
+<div class="dbody">
+<div class="grid g3">
+<div class="card"><span class="tag t-coral">現象一</span><h4>太多、太雜，模糊焦點</h4>
+<ul class="b t"><li>正文與附件合計列出 <b>20 項以上</b>資料源</li>
+<li>橫跨公司登記、財務、能量登錄、採購、拓銷、風險、問卷等七類</li>
+<li>每項都有其用途，但<b>尚未區分主從</b></li></ul></div>
+<div class="card"><span class="tag t-coral">現象二</span><h4>廣但含金量低，部分屬膨脹</h4>
+<ul class="b t"><li>筆數大的多為<b>全體母體搬運</b>：稅籍 17,766 筆、證交所 1,095、櫃買 890</li>
+<li><b>17,766 是稅籍「筆數」，非公司「家數」</b>——同一公司多個營業處所各有稅籍，去重後家數需確認</li>
+<li>陸資名錄 147 筆，簡報已註明尚未篩出資服業者，<b>使用前需先篩選</b></li>
+<li>人力銀行資料的可信度已標示為<b>低</b>，作為產品服務來源時需搭配佐證</li></ul></div>
+<div class="card"><span class="tag t-coral">現象三</span><h4>篩選萃取才有分析價值</h4>
+<ul class="b t"><li>目前動作偏向「接進來、存起來」</li>
+<li>缺中間的<b>篩選（哪些該留）與萃取（要轉成什麼欄位）</b></li>
+<li>資料量越大，訊號被雜訊稀釋越嚴重</li></ul></div>
+</div>
+
+
+<div class="figure">
+<svg viewBox="0 0 680 415" role="img" aria-label="資料源分類矩陣">
+<title>資料源分類矩陣</title>
+<desc>橫軸為資料取得的獨有程度，縱軸為對判斷力的貢獻。公開登記資料集中於左下（任何人可取得、對判斷力貢獻低），政策關係資料集中於右上（僅署與資策會可取得、對判斷力貢獻高）</desc>
+
+<rect x="380" y="50" width="260" height="150" fill="#e4f5ef" opacity="0.55"/>
+<rect x="110" y="200" width="270" height="155" fill="#f1efe8" opacity="0.7"/>
+<line x1="380" y1="50" x2="380" y2="355" stroke="#d5d3ca" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="110" y1="200" x2="640" y2="200" stroke="#d5d3ca" stroke-width="1" stroke-dasharray="4 4"/>
+
+<line x1="110" y1="42" x2="110" y2="355" stroke="#8b8a83" stroke-width="1.2"/>
+<line x1="104" y1="355" x2="648" y2="355" stroke="#8b8a83" stroke-width="1.2"/>
+
+<text x="92" y="55" font-size="12" fill="#8b8a83" text-anchor="end">高</text>
+<text x="92" y="352" font-size="12" fill="#8b8a83" text-anchor="end">低</text>
+<text x="0" y="0" font-size="12.5" fill="#5f5e5a" transform="translate(76,255) rotate(-90)" text-anchor="middle">對判斷力的貢獻</text>
+<text x="118" y="376" font-size="12" fill="#8b8a83">任何人可取得</text>
+<text x="644" y="376" font-size="12" fill="#8b8a83" text-anchor="end">僅署與資策會可取得</text>
+<text x="378" y="400" font-size="12.5" fill="#5f5e5a" text-anchor="middle">資料取得的獨有程度</text>
+
+<text x="632" y="68" font-size="12.5" font-weight="600" fill="#0f6e56" text-anchor="end">政策關係資料</text>
+<text x="126" y="345" font-size="12.5" font-weight="600" fill="#8b8a83">公開登記資料</text>
+
+<g fill="#1d9e75">
+<circle cx="425" cy="62" r="5"/><circle cx="470" cy="90" r="5"/><circle cx="430" cy="118" r="6"/>
+<circle cx="495" cy="146" r="6"/><circle cx="445" cy="174" r="7"/><circle cx="470" cy="192" r="6"/>
+</g>
+<g font-size="11.5" fill="#0f6e56">
+<text x="437" y="66">署內計畫紀錄</text>
+<text x="482" y="94">MIC 訪談問卷</text>
+<text x="443" y="122">Digit+ 獎補助 139</text>
+<text x="508" y="150">能量登錄 175 家次</text>
+<text x="457" y="178">政府採購得標 540 筆</text>
+<text x="482" y="196">海外拓銷團 314、研發投抵</text>
+</g>
+
+<g fill="#a5a49c">
+<circle cx="200" cy="225" r="5"/><circle cx="300" cy="243" r="5"/><circle cx="150" cy="262" r="5"/>
+<circle cx="250" cy="280" r="6"/><circle cx="250" cy="300" r="6"/><circle cx="390" cy="322" r="5"/>
+<circle cx="165" cy="318" r="11"/><circle cx="170" cy="342" r="5"/>
+</g>
+<g font-size="11.5" fill="#6f6e68">
+<text x="212" y="229">產業統計專區</text>
+<text x="312" y="247">陸資名錄（未篩出資服業者）</text>
+<text x="162" y="266">商工登記</text>
+<text x="264" y="284">櫃買中心 890</text>
+<text x="264" y="304">證交所 1,095</text>
+<text x="402" y="326">公司官網</text>
+<text x="182" y="322" font-weight="600" fill="#4d4c47">營業稅籍登記 17,766 筆</text>
+<text x="182" y="346">人力銀行（可信度標示為低）</text>
+</g>
+</svg>
+<div class="cap">圓點大小約略反映資料筆數。筆數集中在左下，對判斷力的貢獻集中在右上<br>
+橫軸實質衡量的是取得門檻：左側門檻為技術，對各單位一致；右側門檻為身分與職權，外部無法複製</div>
+</div>
+
+<table>
+<thead><tr><th style="width:16%">資料性質</th><th style="width:38%">來源</th><th style="width:14%">誰能取得</th><th>對含金量的貢獻</th></tr></thead>
+<tbody>
+<tr><td><b>公開登記資料</b><br><span class="sub">佔比約九成</span></td>
+<td><ul class="b t"><li>財政部營業稅籍登記（17,766 筆）</li><li>經濟部商工登記</li><li>櫃買中心（890）、證交所（1,095）</li><li>人力銀行、公司官網</li></ul></td>
+<td>任何人</td>
+<td class="warn">低。取得門檻為技術，對各單位一致；外部顧問、其他單位、AI 工具皆可取得同一份資料</td></tr>
+<tr><td><b>政策關係資料</b><br><span class="sub">目前僅作標籤與排序</span></td>
+<td><ul class="b t"><li>能量登錄核定名單（6 類，175 家次）</li><li>Digit+ 獎補助名單（139）</li><li>政府採購網得標（540 筆）</li><li>海外拓銷團名單（314）</li><li>研發投抵、MIC 訪談問卷</li><li>署內計畫歷史紀錄</li></ul></td>
+<td class="good">僅數產署與資策會</td>
+<td class="good">高。取得門檻為承辦身分與職權，外部無法複製，是交叉分析可用的基礎</td></tr>
+</tbody>
+</table>
+
+<div class="pull">
+<p class="pt">關鍵發現：解方的雛型已經在簡報裡</p>
+<ul class="b">
+<li>資料來源表已設計「<b>關聯序計分</b>」：能量登錄與獎補助 <b>+1</b>、公開資料 <b>0</b>、陸資名錄 <b>−1</b></li>
+<li>但目前只用來決定搜尋結果的顯示排序</li>
+<li>建議<b>升格為選樣標準與分析主軸</b>——它衡量的正是「業者與政策的關聯強度」，而那是這個資料庫唯一無法被取代的資訊</li>
+</ul>
+</div>
+</div>
+</details>
+
+<details>
+<summary>展開 ②：既有資產實測——114 年 landscape 檔案剖析</summary>
+<div class="dbody">
+<p class="sub">以專案 114 年延續的 landscape 檔案（資服業landscape0607.xlsx）實際盤點，「資料粗糙」可被量化。
+此檔即簡報第 14 頁「114 年延續資料欄位盤點」所對應的資產。</p>
+
+<h4>① 檔案結構：14 個工作表，同一份資料的不同切面</h4>
+<table>
+<thead><tr><th style="width:26%">工作表</th><th class="n" style="width:14%">實際資料列</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>資服業者總表</td><td class="n">894</td><td>跨領域彙總，欄位最完整（含統編、成立時間）</td></tr>
+<tr><td>其他領域總表</td><td class="n">286</td><td>含不動產等大類</td></tr>
+<tr><td>與個資相關業者</td><td class="n">247</td><td>獨立盤點清單</td></tr>
+<tr><td>製造領域總表</td><td class="n">196</td><td rowspan="4">領域分表，均無統編欄位</td></tr>
+<tr><td>零售領域總表</td><td class="n">164</td></tr>
+<tr><td>金融領域總表</td><td class="n">88</td></tr>
+<tr><td>餐飲領域總表</td><td class="n">83</td></tr>
+<tr><td>醫療領域總表</td><td class="n">76</td><td class="warn">殘留逾百萬列空白列（已清理，30.3 MB → 0.2 MB）</td></tr>
+</tbody>
+</table>
+<ul class="b t"><li>六個領域分表合計 893 列，與總表 894 列一致</li>
+<li>代表分表與總表<b>是同一份資料的不同切面，非各自獨立來源</b></li></ul>
+
+<h4>② 去重：894 列不等於 894 家</h4>
+<div class="grid g3">
+<div class="card"><span class="tag t-gray">資料列</span><h4>894 列</h4><ul class="b t"><li>總表實際資料筆數</li></ul></div>
+<div class="card"><span class="tag t-teal">去重後</span><h4>437 家</h4><ul class="b t"><li>不重複公司名稱</li></ul></div>
+<div class="card"><span class="tag t-amber">重複原因</span><h4>公司 × 領域</h4><ul class="b t"><li>同一家跨多領域即拆成多列</li></ul></div>
+</div>
+<ul class="b t"><li>例：IBM 台灣國際商業機器同時出現在金融、零售、公共行政三列，產品服務內容各不相同</li>
+<li>代表<b>主鍵單位是「公司 × 領域」，而不是「公司」</b>——主鍵未定案，補再多欄位都會鬆動</li></ul>
+
+<h4>③ 欄位完整度：缺漏集中在識別欄位</h4>
+<table>
+<thead><tr><th style="width:26%">欄位</th><th class="n" style="width:16%">有值 / 總列數</th><th class="n" style="width:12%">缺值</th><th>影響</th></tr></thead>
+<tbody>
+<tr><td>產品服務類型</td><td class="n">878 / 894</td><td class="n good">2%</td><td>最完整，可直接使用</td></tr>
+<tr><td>AI 技術應用（V 註記）</td><td class="n">442 / 894</td><td class="n">51%</td><td>無法判斷是「沒有 AI」或「未查證」</td></tr>
+<tr><td>系統名稱／產品說明</td><td class="n">373 / 894</td><td class="n">58%</td><td>影響語意檢索與比較品質</td></tr>
+<tr><td>統一編號</td><td class="n">317 / 894</td><td class="n warn">65%</td><td>缺唯一識別鍵，無法與外部資料介接</td></tr>
+<tr><td>成立時間</td><td class="n">317 / 894</td><td class="n warn">65%</td><td>同上，與統編同批缺漏</td></tr>
+</tbody>
+</table>
+<ul class="b t"><li>統編與成立時間有值筆數<b>完全相同（皆 317 筆）</b>，推測為同一批次補建，其餘 577 列未曾比對登記資料</li></ul>
+
+<div class="pull">
+<p class="pt">這份剖析對本提案的三個意義</p>
+<ul class="b">
+<li><b>「粗糙」可量化</b>：65% 缺統編、58% 缺產品說明，判斷有數據支撐，改善目標也可衡量</li>
+<li><b>主鍵尚未定案</b>：「公司 × 領域」若不先收斂為「公司」，任何擴充都在錯誤的地基上進行</li>
+<li><b>既有深度整理資產實為 437 家</b>，與本提案建議的核心觀測名單（500–800 家）<b>同一量級</b>；
+這專案原本即在數百家規模上進行深度整理；涵蓋全體稅籍母體是後續擴大的目標，資料深度尚未同步擴充</li>
+</ul>
+</div>
+<p class="sub">說明：437 家為「主要客戶領域」導向的市場調查名單，與「與署有政策接觸」的名單母體不同，交集需實際比對確認。此處引用的是規模量級參照，不是直接沿用名單。</p>
+</div>
+</details>
+
+<details>
+<summary>展開 ③：產出層次——停在資料，未到資訊與洞察</summary>
+<div class="dbody">
+<div class="grid g3">
+<div class="card"><span class="tag t-gray">層次一</span><h4>資料（記錄）</h4>
+<ul class="b t"><li>有哪些業者、欄位值是什麼</li><li><b>現況：已具備</b></li><li>資料源與欄位盤點完整</li></ul></div>
+<div class="card"><span class="tag t-amber">層次二</span><h4>資訊（可比較）</h4>
+<ul class="b t"><li>分群、標記、正規化後可互相比較</li><li><b>現況：部分具備</b></li><li>缺規模分層、技術來源型態等分類軸</li></ul></div>
+<div class="card"><span class="tag t-coral">層次三</span><h4>洞察（可判斷）</h4>
+<ul class="b t"><li>交叉關聯後可直接支撐決策</li><li><b>現況：尚未觸及</b></li><li>三個使用案例都屬查找型</li></ul></div>
+</div>
+<ul class="b">
+<li><b>查得到 ≠ 看得出脈絡</b>：條件篩選回傳的是符合條件的名單，不含業者之間的關聯與判斷依據</li>
+<li>查詢本身沒有指向特定目的：拿到 21 家名單後，仍看不出這些業者在產業裡的位置、彼此的差異與關聯</li>
+<li>「洞察業者之間的交叉關係」對應的正是這一層</li>
+</ul>
+</div>
+</details>
+
+<details>
+<summary>展開 ④：資源配置——權限機制的設計顆粒度與現階段使用規模</summary>
+<div class="dbody">
+<ul class="b">
+<li>13 頁正文中<b>有 2 頁</b>、附件另有 1 頁完整關係圖用於權限控管設計</li>
+<li>內容包含群組角色、欄位級黑名單、審核流程、API Key 權限，設計完整度已達可實作程度</li>
+<li>目前使用對象為署內 PM 與顧問，屬<b>數十人量級、單一機關內部</b>；設計顆粒度大於現階段使用規模</li>
+</ul>
+<p class="sub">說明：此處談的是工作順序。在 12 月結案的時間壓力下，建議先完成資料層的收斂，權限機制待使用規模擴大後再接續。</p>
+</div>
+</details>
+
+
+<h2><span class="num">六</span>依據③：兩個資料庫的結構差異<span class="timer">視需要</span></h2>
+<ul class="key">
+<li><b>核心決策</b>：現行產業資料庫綁定單一決策——這家企業的痛點該媒合哪個方案、哪個廠商
+<span class="note">資服業者資料庫目前以「可查詢」為主，對應的核心決策待定義</span></li>
+<li><b>資料結構</b>：現行產業資料庫為三層（公司 → 方案 → 案例），案例層屬外部無法取得的資料
+<span class="note">資服業者資料庫目前為單層，政策關係資料以標籤形式存在，未獨立成層</span></li>
+<li><b>規模</b>：871 家，對照目標母體 17,766 筆稅籍登記
+<span class="note">前者每家連著方案與案例、欄位可交叉；可回答的問題數與資料筆數並非正比</span></li>
+</ul>
+
+<details>
+<summary>展開：六個構面逐項對照</summary>
+<div class="dbody">
+<table>
+<thead><tr><th style="width:14%">構面</th><th style="width:43%">現行產業資料庫（Solution Finder）</th><th>資服業者領域能量資料庫（現行規劃）</th></tr></thead>
+<tbody>
+<tr><td><b>使用對象</b></td><td>內部顧問，執行中小企業輔導媒合</td><td>承辦、署會人員，尚未收斂到具體作業情境</td></tr>
+<tr><td><b>核心決策</b></td><td>這家企業的痛點，該媒合哪個方案、哪個廠商</td><td class="warn">待定義，目前以「可查詢」為主</td></tr>
+<tr><td><b>核心資料</b></td><td><ul class="b t"><li>三層：公司 → 方案 → 案例</li><li>案例層記錄實際輔導成效</li><li>外部無法取得的獨有資料</li></ul></td>
+<td class="warn"><ul class="b t"><li>單層：以公司屬性為主</li><li>政策關係資料散為標籤</li><li>未獨立成層</li></ul></td></tr>
+<tr><td><b>洞察功能</b></td><td><ul class="b t"><li>交叉分析（雙維度自由組合）</li><li>競爭態勢（市場規模 × 競爭密度四象限）</li><li>公司圖譜、案例知識庫</li></ul></td>
+<td class="warn">以條件篩選與單一公司檢視為主</td></tr>
+<tr><td><b>資料揭露</b></td><td>每筆標註來源與收錄日期，狀態區分「已確認下架」與「疑似下架」</td><td class="good">已有來源可信度標示（高／中／低），方向一致</td></tr>
+<tr><td><b>規模</b></td><td>871 家公司／2,487 筆方案／115 筆案例</td><td>目標涵蓋稅籍母體 17,766 筆<br><span class="sub">去重後家數待確認</span></td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+
+<div class="foot">
+本文件為內部提案討論用。資料引用自「20260831 週會簡報｜資服業者領域能量資料庫 v2」與 114 年 landscape 檔案實測；
+核心觀測名單規模為粗估，實際數量需完成去重後確認。現行產業資料庫數據基準 2026-08-28。｜資策會數位轉型研究院
+</div>
+
+</div>
+</body>
+</html>
