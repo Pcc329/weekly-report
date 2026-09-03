@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>產業策略智庫 案例分析功能開放測試提案</title>
+<title>產業策略智庫 測試邀請與操作說明</title>
 <style>
   :root{
     --ink:#1a2733;
@@ -146,80 +146,33 @@
 
 <div class="cover">
   <div class="wrap">
-    <div class="eyebrow">資策會數位轉型研究院 · 對內提案</div>
-    <h1>案例分析功能<br>開放測試提案</h1>
-    <p class="sub">案例知識庫現況、分階段開放建議，與擴大使用前的架構前置條件</p>
+    <div class="eyebrow">資策會數位轉型研究院 · 產業策略智庫</div>
+    <h1>產業策略智庫<br>測試邀請與操作說明</h1>
+    <p class="sub">邀請您實際使用平台的三大核心功能並回報使用感受——三個任務、總負擔約 30 分鐘,隨選隨填、不限順序。</p>
     <dl class="meta">
-      <div><dt>日期</dt><dd>2026-07-14</dd></div>
-      <div><dt>提出</dt><dd>—</dd></div>
-      <div><dt>送呈</dt><dd>—</dd></div>
-      <div><dt>文件性質</dt><dd>對內提案</dd></div>
+      <div><dt>日期</dt><dd>2026-08-12</dd></div>
+      <div><dt>對象</dt><dd>院內 PM / 顧問</dd></div>
+      <div><dt>負擔</dt><dd>約 30 分鐘</dd></div>
+      <div><dt>文件性質</dt><dd>測試邀請與教學</dd></div>
     </dl>
-    <a href="pilot_test_guide.html" style="display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;font-size:14px;font-weight:700">📋 本提案之執行文件：測試邀請與操作說明（寄送給 PM 用）→</a>
   </div>
 </div>
 
 <div class="wrap">
 
-  <section>
-    <div class="sec-head"><span class="sec-num">SECTION 01</span><h2>系統現況：已具備開放測試條件</h2></div>
-
-    <div class="stats-lead">
-      <div class="stat"><div class="n">2,340</div><div class="l">總方案數</div></div>
-      <div class="stat"><div class="n">875</div><div class="l">AI 方案數</div></div>
-      <div class="stat"><div class="n">843</div><div class="l">業者總數</div></div>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><div class="n">29</div><div class="l">真實案例（筆）</div></div>
-      <div class="stat"><div class="n">14</div><div class="l">方案商導入實績</div></div>
-      <div class="stat"><div class="n">15</div><div class="l">企業輔導規劃</div></div>
-      <div class="stat"><div class="n">D<small> → </small>A</div><div class="l">資安標頭評分</div></div>
-    </div>
-
-    <div class="cards">
-      <div class="card">
-        <h4>案例知識庫 <span class="tag done">已完成</span></h4>
-        <ul class="tight">
-          <li>7/07 會議素材 <strong>24 筆</strong>已完成整合入庫</li>
-          <li>分類標準化：產業別採<strong>主計總處分類</strong>、痛點場域採<strong>院內 AI 準備度量表</strong>之分類架構</li>
-          <li>成效性質明確標示：輔導規劃案例之量化數字為<strong>規劃目標而非驗收數據</strong>，系統以「預期成效」標章區隔，避免引用時誤判</li>
-        </ul>
-        <a class="card-link" href="https://solution-finder-gray.vercel.app/dashboard.html#cases" target="_blank" rel="noopener">開啟案例知識庫 →</a>
-      </div>
-      <div class="card">
-        <h4>AI 分析的案例推薦 <span class="tag done">已上線</span></h4>
-        <ul class="tight">
-          <li>顧問完成 AI 分析後（對話問答或上傳自評表），系統依其<strong>產業別與痛點</strong>自動推薦最相關的 5 筆案例</li>
-          <li>非提供全部案例讓顧問自行翻找，<strong>避免查詢發散</strong></li>
-          <li>完整案例庫另置於知識庫，供主動查詢</li>
-        </ul>
-        <a class="card-link" href="https://solution-finder-gray.vercel.app/manufacturing.html" target="_blank" rel="noopener">開啟方案探索 →</a>
-      </div>
-    </div>
-
-    <div class="callout">
-      <h3>資安基線（7/13 完成檢測與第一波補強）<a class="li-doc" href="https://pcc329.github.io/weekly-report/report_security_baseline_20260713.html" target="_blank" rel="noopener">完整報告 ↗</a></h3>
-      <ul class="tight">
-        <li><strong>網路層</strong>：零弱點（Tenable Nessus，院內其他單位協助執行）<a class="li-doc" href="https://pcc329.github.io/weekly-report/%E5%8F%B0%E7%81%A3%E8%B3%87%E6%9C%8D%E6%A5%AD%E8%80%85%E6%96%B9%E6%A1%88%E8%B3%87%E6%96%99%E5%BA%AB_1150713_n.pdf" target="_blank" rel="noopener">檢測報告 ↗</a></li>
-        <li><strong>TLS 傳輸層</strong>：憑證鏈驗證全數通過</li>
-        <li><strong>應用回應層</strong>：安全標頭補強並複驗——SecurityHeaders D→A、Mozilla Observatory C−→B</li>
-        <li>檢測同時確認：<strong>外部掃描無法涵蓋架構層風險</strong>，該部分依 Section 03 計畫處理</li>
-      </ul>
-    </div>
-  </section>
+  
 
   <section>
-    <div class="sec-head"><span class="sec-num">SECTION 02</span><h2>建議：先以小規模試行啟動</h2></div>
+    <div class="sec-head"><span class="sec-num">開始之前</span><h2>這是什麼、請您做什麼</h2></div>
 
-    <p style="font-size:15px;color:var(--slate);margin-bottom:20px">系統資料層目前架構適合小規模使用。建議先驗證使用情境與系統承載，再依<strong>實測數據</strong>規劃開放節奏。</p>
+    <p style="font-size:15px;color:var(--slate);margin-bottom:20px">「產業策略智庫」是彙整全台中小企業數位轉型方案與輔導案例的 AI 查詢平台。我們正在進行內部試測,想邀請您以<strong>實際工作情境</strong>走一遍三大核心功能,並回報使用感受——您的回饋將直接決定後續功能調整方向。</p>
 
     <table>
       <tr><th style="width:120px">項目</th><th>內容</th></tr>
-      <tr><td><strong>人數</strong></td><td><strong>2–3 位</strong>　建議耕偉組、中原組各指定 1 位實際會使用案例查詢的同仁</td></tr>
-      <tr><td><strong>期間</strong></td><td><strong>最長 2 週</strong>　期限過半時看一次整體完成率（不綁定特定任務），若回饋已飽和且無新問題，可提前收斂</td></tr>
+      <tr><td><strong>測試網址</strong></td><td><a href="https://solution-finder-gray.vercel.app" target="_blank" rel="noopener" style="color:var(--steel);font-weight:700">solution-finder-gray.vercel.app</a>　免登入、開了即可用</td></tr>
       <tr><td><strong>範圍</strong></td><td>AI 方案搜尋（首頁）、案例知識庫（知識庫）、AI 分析案例推薦（方案探索）</td></tr>
-      <tr><td><strong>回饋</strong></td><td>期間以表單收集使用回饋，結束後彙整測試報告</td></tr>
+      <tr><td><strong>負擔</strong></td><td>三個任務共<strong>約 30 分鐘</strong>,不限順序、可分次完成</td></tr>
+      <tr><td><strong>回報</strong></td><td>每完成一個任務,至線上回報表單提交一次(每次 2–3 分鐘)</td></tr>
     </table>
 
     <div class="callout">
@@ -255,67 +208,26 @@
     </div>
 
     <div class="callout" style="border-left-color:var(--copper)">
-      <h3 style="color:var(--copper)">觀察指標</h3>
+      <h3 style="color:var(--copper)">您的回饋會用在哪</h3>
       <ul class="tight">
         <li><strong>使用價值（主要）</strong>：搜尋與推薦結果是否有助顧問實務——結果相關性、案例內容深度是否足以引用</li>
         <li><strong>入口偏好</strong>：顧問在真實情境下傾向哪條路徑（AI 搜尋或 AI 分析），作為後續介面資源配置依據</li>
-        <li><strong>系統承載（守門）</strong>：API 流量與回應狀況，已建置監控機制</li>
-        <li><strong>缺口識別</strong>：測試者的查詢需求與現有案例庫的覆蓋落差，作為後續<strong>案例徵集方向</strong></li>
+        <li><strong>系統承載</strong>：多人使用下的順暢度（後台已有監控,您只要正常使用即可）</li>
+        <li><strong>缺口識別</strong>：您查不到的需求,就是我們下一步要補的案例方向</li>
       </ul>
     </div>
   </section>
 
-  <section>
-    <div class="sec-head"><span class="sec-num">SECTION 03</span><h2>開放節奏與前置條件</h2></div>
+  
 
-    <div class="stage">
-      <div class="st active">
-        <div class="ph">第一階段</div>
-        <div class="num">2–3 人</div>
-        <div class="d">試行 2 週<br>取得使用回饋與負載基準</div>
-      </div>
-      <div class="arrow">→</div>
-      <div class="st">
-        <div class="ph">第二階段</div>
-        <div class="num">10 人</div>
-        <div class="d">依第一階段實測數據<br>決定放行</div>
-      </div>
-      <div class="arrow">→</div>
-      <div class="st">
-        <div class="ph">第三階段</div>
-        <div class="num">20–30 人</div>
-        <div class="d">須先完成架構升級<br>（見下方）</div>
-      </div>
-    </div>
-
-    <div class="callout">
-      <h3>擴大至 20–30 人前，需完成一項架構升級</h3>
-      <ul>
-        <li><strong>存取控管</strong>：平台定位為 III 內部顧問使用，但技術上尚未建立身分驗證機制。使用者範圍擴大前，應使<strong>技術現況與使用定位一致</strong></li>
-        <li><strong>資料層瓶頸</strong>：現行資料庫（Airtable）有<strong>每秒 5 次請求的平台硬限制，此限制無法透過方案升級解除</strong>，多人同時使用時為潛在瓶頸</li>
-      </ul>
-      <p style="font-size:14px;color:var(--mute);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">上述評估與時程建議，將於第一階段測試報告中一併提出。</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head"><span class="sec-num">SECTION 04</span><h2>建議下一步</h2></div>
-    <div class="ask">
-      <h3>請耕偉組、中原組各推薦 1 位測試同仁</h3>
-      <ul class="tight">
-        <li>建議人選：<strong>實際會使用案例查詢的顧問</strong>（非管理職，以取得第一線使用回饋）</li>
-        <li>收到名單後即安排<strong>存取方式與使用說明</strong>，測試隨即啟動</li>
-        <li>兩週後提交測試報告，含使用回饋、系統承載數據與後續開放建議</li>
-      </ul>
-    </div>
-  </section>
+  
 
   <footer>
     <span>資策會數位轉型研究院 · 產業策略智庫專案</span>
-    <span>2026-07-14 · 附件：資安檢測基線與補強報告（2026-07-13）</span>
+    <span>2026-08-12 · 測試期間有任何問題,請直接聯繫 PM 嘉華</span>
   </footer>
 
 </div>
-  <script src="nav.js"></script>
+  <script src="../nav.js"></script>
 </body>
 </html>
