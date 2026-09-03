@@ -210,24 +210,41 @@
 
     const GITHUB_CONTENTS_API = 'https://api.github.com/repos/Pcc329/weekly-report/contents/';
 
+    async function listFiles(dirs) {
+      const results = await Promise.allSettled(
+        dirs.map(dir =>
+          fetch(GITHUB_CONTENTS_API + dir)
+            .then(r => (r.ok ? r.json() : []))
+            .then(files => (Array.isArray(files) ? files : []).map(file => ({
+              name: file.name,
+              path: dir + file.name,
+            })))
+        )
+      );
+      const merged = results.flatMap(result => (result.status === 'fulfilled' ? result.value : []));
+      const byName = new Map();
+      merged.forEach(file => {
+        const existing = byName.get(file.name);
+        if (!existing || (existing.path === file.name && file.path !== file.name)) {
+          byName.set(file.name, file);
+        }
+      });
+      return Array.from(byName.values());
+    }
+
     function formatReportArchive(fileName) {
       const dateMatch = fileName.match(/(\d{4}-\d{2}-\d{2})/);
       return (dateMatch ? dateMatch[1] : fileName.replace(/^report-/, '').replace(/\.md$/, '')) + ' 週報';
     }
 
-    fetch(GITHUB_CONTENTS_API)
-      .then(r => {
-        if (!r.ok) throw new Error('report archive list not available');
-        return r.json();
-      })
+    listFiles(['', 'report/'])
       .then(files => {
-        if (!Array.isArray(files)) throw new Error('report archive list is invalid');
         const archives = files
           .filter(file => /^report-.+\.md$/.test(file.name))
           .sort((a, b) => b.name.localeCompare(a.name))
           .map(file => ({
             period: formatReportArchive(file.name),
-            file: file.name,
+            file: file.path,
           }));
         renderArchiveSelector(archives, initialReportFile);
       })
