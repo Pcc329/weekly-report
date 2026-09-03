@@ -113,7 +113,7 @@
     <div class="info-bar">
       <strong>🔍 海巡專區：</strong>本頁專門記錄「資料新鮮度稽核」的歷次結果，讀取 <code>freshness-audit-log.md</code>。跟「專案進度即時看板」（記錄各種雜項大事件）分開存放，避免混在一起不好回溯。
     </div>
-    <p><a href="reader.html?file=freshness-audit-sop.md" style="color:var(--teal); font-weight:700; text-decoration:none;">📖 查看稽核方法論SOP →</a></p>
+    <p><a href="../reader.html?file=sop/freshness-audit-sop.md" style="color:var(--teal); font-weight:700; text-decoration:none;">📖 查看稽核方法論SOP →</a></p>
     <p><a href="reader.html?file=freshness-audit-new-source-sop.md" style="color:var(--teal); font-weight:700; text-decoration:none;">📚 查看新增資料來源 SOP →</a></p>
 
     <div class="explainer-box" id="explainer-box">
@@ -139,7 +139,7 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const logFile = urlParams.get('log') || 'freshness-audit-log.md';
+    const logFile = urlParams.get('log') || '../sop/freshness-audit-log.md';
     if (urlParams.get('log')) {
       const dateMatch = logFile.match(/(\d{4}-\d{2}-\d{2})/);
       document.querySelector('header p').textContent =
@@ -173,6 +173,6 @@
           '<p style="color:#aaa;text-align:center;padding:40px">freshness-audit-log.md 尚未建立，請新增稽核紀錄內容。</p>';
       });
   </script>
-  <script src="nav.js"></script>
+  <script src="../nav.js"></script>
 </body>
 </html>
