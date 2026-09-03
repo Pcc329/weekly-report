@@ -738,6 +738,28 @@ const REPO = 'Pcc329/weekly-report';
 const API = `https://api.github.com/repos/${REPO}/contents/`;
 const RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
 
+async function listFiles(dirs) {
+ const results = await Promise.allSettled(
+  dirs.map(dir =>
+   fetch(API + dir)
+    .then(r => (r.ok ? r.json() : []))
+    .then(files => (Array.isArray(files) ? files : []).map(file => ({
+     name: file.name,
+     path: dir + file.name,
+    })))
+  )
+ );
+ const merged = results.flatMap(result => (result.status === 'fulfilled' ? result.value : []));
+ const byName = new Map();
+ merged.forEach(file => {
+  const existing = byName.get(file.name);
+  if (!existing || (existing.path === file.name && file.path !== file.name)) {
+   byName.set(file.name, file);
+  }
+ });
+ return Array.from(byName.values());
+}
+
 function extractSummary(text) {
  const lines = text.split('\n').filter(l => l.trim());
  for (const line of lines.slice(1, 10)) {
@@ -760,8 +782,7 @@ function parseDate(filename) {
 async function loadReportHistory() {
  const container = document.getElementById('report-history');
  try {
-  const res = await fetch(API);
-  const files = await res.json();
+  const files = await listFiles(['', 'report/']);
   const reports = files
    .filter(f => /^report-.+\.md$/.test(f.name))
    .sort((a, b) => b.name.localeCompare(a.name));
@@ -773,9 +794,9 @@ async function loadReportHistory() {
 
   const items = await Promise.all(reports.map(async (f) => {
    try {
-    const r = await fetch(RAW + f.name);
+    const r = await fetch(RAW + f.path);
     const text = await r.text();
-    return { name: f.name, summary: extractSummary(text) };
+    return { name: f.name, path: f.path, summary: extractSummary(text) };
    } catch {
     return { name: f.name, summary: '點擊查看完整內容' };
    }
@@ -783,7 +804,7 @@ async function loadReportHistory() {
 
   const VISIBLE_COUNT = 5;
   const renderItem = (item) => `
-   <a href="reader.html?file=${item.name}" class="log-item">
+   <a href="reader.html?file=${item.path}" class="log-item">
     <div class="log-dot done"></div>
     <div class="log-body">
      <div class="log-title">${parseDate(item.name)}</div>
@@ -851,9 +872,7 @@ function formatStatusArchiveDate(fileName) {
 async function loadStatusHistory() {
  const container = document.getElementById('status-history');
  try {
-  const res = await fetch(API);
-  if (!res.ok) throw new Error('status history not available');
-  const files = await res.json();
+  const files = await listFiles(['', 'status/']);
   const statuses = files
    .filter(f => /^status[-_]\d{4}[-_]?\d{2}[-_]?\d{2}.*\.md$/.test(f.name))
    .sort((a, b) => {
@@ -868,9 +887,9 @@ async function loadStatusHistory() {
 
   const items = await Promise.all(statuses.map(async (f) => {
    try {
-    const r = await fetch(RAW + f.name);
+    const r = await fetch(RAW + f.path);
     const text = await r.text();
-    return { name: f.name, summary: extractSummary(text) };
+    return { name: f.name, path: f.path, summary: extractSummary(text) };
    } catch {
     return { name: f.name, summary: '點擊查看完整內容' };
    }
@@ -878,7 +897,7 @@ async function loadStatusHistory() {
 
   const VISIBLE_COUNT = 5;
   const renderItem = (item) => `
-   <a href="reader.html?file=${item.name}" class="log-item">
+   <a href="reader.html?file=${item.path}" class="log-item">
     <div class="log-dot done"></div>
     <div class="log-body">
      <div class="log-title">${formatStatusArchiveDate(item.name)}</div>
@@ -926,8 +945,7 @@ async function loadStatusHistory() {
 async function loadEtlHistory() {
  const container = document.getElementById('etl-history');
  try {
-  const res = await fetch(API);
-  const files = await res.json();
+  const files = await listFiles(['', 'docs/']);
   const etls = files
    .filter(f => /^etl-report-.+\.html$/.test(f.name))
    .sort((a, b) => b.name.localeCompare(a.name));
@@ -939,10 +957,10 @@ async function loadEtlHistory() {
    'default': { label: '已完成', cls: 'done' },
   };
 
-  async function extractDisplay(filename) {
-   const dateLabel = parseDate(filename);
+  async function extractDisplay(file) {
+   const dateLabel = parseDate(file.name);
    try {
-    const r = await fetch(RAW + filename);
+    const r = await fetch(RAW + file.path);
     const html = await r.text();
     const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
     const subMatch = html.match(/<div class="sub">([^<]*)<\/div>/i);
@@ -957,7 +975,7 @@ async function loadEtlHistory() {
   }
 
   const datedItems = await Promise.all(
-   etls.map(async (f) => ({ file: f, ...(await extractDisplay(f.name)) }))
+   etls.map(async (f) => ({ file: f, ...(await extractDisplay(f)) }))
   );
 
   if (datedItems.length === 0 && !latest) {
@@ -969,7 +987,7 @@ async function loadEtlHistory() {
 
   if (latest) {
    html += `
-    <a href="${latest.name}" class="log-item">
+    <a href="${latest.path}" class="log-item">
      <div class="log-dot done"></div>
      <div class="log-body">
       <div class="log-title">共構平台組(軟採網) — 最新分析</div>
@@ -983,7 +1001,7 @@ async function loadEtlHistory() {
   html += datedItems.map(item => {
    const tag = Object.entries(tagMap).find(([k]) => item.file.name.includes(k))?.[1] || tagMap.default;
    return `
-    <a href="${item.file.name}" class="log-item">
+    <a href="${item.file.path}" class="log-item">
      <div class="log-dot done"></div>
      <div class="log-body">
       <div class="log-title">${item.title}</div>
