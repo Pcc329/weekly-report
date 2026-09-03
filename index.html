@@ -798,7 +798,7 @@ async function loadReportHistory() {
     const text = await r.text();
     return { name: f.name, path: f.path, summary: extractSummary(text) };
    } catch {
-    return { name: f.name, summary: '點擊查看完整內容' };
+    return { name: f.name, path: f.path, summary: '點擊查看完整內容' };
    }
   }));
 
@@ -891,7 +891,7 @@ async function loadStatusHistory() {
     const text = await r.text();
     return { name: f.name, path: f.path, summary: extractSummary(text) };
    } catch {
-    return { name: f.name, summary: '點擊查看完整內容' };
+    return { name: f.name, path: f.path, summary: '點擊查看完整內容' };
    }
   }));
 
