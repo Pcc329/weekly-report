@@ -132,6 +132,17 @@
         'Real-time Status Update · 歷史記事 · ' + (dateMatch ? dateMatch[1] : statusFile);
     }
 
+    function reorderStatusMarkdown(markdown) {
+      // status.md 每天仍然是「接在檔案最下面」寫入，不需要改變既有記帳習慣。
+      // 這裡只在顯示前，依「# YYYY-MM-DD」一級標題切割成日期區塊，
+      // 反轉順序後重新組合，讓最新一天顯示在最上面。
+      // 找不到任何日期區塊時（例如檔案格式改變），原樣顯示，不做反轉。
+      const sections = markdown.split(/(?=^# )/m).filter(Boolean);
+      const hasDaySections = sections.some(section => /^# \d{4}-\d{2}-\d{2}/.test(section));
+      if (!hasDaySections) return markdown;
+      return sections.reverse().join('');
+    }
+
     function loadStatus(statusFile) {
       updateHeaderSubtitle(statusFile);
       fetch(statusFile + '?t=' + Date.now())
@@ -140,7 +151,7 @@
           return r.text();
         })
         .then(md => {
-          reportContent.innerHTML = marked.parse(md);
+          reportContent.innerHTML = marked.parse(reorderStatusMarkdown(md));
           updateTime.textContent = '最後讀取：' + new Date().toLocaleString('zh-TW');
         })
         .catch(() => {
