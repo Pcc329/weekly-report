@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資安補強執行報告</title>
+<style>
+  :root { --primary: #2c3e50; --teal: #1D9E75; --amber: #c07c1e; --amber-bg: #fdf3e3; --red: #b0413e; --red-bg: #fbeae9; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: #f4f7f6; margin: 0; padding: 0; color: #2c2c2c;
+  }
+  header {
+    background: var(--primary); color: white;
+    padding: 40px 20px 24px; text-align: center;
+  }
+  header h1 { margin: 0 0 6px; font-size: 1.6rem; }
+  header p { margin: 0; opacity: 0.75; font-size: 0.9rem; }
+  .container { width: 92%; max-width: 880px; margin: 24px auto 60px; }
+
+  .meta-bar {
+    background: white; padding: 12px 18px; margin-bottom: 20px;
+    border-radius: 8px; border-left: 5px solid var(--teal);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.85rem; color: #555;
+  }
+
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: white; border-radius: 10px; padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center;
+    border-top: 3px solid var(--teal);
+  }
+  .kpi-num { font-size: 1.5rem; font-weight: 800; color: var(--teal); }
+  .kpi-label { font-size: 0.72rem; color: #888; margin-top: 3px; }
+
+  section.card {
+    background: white; border-radius: 10px; padding: 26px 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 18px; line-height: 1.75;
+  }
+  section.card h2 {
+    color: var(--primary); font-size: 1.1rem; margin: 0 0 6px;
+    border-bottom: 2px solid var(--teal); padding-bottom: 8px;
+  }
+  .pillar-sub { font-size: 0.8rem; color: #888; margin: 0 0 16px; }
+  section.card ol, section.card ul { margin: 0; padding-left: 1.25em; }
+  section.card li { margin-bottom: 7px; }
+  section.card li:last-child { margin-bottom: 0; }
+
+  .status-pill {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    padding: 2px 9px; border-radius: 12px; margin-left: 6px; vertical-align: 1px;
+  }
+  .done { background: #e1f5ee; color: var(--teal); }
+  .todo { background: var(--amber-bg); color: var(--amber); }
+  .gap { background: var(--red-bg); color: var(--red); }
+
+  details {
+    margin: 14px 0 4px; border-top: 1px dashed #e0e0e0; padding-top: 12px;
+  }
+  summary {
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer; user-select: none;
+    background: #f0faf6; color: var(--teal);
+    border: 1px solid #cdeee1; border-radius: 20px;
+    padding: 5px 14px; font-size: 0.8rem; font-weight: 700;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▶"; font-size: 0.6rem; margin-right: 2px; }
+  details[open] summary::before { content: "▼"; }
+  summary:hover { background: var(--teal); color: white; }
+  details > div {
+    margin: 12px 2px 0; padding: 14px 18px;
+    background: #fafafa; border-left: 3px solid var(--teal);
+    border-radius: 0 6px 6px 0; font-size: 0.86rem; color: #444;
+  }
+  details table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.82rem; }
+  details th { background: var(--primary); color: white; padding: 7px 9px; text-align: left; }
+  details td { padding: 7px 9px; border-bottom: 1px solid #e5e5e5; vertical-align: top; }
+  details tr:nth-child(even) td { background: #f5f5f5; }
+  details code { background: #eef0ef; padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+
+  .flow-note {
+    background: #f0faf6; border-left: 4px solid var(--teal);
+    color: #0f6e56; padding: 10px 14px; border-radius: 0 6px 6px 0;
+    font-size: 0.85rem; margin: 12px 0 0;
+  }
+
+  footer { text-align: center; padding: 20px; color: #999; font-size: 0.78rem; }
+
+  @media (max-width: 600px) {
+    section.card { padding: 20px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>資安補強執行報告</h1>
+  <p>CIA框架 · 機密性／完整性／可用性 · 2026-09-07</p>
+</header>
+
+<div class="container">
+
+  <div class="meta-bar">
+    <strong>文件性質：</strong>對照7/13資安基線報告與9/7 CIA框架盤點，記錄本次實際修補的4個項目、對照全站改版工作、待處理缺口與下次計畫。
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-num">10</div><div class="kpi-label">本次合併PR數</div></div>
+    <div class="kpi-card"><div class="kpi-num">4</div><div class="kpi-label">資安補強項目</div></div>
+    <div class="kpi-card"><div class="kpi-num">1</div><div class="kpi-label">高風險缺口確認乾淨</div></div>
+    <div class="kpi-card"><div class="kpi-num">3</div><div class="kpi-label">待處理大項目</div></div>
+  </div>
+
+  <section class="card">
+    <h2>一、本次結論</h2>
+    <ol>
+      <li>今天處理範圍分兩軌：<strong>網站功能改版</strong>（首頁、方案卡片、規模顯示修正、AI顧問wording、資料來源連結）與<strong>資安補強</strong>（CIA框架下的4個低成本項目），共10個PR全部合併上線</li>
+      <li>資安補強聚焦在「機密性2項、完整性1項、可用性1項」，全部是低成本、可獨立完成、不需要大改架構的項目</li>
+      <li>最大的洞——<strong>API沒有身分驗證，知道網址就能看到全部內容</strong>——今天沒有處理，這是獨立的大工程，需要另外規劃</li>
+      <li>過程中發現一個原本沒預期到的具體風險（AI回答內容可能被注入惡意程式碼）並且修補完成，這是今天資安工作裡最有價值的發現</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>二、同日網站功能改版（背景脈絡）</h2>
+    <p class="pillar-sub">非資安項目，列在這裡提供完整脈絡——部分資安發現正是在做這些功能時意外觸發的</p>
+    <ol>
+      <li>首頁新增資料更新提示與熱門分類快速入口</li>
+      <li>方案卡片新增「公司介紹」「案例文章」兩個分頁</li>
+      <li>方案「適用規模」顯示問題修正，橫跨三支獨立頁面（index.html、manufacturing.html、diagnosis.html排查後確認不需修改）</li>
+      <li>AI顧問頁面wording調整（「分析結果」→「您的需求條件」、「重新分析」→「清空重填」）</li>
+      <li>資料來源說明頁新增9個官方網站連結、修正SMEI錯字</li>
+    </ol>
+    <details>
+      <summary>展開細節</summary>
+      <div>
+        <table>
+          <tr><th>PR</th><th>內容</th></tr>
+          <tr><td>#136</td><td>首頁信任指標與熱門分類</td></tr>
+          <tr><td>#137-139</td><td>Cases API廠商關聯欄位、公司詳情API、方案卡片三分頁</td></tr>
+          <tr><td>#140-141</td><td>適用規模顯示修正（manufacturing.html、index.html）</td></tr>
+          <tr><td>#142</td><td>AI顧問頁面wording調整</td></tr>
+          <tr><td>#143</td><td>資料來源頁連結與SMEI錯字修正</td></tr>
+        </table>
+        執行過程中，`company-detail` API原規格擬回傳聯絡人email/手機，經檢視後改為資料最小化——此發現是本次CIA盤點的起點之一。
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>三、機密性（Confidentiality）——防止不該看到的人看到資料</h2>
+    <p class="pillar-sub">今天完成2項</p>
+    <ol>
+      <li><strong>搜尋引擎索引防護</strong><span class="status-pill done">已完成</span>：新增robots.txt與noindex標籤，明確告知搜尋引擎不要收錄。這是「請求」不是「強制」，正派搜尋引擎會遵守，但不影響知道網址者直接存取</li>
+      <li><strong>後端金鑰洩漏查證</strong><span class="status-pill done">已完成</span>：全站掃描確認`SUPABASE_SERVICE_ROLE_KEY`只出現在後端程式，沒有意外流出到瀏覽器可讀取的檔案，結果乾淨</li>
+      <li><strong>API無身分驗證</strong><span class="status-pill gap">未處理，最大缺口</span>：知道網址即可呼叫任何API，這是機密性最根本的破口，其餘機密性問題多數是這個問題的延伸</li>
+      <li><strong>欄位白名單為唯一防線</strong><span class="status-pill gap">現況未變</span>：資料庫層防護（RLS）對後端無效，因後端使用能繞過RLS的萬能鑰匙，程式碼白名單是唯一實質防線</li>
+    </ol>
+    <details>
+      <summary>展開細節</summary>
+      <div>
+        <table>
+          <tr><th>項目</th><th>本次動作</th><th>PR</th></tr>
+          <tr><td>robots.txt / noindex</td><td>8支頁面全數加上noindex，新增robots.txt</td><td>#145</td></tr>
+          <tr><td>service-role金鑰查證</td><td>`grep -rn` 全站掃描public目錄，確認金鑰僅存在於`api/`後端程式，透過`process.env`讀取</td><td>無需PR，查證即完成</td></tr>
+        </table>
+        7/13報告已列管「API無身分驗證」為使用者範圍擴大前必要處理項，兩個月後仍未執行。RLS防線有限的發現：8月資料庫遷移至Supabase並啟用RLS，但`company-detail.js`等後端API使用service-role金鑰查詢，此金鑰性質為繞過RLS，故RLS只防得住「瀏覽器用匿名金鑰直接查詢」，防不住「後端API自己選擇回傳什麼」。
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>四、完整性（Integrity）——確保資料不被竄改、保持正確</h2>
+    <p class="pillar-sub">今天完成1項，同時查出既有良好實踐</p>
+    <ol>
+      <li><strong>AI回答內容XSS消毒</strong><span class="status-pill done">已完成，本次最重要發現</span>：AI搜尋/AI分析功能的回答內容，轉換成HTML顯示前沒有經過任何檢查，理論上有機會被注入能在使用者瀏覽器裡執行的惡意程式碼。已加上DOMPurify消毒，實測正常格式（粗體、清單）保留，危險標籤被移除</li>
+      <li><strong>寫入端點盤點</strong><span class="status-pill done">已完成查證</span>：確認全站僅`api/feedback.js`一支寫入端點，已有欄位驗證與白名單限制，本次額外加上流量管制（見下方可用性）</li>
+      <li><strong>既有資料治理實踐</strong><span class="status-pill done">已達標，非本次新增</span>：mark-don't-delete原則、信心層級標示、PR前先核對實際diff不採信口頭回報，這些既有習慣本身就是良好的完整性實踐</li>
+      <li><strong>備份可還原性演練</strong><span class="status-pill todo">尚未執行</span>：每週有備份，但從未實際測試復原流程是否真的可用</li>
+    </ol>
+    <details>
+      <summary>展開細節</summary>
+      <div>
+        <code>marked</code>套件只負責markdown轉HTML語法轉換，不負責清理危險標籤。`index.html`（AI問答）與`compare.html`（AI比較分析）皆有`marked.parse()`輸出直接以`innerHTML`/`dangerouslySetInnerHTML`渲染的情況，已改為`DOMPurify.sanitize(marked.parse(...))`。`manufacturing.html`查證後確認AI分析結果已正確使用`escapeHtml`，不受影響；該檔案內有一個未被呼叫的`renderMarkdown`死代碼函式，本次未處理。
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>五、可用性（Availability）——確保系統維持正常運作</h2>
+    <p class="pillar-sub">今天完成1項</p>
+    <ol>
+      <li><strong>feedback端點流量管制</strong><span class="status-pill done">已完成</span>：意見回饋功能加上簡易速率限制，同一IP每分鐘最多3次提交，超過回傳429錯誤。實測60秒內第4次確實被擋，60秒後恢復正常</li>
+      <li><strong>API流量限制（完整版）</strong><span class="status-pill todo">未處理</span>：僅feedback端點有限制，其餘API端點無流量控管，且Airtable免費方案本身有每秒5請求硬上限</li>
+      <li><strong>監控告警機制</strong><span class="status-pill gap">不存在</span>：目前依賴人工發現異常，網站若真的中斷，沒有任何自動通知</li>
+      <li><strong>邊緣防護</strong><span class="status-pill done">已具備，平台提供</span>：Vercel平台本身的機器人防護，7/13報告曾實際攔截過Nessus掃描行為</li>
+    </ol>
+    <details>
+      <summary>展開細節</summary>
+      <div>
+        流量管制實作於`api/feedback.js`，使用記憶體內`Map`記錄IP與時間窗口。限制：僅在單一Serverless執行個體內有效，Vercel若啟動多個執行個體分散請求，防護效果會打折——此限制已在規格書與SYNC文件中明確記錄，非隱瞞。真正跨執行個體的嚴謹限制需搭配Vercel KV或類似共享儲存方案，本次不在範圍內。
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>六、本次修補的因果脈絡</h2>
+    <div class="flow-note">
+      發現順序：組長詢問「網站是否會被搜尋到」→ 回頭比對7/13資安基線報告，確認為已知列管風險 → 用CIA框架重新盤點現況 → 盤點過程中新發現AI回答XSS風險、寫入端點缺乏防護兩項原本沒被記錄的問題 → 依風險大小排序，從低成本項目開始逐一修補
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>七、下次預定處理項目</h2>
+    <ol>
+      <li><strong>API身分驗證（安全層一）</strong>——優先度最高，7/13報告已列管、至今未執行，是本次盤點裡最大的缺口，需要獨立規劃時間，不是能順手做完的小事</li>
+      <li><strong>CSP第二波</strong>——Content-Security-Policy正式啟用，7/13報告已規劃，狀態待確認是否已啟動</li>
+      <li><strong>備份還原演練</strong>——實際測試備份檔案可還原性</li>
+      <li><strong>監控告警機制</strong>——建立網站存活自動通知，取代目前依賴人工發現的方式</li>
+      <li><strong>AI顧問頁面架構決策</strong>（非資安項目）——維持雙欄局部優化或改為單欄循序流程，待PPC/Alex確認方向</li>
+      <li><strong>target_scale欄位格式統一</strong>（非資安項目）——「規模區間壓縮顯示」長期方案的前置作業</li>
+    </ol>
+  </section>
+
+</div>
+
+<footer>資策會數位轉型研究院 · 產業策略智庫專案 · 2026-09-07 · 對內文件，請勿對外流通</footer>
+
+</body>
+</html>
