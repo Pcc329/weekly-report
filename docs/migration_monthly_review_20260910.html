@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>移轉滿月重點盤點 — III 產業資料庫</title>
+<style>
+  :root {
+    --primary: #2c3e50;
+    --teal: #1D9E75;
+    --bg: #f0f2f5;
+    --accent: #4b6fa8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg); min-height: 100vh; padding-bottom: 48px;
+  }
+  header {
+    background: var(--primary); color: white;
+    padding: 28px 20px 24px; text-align: center;
+  }
+  header h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  header p { opacity: 0.6; font-size: 0.85rem; }
+  .container { max-width: 780px; margin: 0 auto; padding: 28px 20px 0; }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px;
+    background: white; color: var(--primary);
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; border: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+  }
+  .back-btn:hover { background: #f5f5f5; }
+  .report-card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 36px 40px;
+  }
+  .report-card h1 {
+    font-size: 1.5rem; color: var(--primary);
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 10px; margin-bottom: 6px;
+  }
+  .report-card .subtitle { font-size: 0.95rem; color: #888; margin-bottom: 4px; }
+  .report-card .meta { font-size: 0.78rem; color: #aaa; margin-bottom: 24px; }
+  .report-card h2 {
+    font-size: 1.1rem; color: var(--primary);
+    margin: 30px 0 12px; padding-left: 10px;
+    border-left: 4px solid var(--teal);
+  }
+  .report-card h3 {
+    font-size: 0.92rem; color: #666; font-weight: 700;
+    margin: 20px 0 8px;
+  }
+  .report-card ul { padding-left: 20px; margin: 8px 0 16px; }
+  .report-card li { font-size: 0.9rem; color: #444; line-height: 1.75; margin-bottom: 5px; }
+  .report-card table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0 20px; font-size: 0.88rem;
+  }
+  .report-card th {
+    background: #f7f9fc; color: #555;
+    padding: 8px 12px; border: 1px solid #e8e8e8;
+    font-weight: 600; text-align: left;
+  }
+  .report-card td { padding: 8px 12px; border: 1px solid #eee; color: #444; text-align: center; }
+  .report-card td:first-child { text-align: left; }
+  .report-card tr:nth-child(even) td { background: #fafafa; }
+  .ok { color: var(--teal); font-weight: 700; }
+  .conclusion {
+    border-left: 4px solid var(--teal);
+    background: #f0faf5; padding: 10px 16px;
+    margin: 12px 0 20px; border-radius: 0 8px 8px 0;
+    font-size: 0.9rem; color: #2c7a5c;
+  }
+  .pending {
+    border-left: 4px solid #d68910;
+    background: #fef9e7; padding: 10px 16px;
+    margin: 8px 0; border-radius: 0 8px 8px 0;
+    font-size: 0.9rem; color: #92660a;
+  }
+  footer { text-align: center; padding: 28px 20px 0; color: #bbb; font-size: 0.78rem; }
+  @media(max-width: 560px) {
+    .report-card { padding: 24px 18px; }
+    .report-card h1 { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 III 產業資料庫</h1>
+  <p>資料庫升級系列報告</p>
+</header>
+
+<div class="container">
+  <a href="../index.html#database" class="back-btn">← 回報告中心</a>
+
+  <div class="report-card">
+    <h1>移轉滿月重點盤點</h1>
+    <p class="subtitle">Airtable → Supabase 切換滿一個月・資料庫升級系列第 6 篇</p>
+    <p class="meta">2026-09-10 · 嘉華 Patrick</p>
+
+    <h2>一、移轉觀察期進度</h2>
+    <ul>
+      <li>2026/8/12 完成 Airtable → Supabase 正式切換，Supabase 現為 production 資料庫。</li>
+      <li>觀察期至 2026/11/12（共三個月），目前已滿一個月，運作穩定，無異常。</li>
+      <li>目前資料量：Solutions 2,487 筆、Companies 930 家、Cases 115 筆、Program_Promotions 16 筆。</li>
+    </ul>
+
+    <h2>二、備份可靠性驗證</h2>
+    <ul>
+      <li>每週五定期執行 pg_dump 備份（Supabase pooler endpoint，PostgreSQL 17 client），備份存放於 OneDrive。</li>
+      <li>2026/9/10 完成本季度還原驗證演練：於獨立測試環境中完整還原備份檔案，逐表比對筆數，結果完全一致。</li>
+    </ul>
+    <table>
+      <thead><tr><th>資料表</th><th>正式站筆數</th><th>還原後筆數</th></tr></thead>
+      <tbody>
+        <tr><td>companies（公司）</td><td>930</td><td class="ok">930 ✓</td></tr>
+        <tr><td>solutions（方案）</td><td>2,487</td><td class="ok">2,487 ✓</td></tr>
+        <tr><td>cases（案例）</td><td>115</td><td class="ok">115 ✓</td></tr>
+      </tbody>
+    </table>
+    <div class="conclusion">結論：備份機制經實測驗證可靠，正式環境如遇問題，具備可還原的備援。</div>
+
+    <h2>三、資料品質稽核與清理成果</h2>
+    <h3>資料新鮮度稽核（海巡）</h3>
+    <ul>
+      <li>臺灣雲市集（tcloud.gov.tw）：平台已確認停止服務，153 筆高信心度標記下架，1,069 筆疑似下架（政策推論，未逐筆驗證）。</li>
+      <li>商業服務業專區（商業署）：117 筆與官方公告完整比對，無需變更。</li>
+      <li>雲市集工業館：329 筆中 139 筆標記疑似下架，修復 4 筆公司關聯連結。</li>
+    </ul>
+    <h3>異常方案複查（2026/9/10）</h3>
+    <ul>
+      <li>完成一輪針對 26 筆異常方案的資料健康度複查，依情況分類處理（維持下架／確認公司關聯狀態）。</li>
+      <li>新增 solution_reviews 資料表，記錄每一次複查的時間、觸發原因與判斷結果，避免未來複查覆蓋歷史軌跡。</li>
+    </ul>
+
+    <h2>四、安全稽核進度</h2>
+    <h3>已完成（PR #144–#146）</h3>
+    <ul>
+      <li>AI 生成內容的 XSS 防護（DOMPurify）。</li>
+      <li>搜尋引擎索引限制（robots.txt + noindex）。</li>
+      <li>API 層級的 IP 限流保護。</li>
+      <li>資料最小化修正：公司詳情 API 避免曝露聯絡人 email、手機等敏感資訊。</li>
+    </ul>
+    <h3>待處理</h3>
+    <div class="pending">API 身分驗證（Security Layer 1）為目前優先度最高之未解決項目，自 7/13 起列管，尚待排入時程規劃。</div>
+
+    <h2>五、下一步</h2>
+    <ul>
+      <li>觀察期持續至 11/12，期間持續監控系統穩定性。</li>
+      <li>target_scale 欄位格式標準化（長期功能之前置作業）。</li>
+      <li>CSP 第二波：待 CDN 白名單盤點完成後執行。</li>
+      <li>API 身分驗證架構規劃：待排入時程。</li>
+    </ul>
+  </div>
+
+  <footer>III 產業資料庫專案 · 數位轉型研究院 · 2026</footer>
+</div>
+
+</body>
+</html>
