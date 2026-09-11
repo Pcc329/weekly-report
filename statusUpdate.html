@@ -333,8 +333,24 @@
       return new Date(0);
     }
 
-    function formatStatusArchive(fileName) {
-      const date = getStatusArchiveDate(fileName);
+    function getStatusArchiveDisplayDate(fileName) {
+ // Only labels use the range end; getStatusArchiveDate remains the sort key.
+ const range = fileName.match(/^status[-_](\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(?=[_.]|$)/);
+ if (!range) return getStatusArchiveDate(fileName);
+ const startMonth = Number(range[2]);
+ const month = Number(range[4]);
+ const day = Number(range[5]);
+ const year = Number(range[1]) + (month < startMonth ? 1 : 0);
+ const date = new Date(year, month - 1, day);
+ // Invalid suffixes fall back to the existing single-date label.
+ if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+  return getStatusArchiveDate(fileName);
+ }
+ return date;
+}
+
+function formatStatusArchive(fileName) {
+      const date = getStatusArchiveDisplayDate(fileName);
       if (date.getTime() === 0) return fileName;
       return date.toLocaleDateString('sv-SE') + ' 封存';
     }
@@ -452,7 +468,7 @@ function renderTrackingCard(container, items) {
  const groups = grouped ? trackingGroups(items) : [];
  let html = '<div class="tracking-filters" role="group" aria-label="依分類篩選"></div>';
  if (grouped) {
-  html += groups.map(group => '<details class="tracking-group" data-priority="' + group.key + '"' + (group.key === 'P2' ? '' : ' open') + '>' +
+  html += groups.map(group => '<details class="tracking-group" data-priority="' + group.key + '"' + (group.key === 'other' ? ' open' : '') + '>' +
    '<summary class="tracking-group-header"><span>' + group.label + '</span><span class="tracking-group-count"></span><span class="tracking-group-caret" aria-hidden="true">▶</span></summary>' +
    group.entries.map(entry => renderTrackingItem(entry.item, entry.index)).join('') +
    '<p class="card-message tracking-no-match" hidden>此分類在本組沒有項目。</p></details>').join('');
