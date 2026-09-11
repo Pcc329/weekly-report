@@ -302,6 +302,25 @@
   html { scroll-behavior: auto; }
   * { transition: none !important; animation-duration: .01ms !important; }
  }
+
+ /* Dynamic homepage cards */
+ .weekly-summary-header { flex-wrap: wrap; }
+ .weekly-summary .ws-item-name { line-height: 1.7; overflow-wrap: anywhere; font-weight: 500; }
+ .card-message { padding: 16px 20px; font-size: .82rem; line-height: 1.7; color: #6b7684; }
+ .tracking-card { border-color: #dde2e8; box-shadow: 0 3px 12px rgba(44,62,80,.11); }
+ .tracking-card .decisions-header { background: #f4f7f6; }
+ .tracking-card .d-title, .tracking-card .d-caret { color: var(--primary); }
+ .tracking-card .d-badge { background: var(--primary); }
+ .tracking-card .decision-item { border-color: #eef1f4; line-height: 1.65; overflow-wrap: anywhere; }
+ .tracking-card .d-meta { color: #6b7684; margin-top: 4px; }
+ .tracking-card .tracking-urgent { border-left: 4px solid var(--red); background: #fff7f5; }
+ .tracking-tag { display: inline-block; padding: 1px 7px; border-radius: 10px; background: #e9eef2; color: var(--primary); font-size: .7rem; }
+ .tracking-urgent .tracking-tag { background: #fdecea; color: var(--red); }
+ .tracking-status { color: var(--primary); margin-top: 3px; }
+ .tracking-more { padding: 0 16px 14px; }
+ .tracking-toggle { width: calc(100% - 32px); margin: 8px 16px 0; padding: 10px; background: #f4f7f6; border: 1px solid #dde2e8; border-radius: 8px; color: var(--primary); font-weight: 700; font-size: .85rem; cursor: pointer; }
+ .tracking-toggle:focus-visible { outline: 3px solid #7fc9ae; outline-offset: 2px; }
+ .no-js #weekly-card-content, .no-js #tracking-card-content, .no-js #weekly-card-date, .no-js #tracking-card-count { display: none; }
 </style>
 </head>
 <body class="no-js">
@@ -316,65 +335,30 @@
  <details class="weekly-summary">
   <summary class="weekly-summary-header">
    <span class="ws-title">📋 本週摘要</span>
-   <span class="ws-date">2026-08-25</span>
-   <span class="ws-mini-dots">
-    <span class="ws-mini-dot green"></span>
-    <span class="ws-mini-dot green"></span>
-    <span class="ws-mini-dot green"></span>
-    <span class="ws-mini-dot green"></span>
-   </span>
-   <span class="ws-caret">▶</span>
+   <span class="ws-date" id="weekly-card-date">載入中…</span>
+   <span class="ws-caret" style="margin-left:auto;">▶</span>
   </summary>
   <div class="weekly-summary-body">
-   <div class="ws-conclusion">
-    「疑似已下架」1069筆已完成處理：改用GCIS批次弱驗證，19筆確認解散並依廢止原因分級處理（13筆升級已下架、6筆待查存續公司）。同時完成雲市集工業館329筆官網快照稽核（139筆標記疑似已下架），案例庫新增24筆真實案例（Cases表29→53筆，+83%）。
+   <div id="weekly-card-content" aria-live="polite" aria-busy="true">
+    <div class="log-loading"><span class="spinner"></span>載入本週摘要中...</div>
    </div>
-   <div class="ws-item">
-    <div class="ws-dot green"></div>
-    <div class="ws-item-name">經濟部商工行政資料開放平臺（GCIS）弱驗證</div>
-    <div class="ws-item-pct">100%</div>
-   </div>
-   <div class="ws-item">
-    <div class="ws-dot green"></div>
-    <div class="ws-item-name">雲市集工業館官網快照比對（329筆）</div>
-    <div class="ws-item-pct">100%</div>
-   </div>
-   <div class="ws-item">
-    <div class="ws-dot green"></div>
-    <div class="ws-item-name">案例庫擴充（新創嚴選網39篇文章篩選）</div>
-    <div class="ws-item-pct">100%</div>
-   </div>
-   <div class="ws-item">
-    <div class="ws-dot green"></div>
-    <div class="ws-item-name">資料新鮮度稽核SOP更新（v2）</div>
-    <div class="ws-item-pct">100%</div>
-   </div>
-   <div class="ws-more">
-    <a href="docs/freshness-audit.html">查看完整稽核紀錄 →</a>
-   </div>
+   <div class="ws-more"><a href="weekly.html">查看完整週報 →</a></div>
   </div>
  </details>
 
- <details class="decisions">
+ <details class="decisions tracking-card" open>
   <summary class="decisions-header">
-   <span class="d-icon">⚠️</span>
-   <span class="d-title">待決策事項</span>
-   <span class="d-badge">2</span>
+   <span class="d-icon">📋</span>
+   <span class="d-title">待追蹤事項</span>
+   <span class="d-badge" id="tracking-card-count">載入中…</span>
    <span class="d-caret">▶</span>
   </summary>
-
-  <div class="decision-item">
-   <div class="d-name">industry_code 欄位是否改陣列型態</div>
-   <div class="d-meta">目前2筆跨產業案例（駐龍科技/允昌國際）用暫定主分類權宜處理</div>
-   <span class="d-who">需要 PPC 評估工作量</span>
+  <div id="tracking-card-content" aria-live="polite" aria-busy="true">
+   <div class="log-loading"><span class="spinner"></span>載入待追蹤事項中...</div>
   </div>
-
-  <div class="decision-item">
-   <div class="d-name">駐龍科技/允昌國際實際主力業務查證</div>
-   <div class="d-meta">用於修正上述暫定分類，需查公司登記資料或聯繫窗口確認</div>
-   <span class="d-who">需要 PPC 查證</span>
-  </div>
+  <div class="ws-more tracking-more"><a href="statusUpdate.html">查看完整工作記事 →</a></div>
  </details>
+ <noscript><p class="card-message">請啟用 JavaScript 載入摘要，或使用上方連結查看完整內容。</p></noscript>
 
  <a href="weekly.html" class="nav-card">
   <span class="card-icon">📰</span>
@@ -1121,6 +1105,156 @@ loadEtlHistory();
 
   loadDataUpdates();
 })();
+</script>
+<script>
+// Homepage cards read source Markdown on each page load; no inferred completion or priority.
+function cardText(value) {
+ return String(value).replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/`([^`]+)`/g, '$1').trim();
+}
+
+function cardEscape(value) {
+ return cardText(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+}
+
+function cardSection(markdown, title) {
+ const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+ const start = lines.findIndex(line => /^##\s+/.test(line) && cardText(line.replace(/^##\s+/, '')).replace(/^[一二三四五六七八九十百\d]+[、.．]\s*/, '') === title);
+ if (start < 0) throw new Error('Missing section: ' + title);
+ let end = start + 1;
+ while (end < lines.length && !/^#{1,2}\s+/.test(lines[end])) end++;
+ return lines.slice(start + 1, end);
+}
+
+function parseWeeklyCard(markdown) {
+ const title = markdown.split('\n').find(line => /^#\s+/.test(line)) || '';
+ const dates = title.match(/\d{4}-\d{2}-\d{2}/g);
+ if (!dates) throw new Error('Missing report date');
+ const items = [];
+ const paragraphs = [];
+ let current = null;
+ for (const line of cardSection(markdown, '本週摘要')) {
+  const match = line.match(/^\s*(?:\d+[.)]|[-*+])\s+(?:\[([ xX])\]\s*)?(.*)$/);
+  if (match) {
+   current = {text: match[2], checked: match[1] === undefined ? null : match[1].toLowerCase() === 'x'};
+   items.push(current);
+  } else if (/^\s+\S/.test(line) && current) {
+   current.text += ' ' + line.trim();
+  } else if (line.trim()) {
+   current = null;
+   paragraphs.push(line.trim());
+  }
+ }
+ if (!items.length && !paragraphs.length) throw new Error('Empty summary');
+ return {date: dates.slice(0, 2).join(' ～ '), items, conclusion: paragraphs.join(' ')};
+}
+
+function cardTableCells(line) {
+ // Protect escaped pipes before splitting table columns.
+ return line.trim().replace(/^\|/, '').replace(/\|$/, '').split(/(?<!\\)\|/).map(cell => cardText(cell.replace(/\\\|/g, '|')));
+}
+
+function parseTrackingCard(markdown) {
+ const lines = cardSection(markdown, '待追蹤事項');
+ const items = [];
+ let priority = null;
+ let headers = null;
+ let tableFound = false;
+ for (let i = 0; i < lines.length; i++) {
+  const heading = lines[i].match(/^###\s+(.+)$/);
+  if (heading) {
+   const match = cardText(heading[1]).match(/^P([012])\b/i);
+   priority = match ? 'P' + match[1] : null;
+   headers = null;
+   continue;
+  }
+  if (!/^\s*\|/.test(lines[i])) { headers = null; continue; }
+  const cells = cardTableCells(lines[i]);
+  if (i + 1 < lines.length && /^\s*\|/.test(lines[i + 1]) && cardTableCells(lines[i + 1]).every(cell => /^:?-{3,}:?$/.test(cell))) {
+   if (!cells.includes('項目') || !cells.includes('狀態')) throw new Error('Unsupported tracking table');
+   headers = cells;
+   tableFound = true;
+   i++;
+   continue;
+  }
+  if (!headers) throw new Error('Missing tracking headers');
+  if (cells.length !== headers.length) throw new Error('Malformed tracking row');
+  const row = Object.fromEntries(headers.map((name, index) => [name, cells[index]]));
+  if (!row['項目']) throw new Error('Missing tracking name');
+  items.push({name: row['項目'], category: row['分類'] || '', status: row['狀態'], priority,
+   meta: ['對象', '執行人', '決策人', '預計時間'].filter(key => row[key] && row[key] !== '—').map(key => key + '：' + row[key]).join(' · ')});
+ }
+ if (!tableFound) throw new Error('Missing tracking table');
+ return items;
+}
+
+function splitTrackingCard(items) {
+ if (!items.some(item => item.priority)) return {visible: items.slice(0, 5), hidden: items.slice(5)};
+ // Unclassified entries stay visible so missing priority cannot hide urgent work.
+ return {visible: ['P0', 'P1', null].flatMap(priority => items.filter(item => item.priority === priority)), hidden: items.filter(item => item.priority === 'P2')};
+}
+
+async function fetchCardMarkdown(path) {
+ const controller = new AbortController();
+ const timer = setTimeout(() => controller.abort(), 15000);
+ try {
+  const response = await fetch(RAW + path, {cache: 'no-cache', signal: controller.signal});
+  if (!response.ok) throw new Error('GitHub raw ' + response.status);
+  return await response.text();
+ } finally { clearTimeout(timer); }
+}
+
+async function loadWeeklyCard() {
+ const container = document.getElementById('weekly-card-content');
+ const date = document.getElementById('weekly-card-date');
+ try {
+  const summary = parseWeeklyCard(await fetchCardMarkdown('report.md'));
+  date.textContent = summary.date;
+  container.innerHTML = (summary.conclusion ? '<div class="ws-conclusion">' + cardEscape(summary.conclusion) + '</div>' : '') +
+   summary.items.map(item => '<div class="ws-item"><span class="ws-item-name">' +
+    (item.checked === null ? '' : (item.checked ? '☑ 已完成：' : '☐ 未完成：')) + cardEscape(item.text) + '</span></div>').join('');
+ } catch (error) {
+  date.textContent = '暫無日期';
+  container.innerHTML = '<p class="card-message">本週摘要載入失敗或格式無法辨識，請查看完整週報或稍後重新整理。</p>';
+ } finally { container.setAttribute('aria-busy', 'false'); }
+}
+
+function renderTrackingItem(item) {
+ return '<div class="decision-item' + (item.priority === 'P0' ? ' tracking-urgent' : '') + '">' +
+  '<div class="d-name">' + (item.priority ? '<span class="tracking-tag">' + item.priority + '</span> ' : '') +
+  cardEscape(item.name) + '</div>' +
+  (item.category ? '<span class="tracking-tag">' + cardEscape(item.category) + '</span>' : '') +
+  '<div class="tracking-status">' + cardEscape(item.status) + '</div>' +
+  (item.meta ? '<div class="d-meta">' + cardEscape(item.meta) + '</div>' : '') + '</div>';
+}
+
+async function loadTrackingCard() {
+ const container = document.getElementById('tracking-card-content');
+ const badge = document.getElementById('tracking-card-count');
+ try {
+  const items = parseTrackingCard(await fetchCardMarkdown('status.md'));
+  const groups = splitTrackingCard(items);
+  badge.textContent = items.length + ' 筆';
+  let html = groups.visible.map(renderTrackingItem).join('');
+  if (!items.length) html = '<p class="card-message">目前沒有待追蹤事項。</p>';
+  if (groups.hidden.length) html += '<div id="tracking-card-hidden" style="display:none;">' + groups.hidden.map(renderTrackingItem).join('') +
+   '</div><button id="tracking-card-toggle" class="tracking-toggle" type="button" aria-expanded="false" aria-controls="tracking-card-hidden">顯示更多（還有 ' + groups.hidden.length + ' 筆）▾</button>';
+  container.innerHTML = html;
+  const toggleBtn = document.getElementById('tracking-card-toggle');
+  if (toggleBtn) toggleBtn.addEventListener('click', () => {
+   const hiddenBlock = document.getElementById('tracking-card-hidden');
+   const isHidden = hiddenBlock.style.display === 'none';
+   hiddenBlock.style.display = isHidden ? 'block' : 'none';
+   toggleBtn.textContent = isHidden ? '收合 ▴' : '顯示更多（還有 ' + groups.hidden.length + ' 筆）▾';
+   toggleBtn.setAttribute('aria-expanded', String(isHidden));
+  });
+ } catch (error) {
+  badge.textContent = '暫無資料';
+  container.innerHTML = '<p class="card-message">待追蹤事項載入失敗或格式無法辨識，請查看完整工作記事或稍後重新整理。</p>';
+ } finally { container.setAttribute('aria-busy', 'false'); }
+}
+
+loadWeeklyCard();
+loadTrackingCard();
 </script>
 </body>
 </html>
