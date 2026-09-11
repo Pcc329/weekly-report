@@ -113,48 +113,6 @@
  }
  .pinned .nav-card { box-shadow: 0 3px 12px rgba(44,62,80,0.11); }
 
- .weekly-summary {
-  background: white; border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(44,62,80,0.11); overflow: hidden;
-  margin-bottom: 10px;
- }
- .weekly-summary-header {
-  background: var(--primary); color: white;
-  padding: 12px 20px; display: flex; align-items: center; gap: 8px;
-  cursor: pointer; user-select: none; list-style: none;
- }
- .weekly-summary-header::-webkit-details-marker { display: none; }
- .weekly-summary-header .ws-title { font-size: 0.88rem; font-weight: 700; }
- .weekly-summary-header .ws-date { font-size: 0.7rem; opacity: 0.6; }
- .weekly-summary-header .ws-mini-dots { display: flex; gap: 4px; margin-left: auto; }
- .weekly-summary-header .ws-mini-dot { width: 7px; height: 7px; border-radius: 50%; }
- .weekly-summary-header .ws-mini-dot.green { background: #6fd4ac; }
- .weekly-summary-header .ws-mini-dot.amber { background: #f4c869; }
- .weekly-summary-header .ws-mini-dot.red { background: #ec8b83; }
- .weekly-summary-header .ws-caret {
-  font-size: 0.7rem; opacity: 0.6; transition: transform 0.15s; margin-left: 4px;
- }
- .weekly-summary[open] .ws-caret { transform: rotate(90deg); }
- .weekly-summary-body { padding: 16px 20px; }
- .ws-conclusion {
-  font-size: 0.86rem; color: var(--primary); line-height: 1.7;
-  padding: 10px 14px; background: #f4fbf8; border-left: 3px solid var(--teal);
-  border-radius: 0 6px 6px 0; margin-bottom: 14px;
- }
- .ws-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 0; border-bottom: 1px solid #f4f4f4; font-size: 0.82rem;
- }
- .ws-item:last-child { border-bottom: none; }
- .ws-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
- .ws-dot.green { background: var(--teal); }
- .ws-dot.amber { background: var(--amber); }
- .ws-dot.red { background: var(--red); }
- .ws-item-name { flex: 1; color: var(--primary); font-weight: 600; }
- .ws-item-pct { color: #999; font-size: 0.78rem; flex-shrink: 0; }
- .ws-more { margin-top: 12px; text-align: center; }
- .ws-more a { font-size: 0.78rem; color: var(--teal); text-decoration: none; }
- .ws-more a:hover { text-decoration: underline; }
 
  .decisions {
   background: white; border-radius: 12px;
@@ -295,7 +253,6 @@
   .log-hint { padding: 10px 16px 14px; }
   .update-header { padding: 10px 14px; flex-wrap: wrap; }
   .update-item { padding: 10px 14px; }
-  .weekly-summary-body { padding: 14px 16px; }
   .decision-item { padding: 10px 16px; }
  }
  @media (prefers-reduced-motion: reduce) {
@@ -304,8 +261,6 @@
  }
 
  /* Dynamic homepage cards */
- .weekly-summary-header { flex-wrap: wrap; }
- .weekly-summary .ws-item-name { line-height: 1.7; overflow-wrap: anywhere; font-weight: 500; }
  .card-message { padding: 16px 20px; font-size: .82rem; line-height: 1.7; color: #6b7684; }
  .tracking-card { border-color: #dde2e8; box-shadow: 0 3px 12px rgba(44,62,80,.11); }
  .tracking-card .decisions-header { background: #f4f7f6; }
@@ -320,7 +275,31 @@
  .tracking-more { padding: 0 16px 14px; }
  .tracking-toggle { width: calc(100% - 32px); margin: 8px 16px 0; padding: 10px; background: #f4f7f6; border: 1px solid #dde2e8; border-radius: 8px; color: var(--primary); font-weight: 700; font-size: .85rem; cursor: pointer; }
  .tracking-toggle:focus-visible { outline: 3px solid #7fc9ae; outline-offset: 2px; }
- .no-js #weekly-card-content, .no-js #tracking-card-content, .no-js #weekly-card-date, .no-js #tracking-card-count { display: none; }
+ .no-js #tracking-card-content, .no-js #tracking-card-count { display: none; }
+
+ /* Priority accordions and category filters are independent controls. */
+ .tracking-more { margin-top: 12px; text-align: center; }
+ .tracking-more a { font-size: .78rem; color: var(--teal); text-decoration: none; }
+ .tracking-more a:hover { text-decoration: underline; }
+ .tracking-filters { display: flex; flex-wrap: wrap; gap: 7px; padding: 14px 16px; }
+ .tracking-filter { font-family: inherit; border: 1px solid transparent; border-radius: 999px; padding: 7px 11px; cursor: pointer; line-height: 1.5; font-size: .78rem; overflow-wrap: anywhere; max-width: 100%; opacity: .4; }
+ .tracking-filter[aria-pressed="true"] { opacity: 1; border-color: currentColor; font-weight: 700; }
+ .tracking-color-0 { background: #e9eef2; color: #2c3e50; }
+ .tracking-color-1 { background: #e8f8f2; color: #176b50; }
+ .tracking-color-2 { background: #fef3dc; color: #82550d; }
+ .tracking-color-3 { background: #ede9fe; color: #60419a; }
+ .tracking-color-4 { background: #e7f1fc; color: #285d93; }
+ .tracking-group { margin: 0 16px 10px; border: 1px solid #dde2e8; border-radius: 8px; overflow: hidden; }
+ .tracking-group-header { display: flex; align-items: center; gap: 8px; padding: 11px 12px; background: #f4f7f6; color: var(--primary); font-size: .82rem; font-weight: 700; cursor: pointer; list-style: none; }
+ .tracking-group-header::-webkit-details-marker { display: none; }
+ .tracking-group-count { margin-left: auto; font-size: .72rem; white-space: nowrap; }
+ .tracking-group-caret { font-size: .65rem; transition: transform .15s; }
+ .tracking-group[open] > .tracking-group-header .tracking-group-caret { transform: rotate(90deg); }
+ .tracking-group[data-priority="P0"] { border-left: 4px solid var(--red); }
+ .tracking-group[data-priority="P0"] > .tracking-group-header { background: #fdecea; color: var(--red); }
+ .tracking-group .tracking-urgent { border-left: 0; }
+ .tracking-filter:focus-visible, .tracking-group-header:focus-visible { outline: 3px solid #7fc9ae; outline-offset: -3px; }
+ .tracking-card [hidden] { display: none !important; }
 </style>
 </head>
 <body class="no-js">
@@ -332,20 +311,6 @@
 <div class="container pinned">
  <div class="pinned-label">最新動態</div>
 
- <details class="weekly-summary">
-  <summary class="weekly-summary-header">
-   <span class="ws-title">📋 本週摘要</span>
-   <span class="ws-date" id="weekly-card-date">載入中…</span>
-   <span class="ws-caret" style="margin-left:auto;">▶</span>
-  </summary>
-  <div class="weekly-summary-body">
-   <div id="weekly-card-content" aria-live="polite" aria-busy="true">
-    <div class="log-loading"><span class="spinner"></span>載入本週摘要中...</div>
-   </div>
-   <div class="ws-more"><a href="weekly.html">查看完整週報 →</a></div>
-  </div>
- </details>
-
  <details class="decisions tracking-card" open>
   <summary class="decisions-header">
    <span class="d-icon">📋</span>
@@ -356,9 +321,9 @@
   <div id="tracking-card-content" aria-live="polite" aria-busy="true">
    <div class="log-loading"><span class="spinner"></span>載入待追蹤事項中...</div>
   </div>
-  <div class="ws-more tracking-more"><a href="statusUpdate.html">查看完整工作記事 →</a></div>
+  <div class="tracking-more"><a href="statusUpdate.html">查看完整工作記事 →</a></div>
  </details>
- <noscript><p class="card-message">請啟用 JavaScript 載入摘要，或使用上方連結查看完整內容。</p></noscript>
+ <noscript><p class="card-message">請啟用 JavaScript 載入待追蹤事項，或使用上方連結查看完整內容。</p></noscript>
 
  <a href="weekly.html" class="nav-card">
   <span class="card-icon">📰</span>
@@ -1107,7 +1072,7 @@ loadEtlHistory();
 })();
 </script>
 <script>
-// Homepage cards read source Markdown on each page load; no inferred completion or priority.
+// Tracking card reads source Markdown on each page load; no inferred priority or category.
 function cardText(value) {
  return String(value).replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/`([^`]+)`/g, '$1').trim();
 }
@@ -1123,29 +1088,6 @@ function cardSection(markdown, title) {
  let end = start + 1;
  while (end < lines.length && !/^#{1,2}\s+/.test(lines[end])) end++;
  return lines.slice(start + 1, end);
-}
-
-function parseWeeklyCard(markdown) {
- const title = markdown.split('\n').find(line => /^#\s+/.test(line)) || '';
- const dates = title.match(/\d{4}-\d{2}-\d{2}/g);
- if (!dates) throw new Error('Missing report date');
- const items = [];
- const paragraphs = [];
- let current = null;
- for (const line of cardSection(markdown, '本週摘要')) {
-  const match = line.match(/^\s*(?:\d+[.)]|[-*+])\s+(?:\[([ xX])\]\s*)?(.*)$/);
-  if (match) {
-   current = {text: match[2], checked: match[1] === undefined ? null : match[1].toLowerCase() === 'x'};
-   items.push(current);
-  } else if (/^\s+\S/.test(line) && current) {
-   current.text += ' ' + line.trim();
-  } else if (line.trim()) {
-   current = null;
-   paragraphs.push(line.trim());
-  }
- }
- if (!items.length && !paragraphs.length) throw new Error('Empty summary');
- return {date: dates.slice(0, 2).join(' ～ '), items, conclusion: paragraphs.join(' ')};
 }
 
 function cardTableCells(line) {
@@ -1187,12 +1129,6 @@ function parseTrackingCard(markdown) {
  return items;
 }
 
-function splitTrackingCard(items) {
- if (!items.some(item => item.priority)) return {visible: items.slice(0, 5), hidden: items.slice(5)};
- // Unclassified entries stay visible so missing priority cannot hide urgent work.
- return {visible: ['P0', 'P1', null].flatMap(priority => items.filter(item => item.priority === priority)), hidden: items.filter(item => item.priority === 'P2')};
-}
-
 async function fetchCardMarkdown(path) {
  const controller = new AbortController();
  const timer = setTimeout(() => controller.abort(), 15000);
@@ -1203,28 +1139,88 @@ async function fetchCardMarkdown(path) {
  } finally { clearTimeout(timer); }
 }
 
-async function loadWeeklyCard() {
- const container = document.getElementById('weekly-card-content');
- const date = document.getElementById('weekly-card-date');
- try {
-  const summary = parseWeeklyCard(await fetchCardMarkdown('report.md'));
-  date.textContent = summary.date;
-  container.innerHTML = (summary.conclusion ? '<div class="ws-conclusion">' + cardEscape(summary.conclusion) + '</div>' : '') +
-   summary.items.map(item => '<div class="ws-item"><span class="ws-item-name">' +
-    (item.checked === null ? '' : (item.checked ? '☑ 已完成：' : '☐ 未完成：')) + cardEscape(item.text) + '</span></div>').join('');
- } catch (error) {
-  date.textContent = '暫無日期';
-  container.innerHTML = '<p class="card-message">本週摘要載入失敗或格式無法辨識，請查看完整週報或稍後重新整理。</p>';
- } finally { container.setAttribute('aria-busy', 'false'); }
+function trackingGroups(items) {
+ const labels = {P0: 'P0 · 緊急', P1: 'P1 · 重要', P2: 'P2 · 待排入', other: '未設定優先度'};
+ return ['P0', 'P1', 'P2', 'other'].map(key => ({
+  key, label: labels[key], entries: items.map((item, index) => ({item, index})).filter(entry => (entry.item.priority || 'other') === key)
+ })).filter(group => group.entries.length);
 }
 
-function renderTrackingItem(item) {
- return '<div class="decision-item' + (item.priority === 'P0' ? ' tracking-urgent' : '') + '">' +
-  '<div class="d-name">' + (item.priority ? '<span class="tracking-tag">' + item.priority + '</span> ' : '') +
-  cardEscape(item.name) + '</div>' +
+function renderTrackingItem(item, index) {
+ return '<div class="decision-item' + (item.priority === 'P0' ? ' tracking-urgent' : '') + '" data-tracking-index="' + index + '">' +
+  '<div class="d-name">' + cardEscape(item.name) + '</div>' +
   (item.category ? '<span class="tracking-tag">' + cardEscape(item.category) + '</span>' : '') +
   '<div class="tracking-status">' + cardEscape(item.status) + '</div>' +
   (item.meta ? '<div class="d-meta">' + cardEscape(item.meta) + '</div>' : '') + '</div>';
+}
+
+function renderTrackingCard(container, items) {
+ if (!items.length) {
+  container.innerHTML = '<p class="card-message">目前沒有待追蹤事項。</p>';
+  return;
+ }
+ const grouped = items.some(item => item.priority);
+ const groups = grouped ? trackingGroups(items) : [];
+ let html = '<div class="tracking-filters" role="group" aria-label="依分類篩選"></div>';
+ if (grouped) {
+  html += groups.map(group => '<details class="tracking-group" data-priority="' + group.key + '"' + (group.key === 'P2' ? '' : ' open') + '>' +
+   '<summary class="tracking-group-header"><span>' + group.label + '</span><span class="tracking-group-count"></span><span class="tracking-group-caret" aria-hidden="true">▶</span></summary>' +
+   group.entries.map(entry => renderTrackingItem(entry.item, entry.index)).join('') +
+   '<p class="card-message tracking-no-match" hidden>此分類在本組沒有項目。</p></details>').join('');
+ } else {
+  html += items.map(renderTrackingItem).join('') + '<button class="tracking-toggle" type="button" aria-expanded="false" hidden></button>';
+ }
+ container.innerHTML = html;
+ const nodes = Array.from(container.querySelectorAll('[data-tracking-index]'));
+ nodes.forEach(node => { node.dataset.cat = items[Number(node.dataset.trackingIndex)].category; });
+ const categories = new Map();
+ items.forEach(item => categories.set(item.category, (categories.get(item.category) || 0) + 1));
+ const filters = container.querySelector('.tracking-filters');
+ const buttons = [];
+ let selected = null;
+ let expanded = false;
+ const toggle = container.querySelector('.tracking-toggle');
+
+ function addFilter(category, label, count, index) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'tracking-filter tracking-color-' + (index % 5);
+  button.textContent = label + ' ' + count;
+  button.addEventListener('click', () => { selected = category; applyFilter(); });
+  filters.appendChild(button);
+  buttons.push({button, category});
+ }
+
+ function applyFilter() {
+  buttons.forEach(({button, category}) => button.setAttribute('aria-pressed', String(category === selected)));
+  let matched = 0;
+  nodes.forEach(node => {
+   const matches = selected === null || node.dataset.cat === selected;
+   if (matches) matched++;
+   node.hidden = !matches || (!grouped && !expanded && matched > 5);
+  });
+  if (grouped) {
+   groups.forEach(group => {
+    const element = container.querySelector('[data-priority="' + group.key + '"]');
+    const count = group.entries.filter(entry => selected === null || entry.item.category === selected).length;
+    element.querySelector('.tracking-group-count').textContent = selected === null ? count + ' 筆' : count + ' / ' + group.entries.length + ' 筆';
+    element.querySelector('.tracking-no-match').hidden = count !== 0;
+   });
+  } else {
+   toggle.hidden = matched <= 5;
+   toggle.textContent = expanded ? '收合 ▴' : '顯示更多（還有 ' + Math.max(0, matched - 5) + ' 筆）▾';
+   toggle.setAttribute('aria-expanded', String(expanded));
+  }
+ }
+
+ addFilter(null, '全部', items.length, 0);
+ // The legacy table has no category column: show only All instead of inventing categories.
+ if (items.some(item => item.category)) {
+  let color = 1;
+  categories.forEach((count, category) => addFilter(category, category || '未分類', count, color++));
+ }
+ if (toggle) toggle.addEventListener('click', () => { expanded = !expanded; applyFilter(); });
+ applyFilter();
 }
 
 async function loadTrackingCard() {
@@ -1232,28 +1228,14 @@ async function loadTrackingCard() {
  const badge = document.getElementById('tracking-card-count');
  try {
   const items = parseTrackingCard(await fetchCardMarkdown('status.md'));
-  const groups = splitTrackingCard(items);
   badge.textContent = items.length + ' 筆';
-  let html = groups.visible.map(renderTrackingItem).join('');
-  if (!items.length) html = '<p class="card-message">目前沒有待追蹤事項。</p>';
-  if (groups.hidden.length) html += '<div id="tracking-card-hidden" style="display:none;">' + groups.hidden.map(renderTrackingItem).join('') +
-   '</div><button id="tracking-card-toggle" class="tracking-toggle" type="button" aria-expanded="false" aria-controls="tracking-card-hidden">顯示更多（還有 ' + groups.hidden.length + ' 筆）▾</button>';
-  container.innerHTML = html;
-  const toggleBtn = document.getElementById('tracking-card-toggle');
-  if (toggleBtn) toggleBtn.addEventListener('click', () => {
-   const hiddenBlock = document.getElementById('tracking-card-hidden');
-   const isHidden = hiddenBlock.style.display === 'none';
-   hiddenBlock.style.display = isHidden ? 'block' : 'none';
-   toggleBtn.textContent = isHidden ? '收合 ▴' : '顯示更多（還有 ' + groups.hidden.length + ' 筆）▾';
-   toggleBtn.setAttribute('aria-expanded', String(isHidden));
-  });
+  renderTrackingCard(container, items);
  } catch (error) {
   badge.textContent = '暫無資料';
   container.innerHTML = '<p class="card-message">待追蹤事項載入失敗或格式無法辨識，請查看完整工作記事或稍後重新整理。</p>';
  } finally { container.setAttribute('aria-busy', 'false'); }
 }
 
-loadWeeklyCard();
 loadTrackingCard();
 </script>
 </body>
