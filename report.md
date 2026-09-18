@@ -1,6 +1,6 @@
 # 產業資料庫 週報（2026-09-14 ～ 2026-09-18）
 
-🔗 線上系統：https://solution-finder-gray.vercel.app
+🔗 產業資料庫：https://solution-finder-gray.vercel.app
 
 ## 本週工作內容
 
