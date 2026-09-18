@@ -453,3 +453,17 @@ P1「5筆疑似已下架待人工複查（新創嚴選）」實際剩餘範圍�
 本次直接訪問website_url（https://startup.sme.gov.tw/startupselect/product/6f916b22-6e18-4c5c-96a0-e08d1d8b4d9e），頁面meta description「以邊緣運算、AWS/Google雲端與Wallet手機票券，讓新舊門禁共存並快速升級行動通行。」與DB既有description_short/slogan逐字一致（非僅關鍵字相似），確認「Cellbedell 邊際AI智慧門禁管理平台」即為原方案改名後版本。record_status由「疑似已下架_待人工複查」改為「正常」，並於solution_status_log補入結案紀錄，保留原名與改名脈絡供追溯。
 
 至此26筆triage缺口（8/7~8/12批次）全數結案，P1待辦「5筆疑似已下架待人工複查（新創嚴選）」從清單移除。
+
+
+十三、【使用者實測回報】方案介紹未分段，追查發現實為description欄位洩漏內部審查資料，規格已交付
+
+使用者回報方案詳情頁「方案介紹」文字沒有分段，追查後發現問題比回報嚴重：`description`欄位存的是完整政府申請表單原始內容，並非單純方案介紹文字。全庫2,314筆有description的方案中，10筆超過800字元、屬於「表單整包塞入」模式，內容包含供應商聯絡人姓名/電話/Email、上傳PDF檔名（其中一筆檔名含「勿外洩」字樣）、完稅證明等內部審查欄位，並非單純缺換行字元。
+
+根因定位：`manufacturing.html`方案詳情頁已正確優先使用`description_short`（沒有才退回截斷版description），但`index.html`方案詳情浮層未接此邏輯，直接輸出完整`item.desc`，是本次外洩的直接原因。全庫2,314筆皆已有description_short，可直接套用同一套邏輯修正，不需資料清洗。已將此項提升為P0（含個資與標註「勿外洩」的內部檔名正在公開頁面上），規格書已交付Codex，僅調整`index.html`前端顯示邏輯，不動manufacturing.html與資料庫。
+
+
+十四、【使用者實測回報】回首頁未完整清空搜尋狀態，PPC決策採方向A（完整清空），規格已交付
+
+使用者回報搜尋後點回首頁，篩選條件仍殘留生效，與一般網站「回上一頁即清空」的直覺不符。追查發現index.html有三個「回首頁」入口（搜尋結果頁返回箭頭、瀏覽器實體上一頁、主題區詳情頁返回/頂部logo），各自處理方式不一致，其中搜尋結果頁返回箭頭完全不清空任何狀態，瀏覽器上一頁僅清空query未清filters/sortBy/currentPage。
+
+PPC確認方向：回首頁應等同「完整清空」（方向A），不採維持現況（B）或加UI提示（C）兩個選項。規格已交付Codex：新增統一`resetToHome()`函式（清空query/filters/sortBy/currentPage/selectedItem/selectedCategory，不清compareItems），三個回首頁入口統一呼叫，僅限index.html，不動搜尋執行邏輯本身。
