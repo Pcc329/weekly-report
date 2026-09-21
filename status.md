@@ -467,3 +467,31 @@ P1「5筆疑似已下架待人工複查（新創嚴選）」實際剩餘範圍�
 使用者回報搜尋後點回首頁，篩選條件仍殘留生效，與一般網站「回上一頁即清空」的直覺不符。追查發現index.html有三個「回首頁」入口（搜尋結果頁返回箭頭、瀏覽器實體上一頁、主題區詳情頁返回/頂部logo），各自處理方式不一致，其中搜尋結果頁返回箭頭完全不清空任何狀態，瀏覽器上一頁僅清空query未清filters/sortBy/currentPage。
 
 PPC確認方向：回首頁應等同「完整清空」（方向A），不採維持現況（B）或加UI提示（C）兩個選項。規格已交付Codex：新增統一`resetToHome()`函式（清空query/filters/sortBy/currentPage/selectedItem/selectedCategory，不清compareItems），三個回首頁入口統一呼叫，僅限index.html，不動搜尋執行邏輯本身。
+
+
+十五、PR #165（index.html description_short修正）驗證通過並merge
+
+Codex交付PR #165（branch `fix/index-description-short-2026-09-18`），Claude比對實際commit內容（非僅信SYNC自報）：`public/index.html`僅新增`descShort`/`descFull`/`displayDesc`三個衍生變數與對應渲染邏輯，共4行改動，與規格書要求逐字相符；確認`manufacturing.html`、API、資料庫、功能清單皆未被動到；第二個commit（文件/證據）確認未再改動程式碼。
+
+SYNC誠實揭露一項驗證限制：`SOL-MOE-0582`（原始回報案例）因`solution_id`不被搜尋索引，無法透過既有UI搜尋精確打開，Codex未用其他案例冒充該筆驗收，改用另一筆碳管理方案＋一般方案驗證邏輯正確運作，並在SYNC勾選項目中誠實標記該筆為未通過。核准合併，PPC已於9/21確認merge，Claude重查main分支確認`descShort`/`displayDesc`已生效、`manufacturing.html`確認未受影響。description外洩問題正式結案。
+
+
+---
+
+# 2026-09-21
+
+一、CSP第二波：查證Report-Only回報資料，確認唯一真實漏洞並交付修正規格
+
+新週開工，針對P0待辦「CSP第二波」查證9/14~9/18累積的Report-Only回報資料（`csp_violations`表）：
+
+- 總計197筆回報，但拆開來看：正式站（solution-finder-gray.vercel.app）僅4筆，其餘193筆（script-src-elem 95筆＋frame-src 92筆＋img-src 6筆）皆來自Preview環境（各PR預覽網址），根因是Vercel自家Live Feedback工具列（`vercel.live`），僅在Preview網址載入，與正式站使用者無關，判定為雜訊不需處理
+- 正式站4筆中，3筆（media-src `data:` 2筆、img-src `data:` 1筆）為同一根因：現行CSP規則`img-src`未將`data:`（base64內嵌圖片/媒體資源）列入允許清單，且規則字串**完全未定義`media-src`指令**，會回退套用`default-src 'self'`（同樣不含data:）；另1筆為PPC先前手動測試產生，非真實違規
+- 判定：5天試跑訊號已足夠乾淨（僅1種根因、無新類型違規出現），不需再等待累積，可直接修正後評估切換強制模式
+- 規格書已交付Codex：`vercel.json`的`img-src`加入`data:`、新增`media-src 'self' data:`指令，僅改這兩處，不涉及其他CSP指令、不切換強制模式（留待本次驗證後下一步評估）
+
+
+二、PR #166（CSP data:資源允許清單修正）驗證通過，核准合併
+
+Codex交付PR #166（branch `fix/csp-data-resources-2026-09-21`），Claude比對實際branch內容確認：`vercel.json`僅一處改動——`img-src`加入`data:`、新增`media-src 'self' data:`，插入位置、其餘指令（script-src/style-src/font-src/connect-src/frame-src/object-src/base-uri/form-action/report-uri）文字與順序完全未變，`redirects`/`rewrites`區塊未受影響；另確認`api/csp-report.js`、`index.html`、`manufacturing.html`三個容易被誤動的檔案與main分支逐字相同，未夾帶額外改動。與規格書要求逐字相符。
+
+SYNC誠實揭露：Preview環境回應標頭已含兩項修正，但正式站尚未套用（PR未merge）；規格書第三、四項驗收標準（登入後Console巡檢、正式站部署24小時後違規數據）需要部署後的真實資料才能驗證，Codex明確標記為未完成，不虛報驗收通過。核准合併，待PPC執行merge；merge後24小時可查`csp_violations`表確認正式站data:相關違規消失，並請PPC登入後手動巡檢Console無CSP警告。
