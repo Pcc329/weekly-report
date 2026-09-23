@@ -14,6 +14,7 @@
 | PR #156（API身分驗證Phase2）已就緒，待復工決策 | 資安 | Patrick | Patrick | — | 規格/實作/審查皆已完成，PPC決定延後——經與Alex、Carrie多次小型會議，發現組織層級更在乎的是資料庫方案（含ETL/爬取資料）如何與iii產生連結、產出價值，優先度重新評估中；13組帳號已建好不會過期。狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查 |
 | 篩選面板熱門篩選chip（官方認證供應商／免費試用）套用標籤未顯示 | 前端 | Patrick | — | — | 篩選邏輯本身正確運作，僅UI套用標籤區塊漏寫isGov/pricingModel分支，規格已交付 |
 | 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付；方案詳情頁返回鈕、搜尋結果頁箭頭、popstate分支另案處理 |
+| 6張表RLS開啟但無policy待確認（data_sources/program_promotions/program_sources/solution_status_log等） | 資安 | Patrick | — | — | 9/23查advisor時一併發現，INFO等級、預設拒絕非外洩風險，需確認是否有功能其實需要anon讀取這幾張表 |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -139,24 +140,4 @@
 3. **清除全部按鈕優化**：放大樣式＋補currentPage漏洞＋新增hover說明，PR #167已merge
 4. **篩選面板拔除「暫無法分類」選項**：PR #168已merge
 5. **設計複盤**：跑馬燈提示文字非bug（signifier衝突）；熱門篩選chip顯示遺漏是真bug，規格已交付
-6. **稽核方法論復盤**：比例只決定值不值得查，不能取代逐筆判斷
-7. **「返回首頁」實為退一步**：追查為9/18規格未實作的舊債，縮小範圍先修兩處，規格已交付
-
-<details>
-<summary>展開細節</summary>
-
-**1. CSP第二波**：Report-Only 197筆回報，正式站僅4筆為真實違規（img-src/media-src未列data:），193筆為Preview環境雜訊。規格：vercel.json加data:到img-src、新增media-src。Claude比對branch確認僅一處改動，PPC已merge。
-
-**2. 資料新鮮度稽核**：新創嚴選官網144筆(DB152)，16筆標記疑似已下架，4筆改名候選待人工核對；農業雲市集官網82筆(DB93)，17筆標記疑似已下架，凌聚農業科技11筆疑似整條產品線改版；SME AI平台官網266筆(DB279)，27筆差異26筆為截斷方法論瑕疵未標記，僅Genie CPO待確認。詳情見`sop/freshness-audit-log.md`。
-
-**3. 清除全部按鈕（PR #167）**：clearAll補setCurrentPage(1)，按鈕改實心樣式，hover說明用純CSS group-hover。Claude確認popstate、manufacturing.html、showFilterTip皆未受影響，PPC已merge。
-
-**4. 拔除暫無法分類（PR #168）**：CATEGORIES陣列移除該值，僅一行改動。merge後一度誤判CDN快取延遲，改用codeload.github.com重新確認PR167/168皆正確共存。
-
-**5. 設計複盤**：跑馬燈提示文字placeholder/value分離正確、CSS對比度正確，非bug，屬signifier衝突（動態輪播暗示活內容，與顏色對比暗示的提示互相打架），暫不處理。熱門篩選chip：filters.isGov/pricingModel篩選邏輯正確，但套用標籤區塊漏寫這兩個分支，篩選有效但畫面不顯示標籤，規格已交付。
-
-**6. 稽核方法論復盤**：以「若比例不是26:1這麼懸殊會怎麼判斷」復盤，PPC答：回到差異定義本身逐筆查證，比例只決定值不值得先查。
-
-**7. 返回首頁bug**：兩層深情境下點「返回首頁」未直接回首頁，根因為共用函式goBackInApp做history.back()（退一步），綁在三個語意是「回首頁」的元件上。發現為9/18已交付但從未實作的舊規格（resetToHome）。縮小範圍：本次僅修主題區詳情頁連結＋全站Logo兩處，規格已交付。
-
-</details>
+6.
