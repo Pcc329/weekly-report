@@ -140,4 +140,65 @@
 3. **清除全部按鈕優化**：放大樣式＋補currentPage漏洞＋新增hover說明，PR #167已merge
 4. **篩選面板拔除「暫無法分類」選項**：PR #168已merge
 5. **設計複盤**：跑馬燈提示文字非bug（signifier衝突）；熱門篩選chip顯示遺漏是真bug，規格已交付
-6.
+6. **稽核方法論復盤**：比例只決定值不值得查，不能取代逐筆判斷
+7. **「返回首頁」實為退一步**：追查為9/18規格未實作的舊債，縮小範圍先修兩處，規格已交付
+
+<details>
+<summary>展開細節</summary>
+
+**1. CSP第二波**：Report-Only 197筆回報，正式站僅4筆為真實違規（img-src/media-src未列data:），193筆為Preview環境雜訊。規格：vercel.json加data:到img-src、新增media-src。Claude比對branch確認僅一處改動，PPC已merge。
+
+**2. 資料新鮮度稽核**：新創嚴選官網144筆(DB152)，16筆標記疑似已下架，4筆改名候選待人工核對；農業雲市集官網82筆(DB93)，17筆標記疑似已下架，凌聚農業科技11筆疑似整條產品線改版；SME AI平台官網266筆(DB279)，27筆差異26筆為截斷方法論瑕疵未標記，僅Genie CPO待確認。詳情見`sop/freshness-audit-log.md`。
+
+**3. 清除全部按鈕（PR #167）**：clearAll補setCurrentPage(1)，按鈕改實心樣式，hover說明用純CSS group-hover。Claude確認popstate、manufacturing.html、showFilterTip皆未受影響，PPC已merge。
+
+**4. 拔除暫無法分類（PR #168）**：CATEGORIES陣列移除該值，僅一行改動。merge後一度誤判CDN快取延遲，改用codeload.github.com重新確認PR167/168皆正確共存。
+
+**5. 設計複盤**：跑馬燈提示文字placeholder/value分離正確、CSS對比度正確，非bug，屬signifier衝突（動態輪播暗示活內容，與顏色對比暗示的提示互相打架），暫不處理。熱門篩選chip：filters.isGov/pricingModel篩選邏輯正確，但套用標籤區塊漏寫這兩個分支，篩選有效但畫面不顯示標籤，規格已交付。
+
+**6. 稽核方法論復盤**：以「若比例不是26:1這麼懸殊會怎麼判斷」復盤，PPC答：回到差異定義本身逐筆查證，比例只決定值不值得先查。
+
+**7. 返回首頁bug**：兩層深情境下點「返回首頁」未直接回首頁，根因為共用函式goBackInApp做history.back()（退一步），綁在三個語意是「回首頁」的元件上。發現為9/18已交付但從未實作的舊規格（resetToHome）。縮小範圍：本次僅修主題區詳情頁連結＋全站Logo兩處，規格已交付。
+
+</details>
+
+---
+
+# 2026-09-23
+
+1. **PR #169已merge**：返回首頁邏輯修正正式生效
+2. **搜尋結果頁返回按鈕改版**：解決按鈕緊貼標題造成的「誤讀成返回搜尋結果」問題，PR #170驗證通過並merge
+
+<details>
+<summary>展開細節</summary>
+
+**1. PR #169 merge確認**：main分支查證`resetToHome`函式存在、`goBackInApp`剩2處（定義+方案詳情頁返回按鈕），與縮小後的規格一致。CSP修復（PR #166）merge後至今`csp_violations`表無新增data:相關違規，確認正式站修復生效。
+
+**2. 搜尋結果頁返回按鈕**：PPC實測Preview時發現左上角圓形箭頭按鈕沒有文字標籤，緊貼「搜尋結果」標題，容易誤讀成「返回搜尋結果」按鈕，但實際行為是回首頁。查證按鈕行為本身正確（`setActivePage("home")`），純屬UI標籤缺失問題。比照方案詳情頁既有「圖示+文字獨立一行」樣式，改為「← 回到首頁」，標題自然退到下一行。用Visualizer demo並排比對確認方向後交付規格。
+
+PR #170（branch `fix/search-results-home-label-2026-09-23`）驗證：因branch在PR #169 merge前就已分出，直接與當前main比對會誤判resetToHome被還原；改用PR170對其真實分支起點的diff核對，確認**僅改動第1190~1197行**（搜尋結果頁header區塊），未觸及resetToHome相關的第1067、1705行，兩個PR改動範圍完全不重疊，GitHub 3-way merge可正確疊加不會互相覆蓋。`onClick`邏輯維持`setActivePage("home")`不變，`manufacturing.html`未受影響。核准合併，PPC已merge。
+
+方法論記錄：branch在其他PR merge前就分出時，直接跟「當前main」比對可能因分支點較舊而誤判成「改動被還原」，應改比對branch自身的真實起點（分支時的main快照），才能看出該PR自己實際的改動範圍。
+
+</details>
+
+## 🔴 資安事件：`solution_reviews`表RLS未啟用，已修復
+
+Supabase官方寄發「rls_disabled_in_public」警告信，PPC轉來查證。查advisor確認`public.solution_reviews`表RLS完全未啟用（非「開了沒policy」的安全鎖死狀態，是真的完全公開），任何持有專案URL者皆可讀取/編輯/刪除此表所有資料，ERROR等級。
+
+- 查證該表：26筆記錄、全數9/9同一時間寫入、單一reviewer，欄位含verdict/trigger_reason/status_before/status_after，判斷為當時「26筆triage缺口」人工複查產生的紀錄表，建表時漏開RLS，裸露14天
+- 已修復：`ALTER TABLE public.solution_reviews ENABLE ROW LEVEL SECURITY`，比照`users`/`csp_violations`既有做法（RLS開啟不設policy，anon完全查不到，僅service_role可查），SQL直接確認`relrowsecurity: true`生效
+- 一併查證advisor回報的另外兩項SECURITY DEFINER view：
+  - `contacts_masked`：查證底層`contacts`表僅開放`admin_role`，此view故意用SECURITY DEFINER繞過限制、暴露遮罩過的email/手機（符合既有資料最小化原則），**判斷為刻意設計，不可修改**（改為SECURITY INVOKER會讓遮罩功能失效）
+  - `companies_with_counts`：查證底層companies/solutions/awards皆已開放anon直接SELECT，此view的SECURITY DEFINER屬多餘但無害，不算漏洞，列入未來清理待辦（非急迫）
+- 另有6個INFO等級「RLS開啟但無policy」項目（data_sources/program_promotions/program_sources/solution_status_log等），屬預設拒絕、非外洩風險，暫不處理，列入待確認清單
+
+## 「回到首頁」文字統一：PR #171交付並merge，PR #169/#170/#171三個PR確認全數merge
+
+PPC發現PR170改完後，主題區詳情頁連結仍寫「返回首頁」、搜尋結果頁已改「回到首頁」，兩處用字不一致。查main分支確認僅第1078行（主題區詳情頁）殘留舊文字，規格書已交付Codex（僅置換該行文字，不動onClick與樣式），PR #171驗證通過並merge。
+
+過程中Claude一度誤判PR170已merge（查main分支時漏看清楚grep結果，誤以為找到「回到首頁」但實際只查到「返回首頁」一處），經PPC貼GitHub PR列表截圖（顯示PR170仍為Open）發現誤判並更正。重新查證確認PR170當時確實尚未merge。
+
+最終PPC一次確認merge三個PR，Claude重新完整下載main分支查證：`resetToHome`次數3（定義+2處使用，對應PR169兩處入口）、`goBackInApp`剩2處（定義+方案詳情頁返回按鈕，符合縮小範圍原意）、第1078行與第1201行皆顯示「回到首頁」，文字統一無殘留，`manufacturing.html`逐字相同未受影響。PR169、PR170、PR171三個PR皆已正確merge於main。
+
+方法論記錄：查證「文字是否已存在」時，grep結果只有1筆命中就該停下來確認命中的是哪一處、代表什麼，不能想當然爾套用先前的假設——這次的誤判就是沒有把grep實際回傳的內容看仔細，直接套用了舊的記憶推論。
