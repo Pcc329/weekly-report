@@ -3,7 +3,7 @@
 ### P0
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
 |---|---|---|---|---|---|
-| CSP第二波（Content-Security-Policy正式啟用） | 資安 | Patrick | — | — | Report-Only回報資料已查證，data:資源漏洞已修復並merge（PR #166），待正式站觀察24小時無異常後評估切換強制模式 |
+| CSP第二波（Content-Security-Policy正式啟用） | 資安 | Patrick | — | — | Report-Only回報資料已查證，data:資源漏洞已修復並merge（PR #166），~~待正式站觀察24小時無異常後評估切換強制模式~~ 觀察期已滿；9/24決定不在週末前切換，延至下週一查證`csp_violations`無新增違規後切換強制模式 |
 
 ### P1
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -13,8 +13,10 @@
 | 三張獨立Table（能量登錄／補助／得標）實際資料量 | 外部協作 | Rio Hsu | — | — | 已去信詢問，未回覆 |
 | PR #156（API身分驗證Phase2）已就緒，待復工決策 | 資安 | Patrick | Patrick | — | 規格/實作/審查皆已完成，PPC決定延後——經與Alex、Carrie多次小型會議，發現組織層級更在乎的是資料庫方案（含ETL/爬取資料）如何與iii產生連結、產出價值，優先度重新評估中；13組帳號已建好不會過期。狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查 |
 | 篩選面板熱門篩選chip（官方認證供應商／免費試用）套用標籤未顯示 | 前端 | Patrick | — | — | 篩選邏輯本身正確運作，僅UI套用標籤區塊漏寫isGov/pricingModel分支，規格已交付 |
-| 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付；方案詳情頁返回鈕、搜尋結果頁箭頭、popstate分支另案處理 |
+| 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理 |
 | 6張表RLS開啟但無policy待確認（data_sources/program_promotions/program_sources/solution_status_log等） | 資安 | Patrick | — | — | 9/23查advisor時一併發現，INFO等級、預設拒絕非外洩風險，需確認是否有功能其實需要anon讀取這幾張表 |
+| Supabase advisor新增一項RLS policy警示待查證 | 資安 | Patrick | — | — | 9/24查advisor時發現，前次未列入；需確認該policy屬讀取或寫入權限，查證前細節不公開記錄 |
+| weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；待評估改為private repo或將資安細節移至非公開文件，需先確認GitHub Pages於private repo下的可用性 |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -35,170 +37,9 @@
 | 新增使用者登入紀錄表（login_logs） | 資安 | Patrick | — | — | Phase2已讓session帶有userId，具備記錄基礎，但尚未建表寫入；欄位初步構想：user_id(FK)、login_at、ip_address |
 | 新創嚴選網4筆疑似改名候選（律果簽/Robotiive/ClimaMentor/EgentHub） | 資料品質 | Patrick | — | — | 9/21海巡發現，同公司同類產品新舊命名並存，待人工核對是否為單純改名 |
 | 農業雲市集「悠由農」容量參數落差(30→32公頃) | 資料品質 | Patrick | — | — | 9/21海巡發現，非下架問題，屬內容更新待辦 |
+| 本機工作區整理（solution-finder-pr-work） | 專案管理 | Patrick | — | — | 9/23盤點：外層repo停在07-14，含2個未commit修改（已另存patch）；9個子資料夾中8個確認內容皆已在GitHub可刪除，`api-auth-phase1`本機commit無法確認已推送，保留待查；已整包備份；taskboard workspace路徑待整理後更新 |
+| Supabase Egress用量觀察 | 後端 | Patrick | — | — | 9/24查看Free plan本期用量3.27／5GB（約65%），待確認計費週期重置日與主要流量來源 |
+| 待啟用帳號臨時密碼處理 | 資安 | Patrick | — | — | 含臨時密碼的CSV已自Claude Project移除，改存僅含帳號名稱版本；恢復PR #156時需重新產生臨時密碼並要求首次登入修改 |
+| 任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑 | 專案管理 | Patrick | — | — | 功能正常，因Codex以獨立沙箱帳號執行，讀不到使用者層級PATH與環境變數，每次多繞步驟；使用一段時間後再評估優化 |
 
 ---
-
-# 2026-09-15
-
-1. **CDM矩陣完整匯入收尾**：139家統編補齊，1,147筆正式匯入，五項驗證全通過
-2. **cdm_domain_display衍生欄位**：解決治理象限NULL顯示被誤認資料缺漏的問題
-3. **API身分驗證Phase2**：規格/實作/審查完成（PR #156），13組帳號建立
-4. **決策：API身分驗證延後merge**：優先度讓位給資料庫商業價值方向
-5. **信任訊號視覺提案**：三版UI方案討論，拍板A+C分層配置方向
-6. **舊待辦結案**：Solutions同步落差14筆查明為殭屍項目，另修復25筆record_status被靜默覆蓋問題
-
-<details>
-<summary>展開細節</summary>
-
-**CDM矩陣**：24家無統編廠商用Claude for Chrome查GCIS/採購公報網補齊，139家全數到位，正式匯入含registration_item欄位，B1象限107筆人工抽查一致。
-
-**cdm_domain_display**：新增PostgreSQL GENERATED欄位（COALESCE(cdm_domain, '治理(全類別)')），不更動底層cdm_domain本身。
-
-**API身分驗證Phase2**：`users`表RLS開啟無policy確保前端無法存取；密碼雜湊`crypto.scrypt`；session簽章HMAC涵蓋userId防冒充；Codex主動補強時序攻擊防護；意外發現並修復`api/companies.js`快取繞過`requireAuth`的既有漏洞。PR待merge。13組帳號密碼透過CSV私下轉發。
-
-**延後merge決策**：與Alex/Carrie小型會議後發現組織更在乎資料庫如何產生商業價值，非資安加固本身。
-
-**信任訊號提案**：方案A極簡標籤/B可展開摘要/C完整分數，決定列表頁採A、詳情頁採C，B不採用（兩邊都不到位）。
-
-**舊待辦結案**：8/31已查明14筆落差為SOL-CASE系列非異常，同批查證中意外發現25筆record_status在8/21批次被靜默覆蓋，已用三段式SQL復原。
-
-</details>
-
----
-
-# 2026-09-16
-
-1. **交叉信任訊號規格拍板並上線**：A+C分層配置，追加政府獎項為第四來源，獲獎等級加權（國際>國家>產業），PR #157兩輪查證後merge
-2. **X/Y分數標籤移除**：使用者反饋數字與畫面對不上，決定只留清單本身
-3. **公共計畫參與度B方案完整交付**：跨N種計畫badge+明細（PR #158）、政府獎項明細（PR #159）、獲獎等級顏色（PR #160）
-
-<details>
-<summary>展開細節</summary>
-
-**信任訊號**：分母動態計算（僅納入已有資料佐證項），缺資料顯示中性「累積中」標籤。PR #157首次mock測試未過，PPC實測發現badge與區塊皆未顯示，退回；第二輪修復動態分母寫死bug後驗證通過merge。
-
-**獲獎權重**：PPC一度考慮改用國家級優先（機構立場），主動反思後維持國際級優先（客觀含金量判斷）。
-
-**公共計畫參與度**：建立假設驗證流程查證資料覆蓋率（跨2種以上計畫23.5%最高），決定先做B方案（輕量標籤，複用既有資料）。PR #158新增pgList明細；PR #159政府獎項明細；PR #160獲獎等級顏色區分（國際靛紫/國家綠/產業中性）。C方案（完整指數）維持不啟動，待興趣訊號明確再議。
-
-</details>
-
----
-
-# 2026-09-17
-
-1. **主題區導覽新構想**：源自第一線同仁回饋，8大服務類別命名為「主題區」（非樓層），規格交付
-2. **【重大發現】record_status篩選規則回退**：PR #131修復實際遺失於main，171筆已下架方案曾未被排除，PR #162修正並merge
-3. **首頁搜尋區塊全面重新設計**：跑馬燈搜尋框（832種組合）、迷你搜尋框快捷搜尋（176種組合）、熱門篩選、主題區導覽四層架構，PR #163驗證通過並merge
-
-<details>
-<summary>展開細節</summary>
-
-**主題區導覽**：8大類別覆蓋82%方案，排除ERD呈現（TA非工程師），CTA複用既有handleCategoryBrowse邏輯。
-
-**record_status回退**：PR #161數字核對時Claude獨立查詢與Codex回報不一致，退回後確認根因——三支API皆用精確比對舊版邏輯，PR#131合併分支非main祖先導致修復遺失。影響範圍非僅單頁，六個前端頁面皆透過這三支API取資料。提升至P0，PR #162修正三支檔案前綴比對，數字核對2,462-171=2,291吻合。
-
-**首頁重新設計**：熱門篩選（新創嚴選/官方認證供應商/免費試用）取代重複的熱門分類；排序邏輯：跑馬燈教學>快捷搜尋>熱門篩選。跑馬燈詞庫服務類別8×地區8×規模6組合832種，快捷搜尋176種（僅載入時生成一次不跳動）。
-
-</details>
-
----
-
-# 2026-09-18
-
-1. **週例行Supabase備份**：5.38MB，已存OneDrive
-2. **target_scale格式統一＋區間壓縮顯示**：一次解決兩項既有P1待辦，PR #164並延伸修正適用規模重複顯示、信任badge樣式統一
-3. **季河資訊/萬物智通舊待辦結案**：發現並修正一筆公司名稱錯誤（環成資訊誤標季河資訊）
-4. **網站存活監控機制建置＋雙向驗證完成**：採用StatusCake，故意觸發異常確認告警與恢復通知皆正確
-5. **SOL-1381人工複查結案**：26筆triage缺口全數結案
-6. **使用者實測回報兩項**：description欄位洩漏內部審查資料（規格交付）；回首頁未完整清空搜尋狀態（規格交付，PPC決策方向A完整清空）
-7. **PR #165（description_short修正）驗證通過並merge**
-
-<details>
-<summary>展開細節</summary>
-
-**target_scale**：10種atomic值中4種問題值正規化，5桶全勾視為不限規模（613筆最大宗），非連續組合（僅2筆）不自動壓縮。共用函式`/target-scale.js`供兩頁共用。PR #164完整核對後merge，並延伸修正方案屬性表格重複顯示適用規模、信任訊號badge樣式（字級/內距/圓角）不一致問題。
-
-**季河資訊**：company_id 70582747與70595145為兩家不相干公司恰好同名，不應合併；但70582747公司簡介內容實為環成資訊，company_name欄位本身填錯，已於Supabase修正，20個方案自動連動正確名稱。萬物智通問題拆分為獨立P2待辦。
-
-**網站監控**：StatusCake（非UptimeRobot，因其限非商業用途），5分鐘檢查頻率，Repeat Alert 15分鐘間隔重複5次。故意改錯網址驗證告警信與恢復通知皆正確送達。
-
-**SOL-1381**：8/31關鍵字推論後未確認，本次直接訪問官網比對description逐字一致，確認為改名方案，record_status改為正常。
-
-**description外洩**：`description`欄位存整份政府申請表單原始內容（含聯絡人個資、標註「勿外洩」的PDF檔名），10筆超過800字元屬此模式。根因為`index.html`未比照`manufacturing.html`優先使用description_short。PR #165僅4行改動，SYNC誠實揭露SOL-MOE-0582因搜尋不索引solution_id無法逐筆驗證，未虛報。PPC 9/21確認merge。
-
-**回首頁清空**：三個入口處理不一致，PPC決策方向A（完整清空），規格交付resetToHome()（後續9/21發現規格從未實作，見同日記錄）。
-
-</details>
-
----
-
-# 2026-09-21
-
-1. **CSP第二波**：查證Report-Only回報資料，確認唯一真實漏洞，PR #166已merge
-2. **資料新鮮度稽核**：新創嚴選網、農業雲市集-數位館、SME AI平台首次完整稽核
-3. **清除全部按鈕優化**：放大樣式＋補currentPage漏洞＋新增hover說明，PR #167已merge
-4. **篩選面板拔除「暫無法分類」選項**：PR #168已merge
-5. **設計複盤**：跑馬燈提示文字非bug（signifier衝突）；熱門篩選chip顯示遺漏是真bug，規格已交付
-6. **稽核方法論復盤**：比例只決定值不值得查，不能取代逐筆判斷
-7. **「返回首頁」實為退一步**：追查為9/18規格未實作的舊債，縮小範圍先修兩處，規格已交付
-
-<details>
-<summary>展開細節</summary>
-
-**1. CSP第二波**：Report-Only 197筆回報，正式站僅4筆為真實違規（img-src/media-src未列data:），193筆為Preview環境雜訊。規格：vercel.json加data:到img-src、新增media-src。Claude比對branch確認僅一處改動，PPC已merge。
-
-**2. 資料新鮮度稽核**：新創嚴選官網144筆(DB152)，16筆標記疑似已下架，4筆改名候選待人工核對；農業雲市集官網82筆(DB93)，17筆標記疑似已下架，凌聚農業科技11筆疑似整條產品線改版；SME AI平台官網266筆(DB279)，27筆差異26筆為截斷方法論瑕疵未標記，僅Genie CPO待確認。詳情見`sop/freshness-audit-log.md`。
-
-**3. 清除全部按鈕（PR #167）**：clearAll補setCurrentPage(1)，按鈕改實心樣式，hover說明用純CSS group-hover。Claude確認popstate、manufacturing.html、showFilterTip皆未受影響，PPC已merge。
-
-**4. 拔除暫無法分類（PR #168）**：CATEGORIES陣列移除該值，僅一行改動。merge後一度誤判CDN快取延遲，改用codeload.github.com重新確認PR167/168皆正確共存。
-
-**5. 設計複盤**：跑馬燈提示文字placeholder/value分離正確、CSS對比度正確，非bug，屬signifier衝突（動態輪播暗示活內容，與顏色對比暗示的提示互相打架），暫不處理。熱門篩選chip：filters.isGov/pricingModel篩選邏輯正確，但套用標籤區塊漏寫這兩個分支，篩選有效但畫面不顯示標籤，規格已交付。
-
-**6. 稽核方法論復盤**：以「若比例不是26:1這麼懸殊會怎麼判斷」復盤，PPC答：回到差異定義本身逐筆查證，比例只決定值不值得先查。
-
-**7. 返回首頁bug**：兩層深情境下點「返回首頁」未直接回首頁，根因為共用函式goBackInApp做history.back()（退一步），綁在三個語意是「回首頁」的元件上。發現為9/18已交付但從未實作的舊規格（resetToHome）。縮小範圍：本次僅修主題區詳情頁連結＋全站Logo兩處，規格已交付。
-
-</details>
-
----
-
-# 2026-09-23
-
-1. **PR #169已merge**：返回首頁邏輯修正正式生效
-2. **搜尋結果頁返回按鈕改版**：解決按鈕緊貼標題造成的「誤讀成返回搜尋結果」問題，PR #170驗證通過並merge
-
-<details>
-<summary>展開細節</summary>
-
-**1. PR #169 merge確認**：main分支查證`resetToHome`函式存在、`goBackInApp`剩2處（定義+方案詳情頁返回按鈕），與縮小後的規格一致。CSP修復（PR #166）merge後至今`csp_violations`表無新增data:相關違規，確認正式站修復生效。
-
-**2. 搜尋結果頁返回按鈕**：PPC實測Preview時發現左上角圓形箭頭按鈕沒有文字標籤，緊貼「搜尋結果」標題，容易誤讀成「返回搜尋結果」按鈕，但實際行為是回首頁。查證按鈕行為本身正確（`setActivePage("home")`），純屬UI標籤缺失問題。比照方案詳情頁既有「圖示+文字獨立一行」樣式，改為「← 回到首頁」，標題自然退到下一行。用Visualizer demo並排比對確認方向後交付規格。
-
-PR #170（branch `fix/search-results-home-label-2026-09-23`）驗證：因branch在PR #169 merge前就已分出，直接與當前main比對會誤判resetToHome被還原；改用PR170對其真實分支起點的diff核對，確認**僅改動第1190~1197行**（搜尋結果頁header區塊），未觸及resetToHome相關的第1067、1705行，兩個PR改動範圍完全不重疊，GitHub 3-way merge可正確疊加不會互相覆蓋。`onClick`邏輯維持`setActivePage("home")`不變，`manufacturing.html`未受影響。核准合併，PPC已merge。
-
-方法論記錄：branch在其他PR merge前就分出時，直接跟「當前main」比對可能因分支點較舊而誤判成「改動被還原」，應改比對branch自身的真實起點（分支時的main快照），才能看出該PR自己實際的改動範圍。
-
-</details>
-
-## 🔴 資安事件：`solution_reviews`表RLS未啟用，已修復
-
-Supabase官方寄發「rls_disabled_in_public」警告信，PPC轉來查證。查advisor確認`public.solution_reviews`表RLS完全未啟用（非「開了沒policy」的安全鎖死狀態，是真的完全公開），任何持有專案URL者皆可讀取/編輯/刪除此表所有資料，ERROR等級。
-
-- 查證該表：26筆記錄、全數9/9同一時間寫入、單一reviewer，欄位含verdict/trigger_reason/status_before/status_after，判斷為當時「26筆triage缺口」人工複查產生的紀錄表，建表時漏開RLS，裸露14天
-- 已修復：`ALTER TABLE public.solution_reviews ENABLE ROW LEVEL SECURITY`，比照`users`/`csp_violations`既有做法（RLS開啟不設policy，anon完全查不到，僅service_role可查），SQL直接確認`relrowsecurity: true`生效
-- 一併查證advisor回報的另外兩項SECURITY DEFINER view：
-  - `contacts_masked`：查證底層`contacts`表僅開放`admin_role`，此view故意用SECURITY DEFINER繞過限制、暴露遮罩過的email/手機（符合既有資料最小化原則），**判斷為刻意設計，不可修改**（改為SECURITY INVOKER會讓遮罩功能失效）
-  - `companies_with_counts`：查證底層companies/solutions/awards皆已開放anon直接SELECT，此view的SECURITY DEFINER屬多餘但無害，不算漏洞，列入未來清理待辦（非急迫）
-- 另有6個INFO等級「RLS開啟但無policy」項目（data_sources/program_promotions/program_sources/solution_status_log等），屬預設拒絕、非外洩風險，暫不處理，列入待確認清單
-
-## 「回到首頁」文字統一：PR #171交付並merge，PR #169/#170/#171三個PR確認全數merge
-
-PPC發現PR170改完後，主題區詳情頁連結仍寫「返回首頁」、搜尋結果頁已改「回到首頁」，兩處用字不一致。查main分支確認僅第1078行（主題區詳情頁）殘留舊文字，規格書已交付Codex（僅置換該行文字，不動onClick與樣式），PR #171驗證通過並merge。
-
-過程中Claude一度誤判PR170已merge（查main分支時漏看清楚grep結果，誤以為找到「回到首頁」但實際只查到「返回首頁」一處），經PPC貼GitHub PR列表截圖（顯示PR170仍為Open）發現誤判並更正。重新查證確認PR170當時確實尚未merge。
-
-最終PPC一次確認merge三個PR，Claude重新完整下載main分支查證：`resetToHome`次數3（定義+2處使用，對應PR169兩處入口）、`goBackInApp`剩2處（定義+方案詳情頁返回按鈕，符合縮小範圍原意）、第1078行與第1201行皆顯示「回到首頁」，文字統一無殘留，`manufacturing.html`逐字相同未受影響。PR169、PR170、PR171三個PR皆已正確merge於main。
-
-方法論記錄：查證「文字是否已存在」時，grep結果只有1筆命中就該停下來確認命中的是哪一處、代表什麼，不能想當然爾套用先前的假設——這次的誤判就是沒有把grep實際回傳的內容看仔細，直接套用了舊的記憶推論。
