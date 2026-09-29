@@ -3,7 +3,6 @@
 ### P0
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
 |---|---|---|---|---|---|
-| CSP第二波（Content-Security-Policy正式啟用） | 資安 | Patrick | — | — | Report-Only回報資料已查證，data:資源漏洞已修復並merge（PR #166），~~待正式站觀察24小時無異常後評估切換強制模式~~ 觀察期已滿；9/24決定不在週末前切換，延至下週一查證`csp_violations`無新增違規後切換強制模式 |
 
 ### P1
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -44,3 +43,23 @@
 | 任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑 | 專案管理 | Patrick | — | — | 功能正常，因Codex以獨立沙箱帳號執行，讀不到使用者層級PATH與環境變數，每次多繞步驟；使用一段時間後再評估優化 |
 
 ---
+
+# 2026-09-29
+
+1. **工作方法決策：status.md與任務看板分工**：看板（`taskctl`／SOL卡片）記錄現況與下一步，status.md專責記錄決策脈絡與查證過程，兩者互補非取代，卡片可簡註「詳見status.md日期」避免重工。看板9/24才試用一天，本週先照此分工跑，視實際操作順不順再決定是否調整
+2. **CSP第二波正式結案**：Report-Only切換強制模式（PR #173），並補上connect-src漏洞（PR #174），兩項驗收標準皆達成，正式站觀察無新增違規
+
+<details>
+<summary>展開細節</summary>
+
+**工作方法決策**：PPC提出看板vs status.md的分工判斷——看板記「結果與下一步」、status.md記「細節與脈絡」，Claude認同並補充兩者互補而非取代關係，避免只留看板會遺失「怎麼查出來的」這類回顧價值，只留status.md則沒有「一眼看懂現況」的功能。
+
+**CSP強制模式（PR #173）**：`vercel.json`只改CSP標頭key名稱（`Content-Security-Policy-Report-Only`→`Content-Security-Policy`），規則value逐字不動。查週末（連假）期間`csp_violations`無新增，確認可安全切換。Claude以完整下載main與PR commit做全樹遞迴比對，確認整個repo僅此一行差異。核准合併。
+
+順帶就CSP切換對CIA三面向的意義討論：機密性與完整性因阻擋未授權來源而增強，可用性則是經過驗證、風險已確認很低的一項取捨（規則之外的東西會被真的擋下而非悄悄放行）。
+
+**connect-src補件（PR #174）**：PPC實測時在開發者工具Console發現2筆真實違規——`cdnjs.cloudflare.com`與`unpkg.com`的`.js.map`原始碼對照表被擋，根因為`script-src`已允許這兩網域載入JS，但`connect-src`未同步允許。此為僅開發者工具開啟時才會觸發的請求，一般使用者不受影響，但仍判斷為規則真實漏洞應修正。規格書已交付並產出完整MD檔案供直接使用。Claude全樹比對確認僅`connect-src`新增兩網域，其餘逐字不變，核准合併。
+
+**驗證**：因內嵌瀏覽器無DevTools，改用查`csp_violations`表間接驗證——merge後立即查到4筆新增，皆為已知的兩個`.js.map`違規、時間點卡在部署完成前（04:05），10分鐘後重查維持8筆無新增，確認PR174確實生效。CSP第二波（Report-Only啟用9/14起算）至此正式結案。
+
+</details>
