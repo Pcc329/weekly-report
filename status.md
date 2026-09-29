@@ -13,9 +13,8 @@
 | PR #156（API身分驗證Phase2）已就緒，待復工決策 | 資安 | Patrick | Patrick | — | 規格/實作/審查皆已完成，PPC決定延後——經與Alex、Carrie多次小型會議，發現組織層級更在乎的是資料庫方案（含ETL/爬取資料）如何與iii產生連結、產出價值，優先度重新評估中；13組帳號已建好不會過期。狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查 |
 | ~~篩選面板熱門篩選chip（官方認證供應商／免費試用）套用標籤未顯示~~ | 前端 | Patrick | — | — | ~~規格已交付~~ PR #172（9/23完成）於9/24驗收並merge |
 | 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理 |
-| 6張表RLS開啟但無policy待確認（data_sources/program_promotions/program_sources/solution_status_log等） | 資安 | Patrick | — | — | 9/23查advisor時一併發現，INFO等級、預設拒絕非外洩風險，需確認是否有功能其實需要anon讀取這幾張表 |
 | ~~Supabase advisor新增一項RLS policy警示待查證~~ | 資安 | Patrick | — | — | ~~需確認該policy屬讀取或寫入權限~~ 9/24已修正：`source_monitoring_checks`的公開INSERT權限為8/20海巡v1腳本試跑遺留（僅1筆資料），已移除；`source_monitoring_targets`僅開放SELECT，無相同問題 |
-| weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；待評估改為private repo或將資安細節移至非公開文件，GitHub Pages於private repo需付費方案，待整理方案 |
+| weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；9/29已評估三個方向（private+付費/改寫法/換平台加密碼），PPC確認「必須記錄細節」排除改寫法，其餘兩個方向暫緩，優先度讓給看板功能，待之後有餘裕再處理 |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -40,7 +39,7 @@
 | 「免費試用」按鈕與資料值「提供試用」語意一致性 | 資料品質 | Patrick | — | — | 9/24驗收PR #172時發現，需確認資料中「提供試用」是否皆為免費，否則按鈕文字屬語意誇大 |
 | Supabase Egress用量觀察 | 後端 | Patrick | — | — | 9/24查看Free plan本期用量3.27／5GB（約65%），待確認計費週期重置日與主要流量來源 |
 | 待啟用帳號臨時密碼處理 | 資安 | Patrick | — | — | 含臨時密碼的CSV已自Claude Project移除，改存僅含帳號名稱版本；恢復PR #156時需重新產生臨時密碼並要求首次登入修改 |
-| 任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑 | 專案管理 | Patrick | — | — | 功能正常，因Codex以獨立沙箱帳號執行，讀不到使用者層級PATH與環境變數，每次多繞步驟；使用一段時間後再評估優化 |
+| ~~任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑~~ | 專案管理 | Patrick | — | — | 9/29已改用GitHub Projects取代dashi-taskboard／Cloudflare部署路線，此問題隨舊路線放棄而不再適用 |
 
 ---
 
@@ -63,3 +62,23 @@
 **驗證**：因內嵌瀏覽器無DevTools，改用查`csp_violations`表間接驗證——merge後立即查到4筆新增，皆為已知的兩個`.js.map`違規、時間點卡在部署完成前（04:05），10分鐘後重查維持8筆無新增，確認PR174確實生效。CSP第二波（Report-Only啟用9/14起算）至此正式結案。
 
 </details>
+
+3. **任務看板遷移：從本機dashi-taskboard改為GitHub Projects**：原規劃部署dashi-taskboard到Cloudflare（Worker/D1/R2），查證後改變方向，24張SOL卡片全數搬遷至GitHub Projects
+4. **solution-finder repo公開性評估：決定暫不處理**，優先確保看板功能可用，資安加固另案處理
+
+<details>
+<summary>展開細節</summary>
+
+**任務看板遷移**：原評估dashi-taskboard部署到Cloudflare雲端（Worker+D1+R2），已完成Cloudflare帳號確認、`wrangler login`步驟；查證dashi-taskboard官方文件確認架構可行，但PPC進一步詢問「能不能做成靜態頁面」時，釐清看板需要即時寫入互動（拖曳卡片、建卡），與status.md/稽核log這類唯讀靜態頁面本質不同，靜態託管做不到寫入。討論延伸出三種滿足「能寫入、不靠本機開機」需求的路線（自建Vercel+Supabase／GitHub Projects／Trello等SaaS），PPC決定改用GitHub Projects——理由是天生跟現有repo/PR/commit活動長在同一個地方，符合「團隊能接手看得懂脈絡」的初衷，且免費、免部署。已取消Cloudflare部署路線（R2啟動頁面關閉，未輸入付款資訊，未產生費用）。
+
+Codex完成匯出（`taskboard-export-solution-finder-20260929-154517.json`）、建立GitHub Project（四欄：Backlog/To Do/In Progress/In Review，另加Done共五欄，符合原Backlog獨立語意不併入To Do的決定），逐筆核對24張卡片（SOL-2～SOL-25）的描述、標籤、優先度、狀態，全數通過。本機dashi-taskboard的31張卡片（含後加的6張與測試卡）維持不變，未刪除。
+
+**repo公開性評估**：搬遷過程中Codex回報`Pcc329/solution-finder`的Issues是公開的，與9/24已發現但未處理的「weekly-report為public repo」屬同一類問題（內部專案管理內容曝露在公開網路上）。實際核對SOL-6（PR #156相關）卡片內容，確認僅含狀態摘要（執行人/決策人/現況一句話），未包含密碼雜湊參數、session簽章機制等實作細節，判斷這24張卡片本身無立即資安風險。
+
+針對weekly-report的public repo問題，討論出三個方向：①repo轉private+GitHub Pro付費（US$4/月）②status.md改寫法只記大方向不記技術細節③換用支援密碼保護的託管平台。PPC確認「必須記錄細節，寫大方向就失去記錄的意義」，②排除。釐清①的實際效果：GitHub Pages發布的網站本身是公開網址，不受repo private/public影響，故①只能防止別人翻commit歷史/原始檔案，防不了「網站畫面被看到」；若在意的是後者，需要③。討論「repo轉private＋3個月觀察有無非預期訪客」的暫行方案，Claude指出此方案的性質是「爭取決策時間」而非「解決風險」——網址可及性在這3個月內完全沒變，3個月平安不代表風險降低，且GitHub Pages/repo本身無內建足夠精細的訪客記錄工具，需另外加裝才有觀察意義。
+
+最終PPC決定：資安加固（無論weekly-report的private化，或solution-finder repo公開性）**暫不處理**，優先順序讓給「看板功能先能用」，兩者為獨立決定，看板搬遷已完成可正常使用，資安評估留待之後有餘裕再處理。
+
+</details>
+
+**補記**：6張表RLS開啟無policy待確認一項，9/23查`api/*.js`與`public/*.html`已確認無任何程式碼查詢這4張表（data_sources/program_promotions/program_sources/solution_status_log），屬純後台/稽核用途，無policy是正確狀態，此P1待辦結案，從清單移除。
