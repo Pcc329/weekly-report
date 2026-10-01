@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>授權 SF MCP 連線｜產業策略智庫</title>
+<style>
+  :root{--ink:#1a2733;--slate:#3d5266;--mute:#6d8296;--line:#dde4ea;--paper:#f6f8fa;--steel:#2f5d7c;--red:#b3372f;--red-lt:#fbeceb;--green:#2f6a4f;--amber-lt:#fff7e6;--amber:#9a6b00}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--steel);max-width:480px;width:100%;padding:28px 28px 24px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:8px}
+  h1{font-size:21px;font-weight:800;margin-bottom:14px}
+  p,li{font-size:14.5px;color:var(--slate)}
+  .hidden{display:none !important}
+  label{display:block;font-size:13.5px;font-weight:700;margin:12px 0 4px}
+  input{width:100%;font:inherit;font-size:15px;padding:9px 11px;border:1px solid #c5d0d9;border-radius:4px}
+  input:focus{outline:2px solid var(--steel);outline-offset:1px}
+  button{font:inherit;font-size:15px;font-weight:700;border:0;border-radius:6px;padding:11px 22px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .primary{background:var(--steel);color:#fff}
+  .primary:hover:not(:disabled){background:#25495f}
+  .ghost{background:#fff;color:var(--slate);border:1px solid #c5d0d9}
+  .row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+  .kv{margin:14px 0;border:1px solid var(--line)}
+  .kv div{display:flex;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:14px}
+  .kv div:last-child{border-bottom:0}
+  .kv dt{color:var(--mute);min-width:84px}
+  .kv dd{color:var(--ink);font-weight:600;word-break:break-all}
+  ul{margin:8px 0 0 18px}
+  .warn{background:var(--red-lt);border:1px solid var(--red);color:var(--red);padding:12px 14px;margin-top:14px;font-size:14px;font-weight:600}
+  .note{background:var(--amber-lt);border:1px solid #f0d9a0;color:var(--amber);padding:10px 12px;margin-top:14px;font-size:13.5px}
+  .err{color:var(--red);font-size:13.5px;font-weight:600;margin-top:10px}
+  .who{font-size:13px;color:var(--mute);margin-top:16px}
+  .who a{color:var(--steel);cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="eyebrow">產業策略智庫 · MCP 連線授權</div>
+  <h1 id="title">授權連線</h1>
+  <p id="status">載入中…</p>
+
+  <form id="loginForm" class="hidden" autocomplete="off">
+    <label for="email">Email</label>
+    <input id="email" type="email" required autocomplete="username">
+    <label for="password">密碼</label>
+    <input id="password" type="password" required autocomplete="current-password">
+    <div class="row"><button class="primary" type="submit" id="loginBtn">登入</button></div>
+    <div class="err" id="loginErr"></div>
+  </form>
+
+  <section id="consent" class="hidden">
+    <p>下列應用程式要求以你的身分<strong>唯讀</strong>查詢「產業策略智庫」資料：</p>
+    <dl class="kv">
+      <div><dt>應用程式</dt><dd id="clientName"></dd></div>
+      <div><dt>回呼網址</dt><dd id="redirectHost"></dd></div>
+      <div><dt>登入身分</dt><dd id="userEmail"></dd></div>
+    </dl>
+    <div id="untrusted" class="warn hidden">此應用程式的回呼網址不是 Claude（claude.ai／claude.com），可能是釣魚連結。<br>為了安全，<strong>不提供核准</strong>，只能拒絕。如果你剛剛確實是從 Claude 發起連線，請關閉此頁並回報。</div>
+    <div class="note">核准後，該應用程式可在你的權限範圍內讀取方案、公司、案例等資料（<strong>不能修改任何資料</strong>）。你可以隨時撤銷。</div>
+    <div class="row">
+      <button class="primary" id="approveBtn">核准</button>
+      <button class="ghost" id="denyBtn">拒絕</button>
+    </div>
+    <div class="err" id="consentErr"></div>
+    <div class="who">不是你？<a id="signOut">登出</a></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"
+        integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok"
+        crossorigin="anonymous"></script>
+<script>
+(function(){
+'use strict';
+
+var CFG = {
+  url: 'https://apdbvjruevjprslhhvlx.supabase.co',
+  key: 'sb_publishable_2aioW0CXtAtszY2_72isDg_jeQ_ekfg',
+  trustedHosts: ['claude.ai', 'claude.com']   // 只有這些回呼網址的用戶端可以被核准（防同意釣魚）
+};
+
+function $(id){ return document.getElementById(id); }
+function show(id, on){ $(id).classList.toggle('hidden', !on); }
+function setStatus(t){ $('status').textContent = t || ''; show('status', !!t); }
+
+var authId = new URLSearchParams(window.location.search).get('authorization_id');
+var sb = null;
+var session = null;
+
+function go(url){
+  // 只允許 https；測試時可注入 window.__go
+  if (!/^https:\/\//i.test(url)) { fail('收到不安全的轉址網址，已中止。'); return; }
+  (window.__go || function(u){ window.location.assign(u); })(url);
+}
+
+function fail(msg){
+  show('loginForm', false); show('consent', false);
+  $('title').textContent = '無法完成授權';
+  setStatus(msg);
+}
+
+function hostOf(u){
+  try { var x = new URL(u); return x.protocol === 'https:' ? x.hostname.toLowerCase() : ''; } catch(e){ return ''; }
+}
+function isTrusted(host){
+  return CFG.trustedHosts.some(function(h){ return host === h || host.endsWith('.' + h); });
+}
+
+async function loadConsent(){
+  setStatus('讀取授權資訊…');
+  var r = await sb.auth.oauth.getAuthorizationDetails(authId);
+  if (r.error || !r.data){ fail('授權請求無效或已過期，請回到 Claude 重新發起連線。'); return; }
+  var d = r.data;
+  if (d.redirect_url){ go(d.redirect_url); return; }   // 先前已核准過的用戶端：直接放行
+
+  var client = d.client || {};
+  var name = client.name || d.client_name || '（未命名的應用程式）';
+  var uri = d.redirect_uri || client.redirect_uri || (client.redirect_uris && client.redirect_uris[0]) || '';
+  var host = hostOf(uri);
+  var trusted = !!host && isTrusted(host);
+
+  $('title').textContent = '授權連線';
+  setStatus('');
+  $('clientName').textContent = name;                        // textContent：不會執行任何 HTML
+  $('redirectHost').textContent = host || '（無效或非 https）';
+  $('userEmail').textContent = (session && session.user && session.user.email) || '';
+  show('untrusted', !trusted);
+  $('approveBtn').classList.toggle('hidden', !trusted);
+  show('loginForm', false);
+  show('consent', true);
+}
+
+async function decide(approve){
+  $('approveBtn').disabled = true; $('denyBtn').disabled = true;
+  $('consentErr').textContent = '';
+  var r = approve ? await sb.auth.oauth.approveAuthorization(authId) : await sb.auth.oauth.denyAuthorization(authId);
+  if (r.error || !r.data || !r.data.redirect_url){
+    $('consentErr').textContent = '操作失敗，請回到 Claude 重新發起連線。';
+    $('approveBtn').disabled = false; $('denyBtn').disabled = false;
+    return;
+  }
+  go(r.data.redirect_url);
+}
+
+async function onLogin(ev){
+  ev.preventDefault();
+  $('loginErr').textContent = '';
+  $('loginBtn').disabled = true;
+  var r = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('password').value });
+  $('loginBtn').disabled = false;
+  if (r.error || !r.data || !r.data.session){ $('loginErr').textContent = '帳號或密碼錯誤。'; return; }
+  session = r.data.session;
+  $('password').value = '';
+  await loadConsent();
+}
+
+async function init(){
+  if (!/^[\w-]{8,200}$/.test(authId || '')){ fail('缺少授權編號。請從 Claude 的「連接器」設定發起連線，不要直接開啟此頁。'); return; }
+  sb = window.supabase.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+  $('loginForm').addEventListener('submit', onLogin);
+  $('approveBtn').addEventListener('click', function(){ decide(true); });
+  $('denyBtn').addEventListener('click', function(){ decide(false); });
+  $('signOut').addEventListener('click', async function(){ await sb.auth.signOut(); session = null; show('consent', false); show('loginForm', true); setStatus('請重新登入。'); });
+
+  var s = await sb.auth.getSession();
+  session = s && s.data && s.data.session;
+  if (!session){ setStatus('請先登入。'); show('loginForm', true); return; }
+  await loadConsent();
+}
+
+init().catch(function(){ fail('發生未預期的錯誤，請重新整理頁面或回到 Claude 重新發起連線。'); });
+})();
+</script>
+</body>
+</html>
