@@ -17,7 +17,11 @@
 | weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；9/29已評估三個方向（private+付費/改寫法/換平台加密碼），PPC確認「必須記錄細節」排除改寫法，其餘兩個方向暫緩，優先度讓給看板功能，待之後有餘裕再處理 |
 | 「跨N種計畫」將非政府來源計入公部門計畫參與 | 後端 | Patrick | — | — | 9/29發現：`api/solutions.js`計算`pgc`／`pgList`時納入所有`program_type`，包含非政府平台的「資策會產業調查」（原領域型調查），導致公部門計畫參與度高估，屬語意膨脹；待開規格書，需決定排除清單（至少排除資策會產業調查） |
 | 「領域型調查(人工搜查)」統一改名為「資策會產業調查」 | 資料品質 | Patrick | Patrick | — | 9/29規格已交付Codex（程式碼4檔＋前端3處來源說明）；資料庫3張表（solutions 133筆／program_sources／data_sources SRC-013）由Claude於PR核准後、merge前執行 |
-| 資料海巡稽核頻率制度化：每週輕量檢查＋每月完整稽核 | 資料品質 | Patrick | Patrick | 每週五 | 9/29定案；9/30產出SOP v3（第七節稽核節奏、第十節比對方法與陷阱，並更正一處成因錯誤）與稽核log（補登9/21、新增9/30段落、每週檢查基準表），待上傳`sop/`目錄；首次例行輕量檢查排10/2（五） |
+| 資料海巡稽核頻率制度化：每週輕量檢查＋每月完整稽核 | 資料品質 | Patrick | Patrick | 每週五 | 9/29定案；9/30產出SOP v3（第七節稽核節奏、第十節比對方法與陷阱，並更正一處成因錯誤）與稽核log（補登9/21、新增9/30段落、每週檢查基準表），~~待上傳`sop/`目錄~~ 10/1已確認上傳（SOP含v3與逐筆驗證範例、稽核log含任務C結果，根目錄誤放的副本已移除）；首次例行輕量檢查排10/2（五） |
+| MCP v1.0.2 驗收第4題補測（高雄飯店：拆短詞、分次搜尋取交集） | 後端 | Patrick | — | — | 10/1：策略正確（不設region、用短詞「入住」、產業加權用詞根「旅宿」、判斷需分兩次搜尋取交集），但第二次搜尋因工具權限於重新連線後被重設為「Needs approval」，未送達伺服器（日誌確認最近25分鐘僅1次呼叫）。待PPC把SF資料庫全部工具改為Always allow後重跑；預期交集為`SOL-0911` |
+| MCP v1.0.3：`matches_industry_keyword`旗標、`page_summary`伺服器端統計、`ids_only`模式 | 後端 | Patrick | Patrick | — | 驗收中浮現：Claude連續三次手算筆數出錯（7／13應為8／12；10應為8）、只看前3類產業而誤判「僅一筆列金融」、交集技巧受每次50筆上限所限。前兩項只增加回傳欄位；`ids_only`新增參數，PPC需再重新連線一次。待驗收全部完成後一次部署 |
+| 組長連線SF資料庫MCP | 專案管理 | Patrick | Patrick | — | 驗收完成後進行，組長第一次連線即拿到最新工具清單，不會遇到重新連線問題；使用指南第二節可直接轉給她。擴大到全組PM時，個人版Claude需每人自備方案或改Team方案，並須先確認資策會對「個人帳號存取內部資料庫」的資安規範（PPC回覆目前無規範） |
+| Airtable退場階段1：三條紀錄寫入遷移、移除API的Airtable分支、確認Vercel環境值 | 後端 | Patrick | Patrick | — | 10/1評估（見當日細節）：`api/ask.js`（Ask_Logs）、`api/claude.js`（Search_Logs）、`api/feedback.js`僅寫Airtable，無Supabase路徑；`solutions`／`companies`／`stats`／`cases`四支有`DB_SOURCE_*`雙來源切換，預設`airtable`。待PPC確認Vercel正式環境值（敏感變數看不到值，**驗證法：首頁「累計方案」應為2,268**）。PPC決定三步驟：①移轉Supabase ②Airtable備著 ③移除另兩位使用權、只留PPC（約US$20／月）。不要降到免費方案（筆數上限）；遷移完成後做一次最終完整匯出並撤掉或改唯讀`AIRTABLE_TOKEN` |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -25,7 +29,7 @@
 | S3優先3：全庫周邊表外鍵驗證 | 後端 | Patrick | — | — | 未執行，非急迫 |
 | 農業雲市集數位館（93筆） | 後端 | Patrick | — | — | 9/30編號比對＋Chrome逐筆驗證完成：73正常／1疑似／19已下架。僅剩`SOL-1423`（錢老闆防錯一鍵通）待判：頁面仍在但已改放其他商品，無法排除功能併入同公司其他商品，維持疑似 |
 | data_sources表拆分「主辦單位」與「執行單位」欄位 | 後端 | Patrick | — | — | 9/7排查連結時發現，非急迫 |
-| feedback.html、system-board.html兩條失效連結 | 前端 | Patrick | — | — | 搬移前既有問題 |
+| feedback.html、system-board.html兩條失效連結 | 前端 | Patrick | — | — | 搬移前既有問題。**10/1更正**：先前我寫「feedback.html不存在」未經驗證有誤——`solution-finder`的`public/feedback.html`與`api/feedback.js`都存在（該頁寫入Airtable，見Airtable退場評估）；repo中找不到的是`system-board.html`。待PPC實際開啟網址確認連結是否可用 |
 | 貼標與搜尋排序DEMO | 外部協作 | Rio Hsu | — | 9/11 | 追蹤中，Rio為專案負責人，Patrick工作已結束 |
 | 萬物智通(93056611)疑似空殼重複記錄 | 資料品質 | Patrick | — | — | 0方案掛靠，另一筆(86570312)有1方案但region='其他'待查證實際地址；發現時機為排查該筆region異常時 |
 | gov_registrations 前端能量登錄badge呈現方式 | 前端 | — | Alex | — | 已暫緩，UI方向未定 |
@@ -37,12 +41,24 @@
 | 新增使用者登入紀錄表（login_logs） | 資安 | Patrick | — | — | Phase2已讓session帶有userId，具備記錄基礎，但尚未建表寫入；欄位初步構想：user_id(FK)、login_at、ip_address |
 | 新北產業AI化輔導計畫56筆 vs 官方公告45家落差 | 資料品質 | Patrick | — | — | 8/25稽核log待辦遺留，至今未處理亦未列入追蹤；官方「AI服務供應商方案表.PDF」可比照商業署PDF比對法；首次以完整稽核處理 |
 | 收錄候選清單交ETL評估：新創嚴選17筆、農業雲市集1筆（豬你旺PigDataPro）、SME AI平台1筆（專加點餐通2.0餐飲系統） | 後端 | Patrick | — | — | 9/30比對產出；均為官網有、資料庫尚無的商品，非稽核問題。注意先前名稱比對列的農業雲市集十餘筆「新增候選」幾乎都是改名，已排除 |
-| 確認9/30 Supabase變更未被Airtable同步覆蓋 | 後端 | Patrick | — | 10/1 | 9/30共動約60筆（改名、狀態、簡介、網址、歸屬、19筆升級已下架）；Solutions資料來源為Airtable，需確認無回寫排程（資策會產業調查規格已請Codex查證，尚未交件） |
+| 確認9/30 Supabase變更未被Airtable同步覆蓋 | 後端 | Patrick | — | — | 9/30共動約60筆；**10/1抽查15筆**（改名／狀態／網址／公司歸屬，含`SOL-1405`／`1388`／`1418`／`1423`／`1440`／`1463`／`SME-0175`）全數保留，各來源狀態分布與9/30處置後一致。repo內無排程或同步程式（無Vercel crons、無GitHub Actions），若有同步必在repo外。**未結案**：待PPC確認Airtable是否仍有外部同步（本機腳本、Airtable自動化等），並隨Airtable退場階段1一併結案 |
 | 本機工作區整理（solution-finder-pr-work） | 專案管理 | Patrick | — | — | ~~9/23盤點，8個舊副本待刪除~~ 9/24已刪除8個（內容皆在GitHub）；`api-auth-phase1`經`git cherry`確認4個commit未在GitHub，保留待PR #156復工時確認；taskboard workspace路徑待建立正式工作區後更新 |
 | 「免費試用」按鈕與資料值「提供試用」語意一致性 | 資料品質 | Patrick | — | — | 9/29查證：54筆有效方案無一筆僅標「提供試用」、無一筆描述提及「免費」，判定語意誇大；規格已交付Codex，按鈕文字改為「提供試用」（僅改label，`id: free-trial`不動） |
 | Supabase Egress用量觀察 | 後端 | Patrick | — | — | 9/24查看Free plan本期用量3.27／5GB（約65%），待確認計費週期重置日與主要流量來源 |
 | 待啟用帳號臨時密碼處理 | 資安 | Patrick | — | — | 含臨時密碼的CSV已自Claude Project移除，改存僅含帳號名稱版本；恢復PR #156時需重新產生臨時密碼並要求首次登入修改 |
 | ~~任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑~~ | 專案管理 | Patrick | — | — | 9/29已改用GitHub Projects取代dashi-taskboard／Cloudflare部署路線，此問題隨舊路線放棄而不再適用 |
+| PM需求調查問卷（網頁表單）暫停，恢復時需上傳兩個檔案 | 專案管理 | Patrick | Patrick | — | 10/1頁面與資料庫都已就緒（22題＋Q2b諮詢對象題；必填姓名；存取碼可由連結`?code=`帶入；80項自動測試通過），但**尚未上線**（repo中`docs/pm_survey_20260930.html`不存在、`index.html`未更新）。恢復只需上傳`docs/pm_survey_20260930.html`與根目錄`index.html`，並用真實存取碼自測一份再發給同事。資料表`pm_survey_responses`目前0筆；分析完成後須刪除原始回覆 |
+| `target_industry`多套詞彙正規化 | 資料品質 | Patrick | — | — | 10/1發現：同樣是「金融業」，雲市集寫法「金融保險」（52筆）與主計總處寫法「K金融及保險業」（57筆）並存，前者存成單一字串以「, 」分隔、後者以「；」分隔。官網首頁`api/claude.js`對照表只命中一套（金融52→詞根112、零售225→363）。MCP已改用詞根；治本是建立統一產業分類與對照表（同地區詞彙問題） |
+| 公司所在地缺口：513家公司region與city皆空（影響543筆有效方案，24%） | 資料品質 | Patrick | — | — | 10/1：官網「地區」篩選與MCP的`region`都是公司所在地（`companies.region`），空白者不被任何地區篩選涵蓋；city也全空所以無法反推。每家都有統編，可比照商工登記API批次補地址與北中南東 |
+| `service_region`兩套詞彙並存與缺口 | 資料品質 | Patrick | — | — | 10/1：同一欄位混用「北北基／桃竹苗／中彰投…」與「北部／中部／南部／東部」，另有「離島地區」（4筆）與「離島/其他」（267筆）疑似同義；空白1,064筆（47%）。目前MCP不提供服務範圍篩選，客戶位置類需求（例：高雄飯店找全台可服務的廠商）做不到，列入v1.1候選 |
+| 臺灣雲市集疑似下架方案逐筆驗證（按需求驅動，先做資安61筆） | 資料品質 | Patrick | Patrick | — | 10/1：疑似1,188筆中1,031筆來自臺灣雲市集，原因「平台停止服務未逐筆驗證」（是稽核判斷，**不是偵測機制出問題**）。關鍵字「資安」204筆＝125確認在架＋79疑似（61臺灣雲市集＋18其他）；**61筆`website_url`全空**，無法直接開網址驗證。建議先排除商工登記顯示歇業者，再以廠商官網為逐筆證據，依SOP恢復需逐筆證據 |
+| 官網顯示疑似下架方案的比例（疑似佔前台可見52%） | 前端 | Patrick | Alex | — | 10/1：2,268筆前台可見中1,188筆為疑似（設計決策：未逐筆驗證不隱藏），比例高，使用者可能誤以為皆可用。MCP的回答會標註，官網是否加註標示為產品決策，另案評估 |
+| 搜尋與排序邏輯目前有兩份實作（官網JS＋資料庫函式`sf_search_solutions`） | 後端 | Patrick | — | — | 10/1：以官網自身程式碼為標準答案做28項對照測試確認一致。長期應讓官網改呼叫同一個資料庫函式，單一實作；首頁邏輯改動前須同步修改函式並重跑`sf_search_parity_gen_test.js` |
+| repo存檔：MCP相關檔案 | 專案管理 | Patrick | — | — | 純存檔不影響執行（功能已在Supabase上線）：`migrations/`放`20261001_create_sf_mcp_access.sql`與`20261001_create_sf_mcp_search.sql`；`supabase/functions/sf-mcp/index.ts`（由`sf-mcp_index.ts`改名）；`tests/sf-mcp/`放`sf_search_parity_gen_test.js`（單獨放仍不能一鍵重跑，需補組裝腳本）。不要放`api/`（Vercel會當函式部署）或`public/`（公開） |
+| solution-finder repo缺`.gitignore` | 資安 | Patrick | — | — | 10/1：已查目前repo內無金鑰；但`SUPABASE_SERVICE_ROLE_KEY`同時存在Production／Preview／Development，若在repo資料夾`vercel env pull`再`git add .`，可能把繞過RLS的金鑰推上公開repo。補`.gitignore`（`.env*`、`.vercel`、`node_modules`）為極小PR |
+| 舊HS256 JWT密鑰仍被信任 | 資安 | Patrick | Patrick | — | 10/1查證：JWT Signing Keys目前使用中為ES256（ECC P-256），舊的Legacy HS256為Previous key。**不可按Revoke**：網站的anon／service_role仍是舊密鑰簽的JWT。要真正封死，須先把Vercel換成新式`sb_publishable_`／`sb_secret_`金鑰，再撤銷舊密鑰；獨立加固專案 |
+| `anon`對內部表仍有預設SELECT授權（僅靠RLS無policy擋住） | 資安 | Patrick | — | — | 10/1：已對`authenticated`收斂（寫入類授權全收回、內部表SELECT收回），`anon`尚未做（`users`、`csp_violations`、`solution_reviews`、`solution_status_log`）。目前安全（讀到0筆），只有一層防護；另`consultant`、`admin_role`為不可經API切換的死角色，可清理 |
+| 資料審查：`AgentFlow 智動客服解決方案`摘要與名稱矛盾、同名「A.I.智能客服大使」兩筆 | 資料品質 | Patrick | — | — | 10/1驗收時發現：前者名稱與標語是客服、簡述卻是製造業ERP整合；後者資料庫有兩筆同名方案，欄位命中情況不同，可能是不同公司或重複記錄，尚未查 |
 
 ---
 
@@ -152,5 +168,56 @@ Codex完成匯出（`taskboard-export-solution-finder-20260929-154517.json`）�
 - 全文搜尋「原名／更名／前身／取代」等字樣在10頁中0筆，所有改名皆為同網址＋內容比對的推論，非官網明示
 - 豬你旺PigDataPro（Content 103，波克生醫）與`SOL-1440`ipoc為不同商品，列入收錄候選，不認定為前身
 - 最終：農業雲市集73正常／1疑似／19已下架；全庫可見方案2,268筆
+
+</details>
+
+---
+
+# 2026-10-01
+
+1. **PM需求調查問卷（網頁表單）完成但暫停**：22題＋諮詢對象題，必填姓名，存取碼擋寫入；轉去評估MCP，**尚未上線**
+2. **MCP可行性評估與範圍定案**：官方Supabase MCP的唯讀角色繞過RLS，不能給組員；改自建唯讀MCP（Edge Function＋Supabase Auth OAuth 2.1）；PPC定案「只有我能編輯、MCP唯讀、開放組長查詢」
+3. **MCP資料庫存取模型上線（Step 1）**：白名單表＋RLS政策＋收斂`authenticated`授權，24項情境測試全過
+4. **Spike通過：Claude Max自訂連接器 × Supabase OAuth**，並完成撤權測試（認證≠授權）
+5. **完整工具集v1.0→v1.0.2**：`search_solutions`移植官網篩選與評分，28項對照測試與官網程式碼結果一致；真實資料「北部＝1,292」
+6. **驗收**：v1.0五題全過；v1.0.2第1～3題通過，第4題策略正確、執行被工具核准機制中斷，待補測
+7. **事件：我的ROLLBACK撤銷了兩個函式**：Claude回報找不到函式，查證後修復並立規則
+8. **驗收中浮現的資料品質議題**：「北部」三種定義、產業詞彙多套、疑似下架占比、`website_url`全空等
+9. **Airtable退場評估**：確認剩餘依賴與PPC三步驟，並更正我兩處錯誤判斷
+
+<details>
+<summary>展開細節</summary>
+
+**問卷**：資料表`pm_survey_responses`（RLS開啟；`anon`僅能在帶正確存取碼時INSERT，無任何讀取權限；姓名存獨立欄位`respondent_name`，答案存`answers`jsonb）。設計重點：把訪談的「追問」寫進題目——先問最近一次發生的事、成本做成勾選題（查官網／問同事／做比較表／放棄）、構想放最後只問「遇過」不問「想要」；痛點判定＝3個月內＋至少一項成本行為＋具體描述。PPC指出資服業者之外還有一般企業來諮詢，因此加入Q2b「諮詢對象」並在Q18補三個企業端主題。PPC要求具名，我建議保留存取碼（取消會讓表單變成任何人可寫，名字本身無法驗證）；PPC回覆「保留」。表單邏輯80項自動測試（jsdom）通過；分析SQL（痛點判定、各主題人數、依諮詢對象分群、每人取最新一份）用假資料驗證。**存取碼與帳號不寫入本檔（公開repo）**。
+
+**官方Supabase MCP的風險（本專案實測）**：唯讀模式使用的`supabase_read_only_user`為`rolbypassrls=true`，且對`users`（含密碼雜湊）、`contacts`、`pm_survey_responses`等全部有SELECT。Supabase官方文件也提醒勿連正式環境。結論：僅PPC本人可用，不給組員。
+
+**MCP設計（D1～D6）**：v1唯讀，「只有PPC能編輯」靠「MCP端點根本沒有寫入工具」保證，寫入沿用PPC既有管道（自己的Supabase帳號＋三段式SQL＋留痕）；架構為Supabase Edge Function＋Supabase Auth當OAuth 2.1授權伺服器，工具以登入者身分查詢；權限＝白名單表`sf_mcp_users`＋判斷函式`sf_mcp_ok()`（SECURITY INVOKER；須在白名單**且**權杖帶`client_id`聲明，一般登入無此聲明故讀不到）；撤權＝刪白名單列，即時生效；授權同意頁放GitHub Pages（`oauth/consent.html`），因solution-finder的CSP `connect-src`不含supabase.co。Claude自訂連接器只支援免認證或OAuth 2.1，沒有API金鑰選項，Claude是從Anthropic雲端連入，故端點必須公開、必須OAuth。
+
+**Step 1遷移**（`20261001_create_sf_mcp_access.sql`）：①`sf_mcp_users`（RLS開、使用者只能讀自己那列）②7張表`mcp_read`政策（`solutions`／`companies`／`awards`／`cases`／`gov_registrations`／`industry_codes`／`data_sources`）③`contacts`欄位層級授權，只開`contact_id`／`company_id`／`contact_name`／`title`／`office_phone`，email與手機讀不到④收斂`authenticated`：原13個物件有寫入授權、20個有讀取授權，全收回寫入類；內部表（`users`／`csp_violations`／`solution_reviews`／`solution_status_log`／`program_promotions`／`program_sources`／`company_cdm_categories`／`digital_needs`）收回SELECT；`contacts_masked`（SECURITY DEFINER視圖）收回，advisor的`security_definer_view`錯誤因此少一個。實測24項：白名單＋MCP權杖讀得到（方案2,487／公司1,103／案例115…）、白名單但無`client_id`→0、非白名單→0、12項越權嘗試（讀email／手機／密碼雜湊／問卷／狀態紀錄、改刪、自行加入白名單）全拒、`anon`公開網站不受影響。Supabase Auth原本0使用者，已建2個、關閉公開註冊與匿名登入；JWT簽章金鑰使用中為ES256。
+
+**Spike與撤權測試**：授權同意頁只允許回呼網址為`claude.ai`／`claude.com`的用戶端核准（動態註冊允許任何人註冊用戶端，防同意釣魚），腳本加SRI並鎖定版本，29項測試涵蓋釣魚網址、XSS、轉址安全。日誌證據鏈：動態註冊→同意紀錄→權杖交換→帶權杖的呼叫兩次200。撤權：刪PPC白名單列後`count_solutions`回0／0、`whoami`仍回原帳號；還原後立即回2,487／2,268——**認證與授權是兩件事**。過程中兩個坑：①新對話工具清單沒出現SF資料庫，強制重新整理claude.ai才出現②Claude說「找不到工具」時，我先以日誌判斷（函式只有booted／shutdown、Claude-User的POST皆200、`deployment_id`結尾版本）才確定是Claude端工具清單快取，**新增工具後需Disconnect→Connect**。
+
+**工具集與對照測試**：`sf_search_solutions`（SQL函式，SECURITY INVOKER）逐字移植`public/index.html`的`filteredResults`、`getRelevanceScore`（名稱100／公司80／類別70／標語40／描述30／功能20／標籤10）、`getIndustryScore`（+12）、`detectIndustryKey`、`industryKeyword`（+50，區分大小寫）；以官網自身JS為標準答案，30筆刻意設計的資料×28案例，結果全部一致。真實資料交叉驗證：北部＝1,292、有效2,268、全庫2,487。已知差異：平手以`solution_id`排序（官網依API回傳順序）；不移植`industry_vertical`（`api/solutions.js`把`iv`寫死為空字串，休眠）；不移植名稱排序；比對沿用完整`description`（與官網一致，其中10筆夾帶政府申請表單個資）但只回傳`description_short`。Edge Function依賴鎖定確切版本（`@supabase/middleware@0.5.0`、`@supabase/server@1.7.0`、`@modelcontextprotocol/server@2.0.0`、`zod@4.6.5`），因Deno供應鏈政策擋掉24小時內發布的新版。工具：`describe_data`（資料定義、口語需求→keyword／category／industry_keyword對照）、`search_solutions`、`get_solution`、`data_status`、`whoami`、`count_solutions`。
+
+**v1.0.2改動**（驗收中累積的小改進）：`data_status`加疑似／已下架的原因分布（函式`sf_status_reasons`）；搜尋結果加`industries_count`；`industry_keyword`對照改用詞根；`describe_data`加搜尋技巧；`get_solution`註明email與手機不提供。
+
+**驗收**：①v1.0（5題）：`data_status`、北部筆數（1,292，Claude主動說明定義與543筆缺口）、北部＋AI＋客服（99筆，前5名與資料庫計算完全一致）、`get_solution`（email與手機未漏出）、金融業改善客戶體驗（251筆）。②v1.0.2：`data_status`引用實際原因（153／25／13拆分只存在於新版，日誌確認`deployment`版本4）、金融業（251筆，TinyBook因詞根升至第3名）、`get_solution`（改寫為「未登錄公司電話」）；第4題待補測。
+
+**事件：ROLLBACK撤銷函式**：建立`sf_data_status`、`sf_data_coverage`時，同一次SQL呼叫尾端接了`BEGIN; … ROLLBACK;`測試。整段是同一個隱含交易，ROLLBACK把前面的`CREATE FUNCTION`一起撤銷；測試因在交易內執行而通過。我隨後說「已建立」卻沒有獨立確認。Claude回報`Could not find the function public.sf_data_status without parameters in the schema cache`，查`pg_proc`證實只有`sf_mcp_ok`與`sf_search_solutions`。連帶隱藏：`search_solutions`帶地區條件時呼叫`sf_data_coverage`取缺口說明，函式不存在時被靜默略過。處置：重建（單獨呼叫）、另用呼叫查`pg_proc`含`has_function_privilege`、再測；程式改為取不到時明確警告（v1.0.1）。**規則：DDL與測試分開成不同呼叫；建立後獨立驗證存在。**
+
+**資料品質發現**：
+- 「北部」有三種意思：公司所在地（`companies.region`，官網與MCP採用）、服務範圍（`solutions.service_region`，另一套詞彙）、口語。北部＝1,292筆方案（416家公司）；公司所在地未填543筆（24%，513家公司，city也全空）；服務範圍空白1,064筆（47%）；價格未提供133筆
+- 疑似下架1,188筆（佔全庫48%、佔前台可見52%），其中臺灣雲市集1,031筆（87%）；另雲市集工業館139筆**全部是AI方案**
+- `target_industry`詞彙：金融保險52／K金融及保險業57；客服相關251筆中，明列金融者22筆，**全部列6類以上產業，專用0筆**。名稱／標語含金融詞的2筆是字面誤判（「時間銀行」「文件保險箱」）
+- 「資安」關鍵字204筆＝125確認在架＋79疑似；穩妥回報是給範圍並說明下限依據。類別＝資安合規另有146筆（兩種定義）
+- `SOL-0911`：功能欄僅一處提到金融（OCR可用於金融票據審查，是列舉的應用情境之一），無金管會、資料存放、ISO等合規資訊，`has_certification`＝false
+- 高雄飯店案例：整詞「入住自動化」0筆；`region=南部`會排除總部在台北但全台服務的廠商（`region`是廠商總部，不是客戶位置）；「入住」∩（評論／輿情／口碑／聲量／情緒）五個同義詞全收斂到`SOL-0911`；詞太廣（如「社群」132筆）時取交集會漏
+
+**Airtable退場評估**：Vercel截圖＋程式碼查證——正式環境`DB_SOURCE_SOLUTIONS`／`COMPANIES`／`CASES`皆8/12新增，預設值為`airtable`所以特地設定很可能是`supabase`（推論；敏感變數看不到值）；`SUPABASE_SERVICE_ROLE_KEY`在三個環境都有（9/4）；`api/company-detail.js`用service role讀`contacts`三欄、`api/csp-report.js`用service role寫`csp_violations`（含頻率限制與大小上限），是伺服器端受控寫入的現成範本。PPC三步驟：先移轉到Supabase→Airtable備著→刪除另兩位使用權只留PPC（US$20／月）。我補充：不降免費方案（筆數上限）、「備著」只是遷移前快照需做最終完整匯出、遷完撤掉或改唯讀`AIRTABLE_TOKEN`。PPC只剩自己一人編輯，使「受控寫入MCP」可無限期延後。
+
+**我的錯誤與更正**：（1）ROLLBACK事件（見上）。（2）說「feedback.html不存在」未驗證，實際存在於`public/`。（3）寫「API層沒有任何寫入Supabase」「需新增service role金鑰」——搜尋條件太窄，csp-report.js就會寫、金鑰早已存在。（4）第一次算「金融專用客服3筆」錯：雲市集寫法把整串產業存在同一字串（以「, 」分隔），我只認「；」，把十類算成一類，修正後為0筆。（5）v1.0.2部署時手動貼上檔案，這版未逐字比對線上版與本機版，以日誌的`deployment`版本與回傳欄位間接確認。（6）取交集測試對「社群」等廣詞只檢查前50筆，該列不可信。（7）驗收時Claude連續三次手算筆數出錯（7／13應為8／12；10應為8；稍早漏列一筆），結論：**統計應由伺服器算好，不要讓AI數**。
+
+**方法論收穫**：（1）Claude說找不到工具時，先看日誌分辨Claude端與伺服器端：函式日誌有沒有錯、Claude-User的POST有沒有到、`deployment`版本是哪版。（2）以官網自身程式碼當標準答案做對照測試，比人工比對可靠。（3）回答任何數字都要附定義與缺口，並給範圍而非單一數字。（4）沒有證據時Claude的「為什麼」是推測（例：猜「爬蟲被擋」，實際是稽核判斷的平台停止服務）。（5）不要讓AI手算；有結構化來源就由伺服器回傳統計。（6）「查無資料」本身是有價值的發現，並指向資料缺口。
 
 </details>
