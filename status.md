@@ -15,14 +15,16 @@
 | 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理 |
 | ~~Supabase advisor新增一項RLS policy警示待查證~~ | 資安 | Patrick | — | — | ~~需確認該policy屬讀取或寫入權限~~ 9/24已修正：`source_monitoring_checks`的公開INSERT權限為8/20海巡v1腳本試跑遺留（僅1筆資料），已移除；`source_monitoring_targets`僅開放SELECT，無相同問題 |
 | weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；9/29已評估三個方向（private+付費/改寫法/換平台加密碼），PPC確認「必須記錄細節」排除改寫法，其餘兩個方向暫緩，優先度讓給看板功能，待之後有餘裕再處理 |
-| 「跨N種計畫」將非政府來源計入公部門計畫參與 | 後端 | Patrick | — | — | 9/29發現：`api/solutions.js`計算`pgc`／`pgList`時納入所有`program_type`，包含非政府平台的「資策會產業調查」（原領域型調查），導致公部門計畫參與度高估，屬語意膨脹；待開規格書，需決定排除清單（至少排除資策會產業調查） |
-| 「領域型調查(人工搜查)」統一改名為「資策會產業調查」 | 資料品質 | Patrick | Patrick | — | 9/29規格已交付Codex（程式碼4檔＋前端3處來源說明）；資料庫3張表（solutions 133筆／program_sources／data_sources SRC-013）由Claude於PR核准後、merge前執行 |
+| 「跨N種計畫」將非政府來源計入公部門計畫參與 | 後端 | Patrick | — | — | 9/29發現：`api/solutions.js`計算`pgc`／`pgList`時納入所有`program_type`，包含非政府平台的「資策會產業調查」（原領域型調查），導致公部門計畫參與度高估，屬語意膨脹；待開規格書，需決定排除清單（至少排除資策會產業調查）；10/2提醒：來源已改名，排除清單須使用新名「資策會產業調查」 |
+| ~~「領域型調查(人工搜查)」統一改名為「資策會產業調查」~~ | 資料品質 | Patrick | Patrick | — | **10/2完成**：PR #199 merge並部署後，資料庫改名（`solutions` 133筆、`program_sources` 1筆、`data_sources` SRC-013 1筆，單一交易含筆數檢查），驗證新名133／舊名0、全庫2,487與前台可見2,268不變；官網來源篩選132筆（133筆含1筆已下架）。遷移檔`20261002_rename_iii_industry_survey.sql`已存檔。待PPC看一眼詳情頁的「非政府審核」揭露說明與`sources.html`顯示數字 |
 | 資料海巡稽核頻率制度化：每週輕量檢查＋每月完整稽核 | 資料品質 | Patrick | Patrick | 每週五 | 9/29定案；9/30產出SOP v3（第七節稽核節奏、第十節比對方法與陷阱，並更正一處成因錯誤）與稽核log（補登9/21、新增9/30段落、每週檢查基準表），~~待上傳`sop/`目錄~~ 10/1已確認上傳（SOP含v3與逐筆驗證範例、稽核log含任務C結果，根目錄誤放的副本已移除）；首次例行輕量檢查排10/2（五） |
-| MCP v1.0.2 驗收第4題補測（高雄飯店） | 後端 | Patrick | — | — | 10/1策略正確但第二次搜尋因工具權限重設未送達；**10/2仍待補測**（需先把6個工具改回Always allow，重新連線後會被重設）。v1.0.3已於10/2部署，不影響此題 |
-| ~~MCP v1.0.3：`matches_industry_keyword`旗標、`page_summary`伺服器端統計、`ids_only`模式~~ | 後端 | Patrick | Patrick | — | **10/2已部署v1.0.3（Edge Function第5版）**：`page_summary`（正常／疑似／未填地區／在名冊／命中產業詞由伺服器計算）、`matches_industry_keyword`、稅籍欄位（`tax_primary_industry`、`it_code_rank`、get_solution的`tax_industries`）、describe_data新增第八節。**未改工具參數，不需重新連線**。`ids_only`改列v1.1與服務範圍篩選一起 |
-| Codex：稅籍主業標示（只標示不排序） | 前端 | Patrick | Patrick | — | 10/2規格已交付（`codex_規格書_稅籍主業標示_2026-10-02.md`）：`api/solutions.js`第167行select加`it_code_rank,tax_primary_name`、第319／421行輸出`tax`／`itr`；`index.html`第1498／1603行加兩個badge；`manufacturing.html`新增`getTaxBadgeHtml`（需轉義）。不得改排序、篩選、`pgc`；不執行SQL。驗收：思偉達顯示「稅籍主業：電腦及電腦週邊設備批發」且無資服標籤；三組關鍵字前20名與main相同 |
-| 組長連線SF資料庫MCP | 專案管理 | Patrick | Patrick | — | 驗收完成後進行，組長第一次連線即拿到最新工具清單，不會遇到重新連線問題；使用指南第二節可直接轉給她。擴大到全組PM時，個人版Claude需每人自備方案或改Team方案，並須先確認資策會對「個人帳號存取內部資料庫」的資安規範（PPC回覆目前無規範） |
-| 稅籍名冊比對匯入後續：3家登記地與SF city不同、254家不在名冊、排序分三階段 | 資料品質 | Patrick | Patrick | — | 10/2已完成資料庫第一階段（詳見當日細節）。待決：①`22023793`／`50767268`／`83764072`的SF city（高雄／台南／彰化）與稅籍登記地（新北／臺北）不同，疑為營運據點vs登記地，**未覆蓋**；②254家不在名冊，建議用財政部開放資料最新月檔補查；③排序：先標示→平手加分→加權，權重由Alex／組長拍板 |
+| ~~MCP v1.0.2 驗收第4題補測（高雄飯店）~~ | 後端 | Patrick | — | — | **10/2通過**：工具權限改為Always allow後重跑，日誌顯示07:43連續10個請求全200、版本5，兩次搜尋都送達；Claude不設region、拆短詞「入住」「評論」分次搜尋，取交集得`SOL-0911`；引用`page_summary`的數字（23筆、前15筆11正常／4疑似）與資料庫完全一致。v1.0.2驗收4／4完成 |
+| ~~MCP v1.0.3：`matches_industry_keyword`旗標、`page_summary`伺服器端統計、`ids_only`模式~~ | 後端 | Patrick | Patrick | — | **10/2已部署v1.0.3（Edge Function第5版）**：`page_summary`（正常／疑似／未填地區／在名冊／命中產業詞由伺服器計算）、`matches_industry_keyword`、稅籍欄位（`tax_primary_industry`、`it_code_rank`、get_solution的`tax_industries`）、describe_data新增第八節。**未改工具參數，不需重新連線**。`ids_only`改列v1.1與服務範圍篩選一起；**同日再部署v1.0.4**（Edge Function第6版）：修正獲獎少報——官網「獲獎肯定」來自`awards`（公司層級），MCP原只讀`solutions.has_award`，有效方案中49筆vs272筆。新增搜尋結果`has_company_award`／`company_award_count`／`company_award_best_level`與`get_solution`的`company_awards`，`describe_data`第九節說明。未改工具參數，不需重新連線。官網另有「資安CDM分類」「案例實績佐證」「跨N種計畫」三個信任訊號MCP尚未帶，列v1.1評估 |
+| ~~Codex：稅籍主業標示（只標示不排序）~~ | 前端 | Patrick | Patrick | — | **10/2完成**：PR #200 merge並於正式站驗證——思偉達卡片顯示「稅籍主業：電腦及電腦週邊設備批發」且無資服標籤（rank 2）、搜尋「客服」仍251筆、排序未變；審查時確認3檔改動、`escapeHtml`、匿名身分可讀新欄位（1,103家全讀得到）、與#199三方合併0衝突。Codex多補了`api/solutions.js`的資料列→公司物件對應（規格書漏列，必要） |
+| 組長連線SF資料庫MCP（驗收項目d） | 專案管理 | Patrick | Patrick | — | **10/2邀請信已備妥**（設定6步＋測試1～6，標準答案換成補完地區後的新數字：公司所在地未填291、北部1,475、北部＋AI＋客服112；密碼另行私訊）。待組長完成測試1（`whoami`）後，以日誌確認請求來自她的user id、版本5，即完成MCP整體驗收。擴大到全組PM時，個人版Claude需每人自備方案或改Team方案，並須先確認資策會對「個人帳號存取內部資料庫」的資安規範（PPC回覆目前無規範）。組長若離職或停用，撤權＝刪除白名單一列，即時生效（10/1已測） |
+| 稅籍名冊比對匯入後續：3家登記地與SF city不同、254家不在名冊、排序分三階段 | 資料品質 | Patrick | Patrick | — | 10/2已完成資料庫第一階段與前端「標示」階段（PR #200）；排序仍未動。待決：①`22023793`／`50767268`／`83764072`的SF city（高雄／台南／彰化）與稅籍登記地（新北／臺北）不同，疑為營運據點vs登記地，**未覆蓋**；②254家不在名冊，建議用財政部開放資料最新月檔補查；③排序：先標示→平手加分→加權，權重由Alex／組長拍板 |
+| 儀表板「近期更新」新增「資料維護」區塊（Codex） | 前端 | Patrick | Patrick | — | 10/2發現「近期更新」只依`created_at`計算新增：當天849家公司被修改，三格仍+0、最新項目停在35天前。PPC選**加「資料維護」欄**。資料庫函式`maintenance_activity(p_days)`已建（`SECURITY DEFINER`、只回彙總、含`__total__`不重複總數，匿名直讀留痕表仍被擋）；預期值方案校正39、公司補充849；規格書`codex_規格書_儀表板資料維護區塊_2026-10-02.md`已備妥，**待PPC貼給Codex**（只改`api/stats.js`、`public/dashboard.html`，失敗隔離、僅`textContent`）。審查要點：標題數字取`__total__`不得相加；既有數字不變（案例+0／85、方案+0／2,268、公司+0／1,102） |
+| 收回`anon`對12張內部表的寫入類授權 | 資安 | Patrick | Patrick | — | 10/2查證：匿名身分在14個物件有INSERT／UPDATE／DELETE／TRUNCATE授權（12張內部表＋1個視圖＋1張問卷表；**收斂完成前不在公開檔案列出表名**，清單留在對話紀錄，收斂後補入）。**目前無法利用**：12張表RLS啟用且無anon寫入policy，`pm_survey_responses`為刻意的帶存取碼INSERT，`companies_public`為`security_invoker`且匿名對`companies`無寫入授權。風險是只剩RLS一層（9/10`solution_reviews`漏開RLS為先例）；`TRUNCATE`不受RLS約束，但網站API不會執行。建議`REVOKE INSERT, UPDATE, DELETE, TRUNCATE ... FROM anon`（保留`pm_survey_responses`的INSERT），對網站功能零影響；**待PPC核准後三段式執行**，並連同SELECT授權一起處理 |
 | Airtable退場階段1：三條紀錄寫入遷移、移除API的Airtable分支、確認Vercel環境值 | 後端 | Patrick | Patrick | — | 10/1評估（見當日細節）：`api/ask.js`（Ask_Logs）、`api/claude.js`（Search_Logs）、`api/feedback.js`僅寫Airtable，無Supabase路徑；`solutions`／`companies`／`stats`／`cases`四支有`DB_SOURCE_*`雙來源切換，預設`airtable`。~~待PPC確認Vercel正式環境值~~ **10/2確認首頁累計方案2,268＝Supabase**，`DB_SOURCE_SOLUTIONS`確定為supabase（companies／cases合理推斷同），前提成立；另Airtable Companies匯出僅871家（Supabase 1,103），Airtable已落後。待寫Codex規格書。PPC決定三步驟：①移轉Supabase ②Airtable備著 ③移除另兩位使用權、只留PPC（約US$20／月）。不要降到免費方案（筆數上限）；遷移完成後做一次最終完整匯出並撤掉或改唯讀`AIRTABLE_TOKEN` |
 
 ### P2
@@ -44,13 +46,13 @@
 | 新北產業AI化輔導計畫56筆 vs 官方公告45家落差 | 資料品質 | Patrick | — | — | 8/25稽核log待辦遺留，至今未處理亦未列入追蹤；官方「AI服務供應商方案表.PDF」可比照商業署PDF比對法；首次以完整稽核處理 |
 | 收錄候選清單交ETL評估：新創嚴選17筆、農業雲市集1筆（豬你旺PigDataPro）、SME AI平台1筆（專加點餐通2.0餐飲系統） | 後端 | Patrick | — | — | 9/30比對產出；均為官網有、資料庫尚無的商品，非稽核問題。注意先前名稱比對列的農業雲市集十餘筆「新增候選」幾乎都是改名，已排除 |
 | 每週輕量檢查基準缺口：雲市集工業館只看了三頁之一 | 資料品質 | Patrick | — | 10/9 | 10/2首次輕量檢查發現`data_sources`登記工業館有三頁（SRC-003 AI工具庫方案、SRC-004 Lite版、SRC-005 雲端解決方案），基準只看SRC-005（111／10頁，+5）；139筆疑似來自SRC-003、SRC-004為6月39→8月126。資料庫329筆全無網址無法對應頁面，完整稽核須三頁合併清單以正規化名稱比對。下週先補另兩頁基準，再排完整稽核 |
-| 商業服務業專區117家名單所屬系列未記錄 | 資料品質 | Patrick | Patrick | — | 10/2輕量檢查：`data_sources`標「計畫名稱/年度/協辦單位待補」，無法判斷9/02「提升商業服務業營運效能強化韌性計畫 整合型補助第三梯次入選名單」是否同系列；10/01另有單店導入方案上架受理（10/1～10/20）。待PPC確認來源公告 |
+| ~~商業服務業專區117家名單所屬系列未記錄~~ | 資料品質 | Patrick | Patrick | — | **10/2結案**：117筆＝「提升商業服務業營運效能強化韌性計畫（個案補助－單店導入）AI解決方案入選名單」（服務提供者上架的有標價方案，非整合型補助的店家名單）。證據：Chrome比對14家公司全在`service-ai.php`提供者名單、整合型第三梯16家與本庫0家重疊；我補：第一梯名單PDF前20筆19筆在本庫、`SOL-BIZ-0001`起依PDF序號排列。`data_sources` SRC-002已補計畫名稱／年度／執行單位，並移除貼錯的工業館計畫頁網址。**未完成**：第二梯（7/15公告）逐筆比對、網站約300筆而本庫僅117筆（在精不在多，不擴充，但要記錄覆蓋範圍）、第三梯受理至10/20後的新名單追蹤 |
 | 政府軟體採購網基準建立：本庫100筆為同仁挑選子集，與網站總數不可比 | 資料品質 | Patrick | — | — | 10/2：網站套裝軟體5,804／雲端服務36／資安健診27；本庫100筆（資安合規67等）7/21由III同仁提供、81筆無網址。每週只看存活與最新消息日期 |
 | ~~舊空專案`Pcc329's Project`與9/10演練測試專案~~ | 資安 | Patrick | — | — | 10/2兩者皆已刪除。空專案查證：Storage下載為22 bytes空zip；Resume後0張資料表、0使用者、Storage從未初始化、9.7MB系統基本大小，repo無引用。組織只剩正式站，12月季度演練有名額 |
 | 備份SKILL改進：密碼寫在指令裡會進PowerShell歷史；歷史參考數字缺9/24與10/2 | 資安 | Patrick | — | — | 10/2週備份5.56MB（9/10為5.01MB，+11%合理：csp_violations 433筆、兩輪稽核留痕、MCP表）。建議改用環境變數或備份後清除歷史；SKILL為PPC外掛，由PPC更新 |
 | ~~確認9/30 Supabase變更未被Airtable同步覆蓋~~ | 後端 | Patrick | — | — | 10/1抽查15筆保留、repo無同步程式；10/2確認官網讀Supabase、Airtable已落後232家且無回寫，**結案** |
 | 本機工作區整理（solution-finder-pr-work） | 專案管理 | Patrick | — | — | ~~9/23盤點，8個舊副本待刪除~~ 9/24已刪除8個（內容皆在GitHub）；`api-auth-phase1`經`git cherry`確認4個commit未在GitHub，保留待PR #156復工時確認；taskboard workspace路徑待建立正式工作區後更新 |
-| 「免費試用」按鈕與資料值「提供試用」語意一致性 | 資料品質 | Patrick | — | — | 9/29查證：54筆有效方案無一筆僅標「提供試用」、無一筆描述提及「免費」，判定語意誇大；規格已交付Codex，按鈕文字改為「提供試用」（僅改label，`id: free-trial`不動） |
+| 「免費試用」按鈕與資料值「提供試用」語意一致性 | 資料品質 | Patrick | — | — | 9/29查證：54筆有效方案無一筆僅標「提供試用」、無一筆描述提及「免費」，判定語意誇大；規格已交付Codex，按鈕文字改為「提供試用」（僅改label，`id: free-trial`不動）；10/2查證`main`仍為「免費試用」（`index.html`第107行），Codex尚未交付，開放PR僅剩#156 |
 | Supabase Egress用量觀察 | 後端 | Patrick | — | — | 9/24查看Free plan本期用量3.27／5GB（約65%），待確認計費週期重置日與主要流量來源 |
 | 待啟用帳號臨時密碼處理 | 資安 | Patrick | — | — | 含臨時密碼的CSV已自Claude Project移除，改存僅含帳號名稱版本；恢復PR #156時需重新產生臨時密碼並要求首次登入修改 |
 | ~~任務看板：Codex沙箱帳號呼叫taskctl需走完整路徑~~ | 專案管理 | Patrick | — | — | 9/29已改用GitHub Projects取代dashi-taskboard／Cloudflare部署路線，此問題隨舊路線放棄而不再適用 |
@@ -61,11 +63,15 @@
 | 臺灣雲市集疑似下架方案逐筆驗證（按需求驅動，先做資安61筆） | 資料品質 | Patrick | Patrick | — | 10/1：疑似1,188筆中1,031筆來自臺灣雲市集，原因「平台停止服務未逐筆驗證」（是稽核判斷，**不是偵測機制出問題**）。關鍵字「資安」204筆＝125確認在架＋79疑似（61臺灣雲市集＋18其他）；**61筆`website_url`全空**，無法直接開網址驗證。建議先排除商工登記顯示歇業者，再以廠商官網為逐筆證據，依SOP恢復需逐筆證據 |
 | 官網顯示疑似下架方案的比例（疑似佔前台可見52%） | 前端 | Patrick | Alex | — | 10/1：2,268筆前台可見中1,188筆為疑似（設計決策：未逐筆驗證不隱藏），比例高，使用者可能誤以為皆可用。MCP的回答會標註，官網是否加註標示為產品決策，另案評估 |
 | 搜尋與排序邏輯目前有兩份實作（官網JS＋資料庫函式`sf_search_solutions`） | 後端 | Patrick | — | — | 10/1：以官網自身程式碼為標準答案做28項對照測試確認一致。長期應讓官網改呼叫同一個資料庫函式，單一實作；首頁邏輯改動前須同步修改函式並重跑`sf_search_parity_gen_test.js` |
-| repo存檔：MCP相關檔案 | 專案管理 | Patrick | — | — | 純存檔不影響執行（功能已在Supabase上線）：`migrations/`放`20261001_create_sf_mcp_access.sql`與`20261001_create_sf_mcp_search.sql`；`supabase/functions/sf-mcp/index.ts`（由`sf-mcp_index.ts`改名）；`tests/sf-mcp/`放`sf_search_parity_gen_test.js`（單獨放仍不能一鍵重跑，需補組裝腳本）。不要放`api/`（Vercel會當函式部署）或`public/`（公開） |
+| ~~repo存檔：MCP相關檔案~~ | 專案管理 | Patrick | — | — | **10/2完成**：`solution-finder`的`supabase/functions/sf-mcp/index.ts`（v1.0.4）、`migrations/`四個SQL（access、search、company_tax_industry、rename_iii_industry_survey）、`tests/sf-mcp/sf_search_parity_gen_test.js`；`weekly-report`的`status.md`與`sop/freshness-audit-log.md`。皆以雜湊逐位元組核對（測試產生器僅一行註解多2個尾端空白，無影響），機密掃描0命中。函式原始碼與Supabase線上版為**間接**一致（同源檔案、部署回傳ACTIVE、新欄位在驗收中出現），未從線上讀回比對。測試產生器單獨仍不能一鍵重跑 |
 | solution-finder repo缺`.gitignore` | 資安 | Patrick | — | — | 10/1：已查目前repo內無金鑰；但`SUPABASE_SERVICE_ROLE_KEY`同時存在Production／Preview／Development，若在repo資料夾`vercel env pull`再`git add .`，可能把繞過RLS的金鑰推上公開repo。補`.gitignore`（`.env*`、`.vercel`、`node_modules`）為極小PR |
 | 舊HS256 JWT密鑰仍被信任 | 資安 | Patrick | Patrick | — | 10/1查證：JWT Signing Keys目前使用中為ES256（ECC P-256），舊的Legacy HS256為Previous key。**不可按Revoke**：網站的anon／service_role仍是舊密鑰簽的JWT。要真正封死，須先把Vercel換成新式`sb_publishable_`／`sb_secret_`金鑰，再撤銷舊密鑰；獨立加固專案 |
-| `anon`對內部表仍有預設SELECT授權（僅靠RLS無policy擋住） | 資安 | Patrick | — | — | 10/1：已對`authenticated`收斂（寫入類授權全收回、內部表SELECT收回），`anon`尚未做（`users`、`csp_violations`、`solution_reviews`、`solution_status_log`）。目前安全（讀到0筆），只有一層防護；另`consultant`、`admin_role`為不可經API切換的死角色，可清理 |
-| 資料審查：`AgentFlow 智動客服解決方案`摘要與名稱矛盾、同名「A.I.智能客服大使」兩筆 | 資料品質 | Patrick | — | — | 10/1驗收時發現：前者名稱與標語是客服、簡述卻是製造業ERP整合；後者資料庫有兩筆同名方案，欄位命中情況不同，可能是不同公司或重複記錄，尚未查 |
+| 資料審查：`AgentFlow 智動客服解決方案`摘要與名稱矛盾、同名「A.I.智能客服大使」兩筆 | 資料品質 | Patrick | — | — | 10/1驗收時發現：前者名稱與標語是客服、簡述卻是製造業ERP整合；後者資料庫有兩筆同名方案，欄位命中情況不同，可能是不同公司或重複記錄，尚未查；10/2補：全庫有效方案中「同名＋同公司」重複組95組、涉及198筆（多為同一產品同時上架多個平台，如SME AI平台／臺灣雲市集／雲市集工業館），詳見P2「重複列」；另`SOL-0491`方案名稱為「缺」（已標已下架_資料異常） |
+| 跨平台重複列：同名＋同公司95組、198筆；「累計方案」計來源列數而非不重複產品 | 資料品質 | Patrick | Alex | — | 10/2驗收評論搜尋時發現同一方案出現兩次。成因是同一產品上架多個平台各存一列。影響：搜尋結果重複、儀表板「累計2,268」不等於2,268個不同產品、所有「有幾筆」的回答。**產品決策**：一個產品一列，還是一個平台上架一列（目前）；需與Alex討論，勿先改資料 |
+| 205筆有效方案沒有公司編號（約9%） | 資料品質 | Patrick | — | — | 10/2：搜尋結果顯示公司名為空、地區不明、稅籍與獲獎皆查不到（例：「快好評」「AI智慧社群互動」）。需查是公司尚未建檔或編號漏填 |
+| 系統性權限防線：新表預設權限與每月授權稽核 | 資安 | Patrick | — | — | 10/2：Supabase建新表時預設把完整權限給`anon`與`authenticated`，今天兩張新表是手動收回的。建議`ALTER DEFAULT PRIVILEGES`改為最小權限，並在每月稽核加一項「列出anon／authenticated寫入類授權與預期比對」；MCP路徑已實測無任何寫入途徑（見當日細節） |
+| MCP信任訊號缺口：資安CDM分類、案例實績佐證、跨N種計畫 | 後端 | Patrick | — | — | 10/2：官網卡片有、MCP未帶；獲獎已於v1.0.4補上。CDM表已對`authenticated`收回SELECT，若要提供需先評估；v1.1依組長測試6的真實問題決定優先序，另含`ids_only`模式與服務範圍篩選 |
+| 備份檔完整性三項檢查未回報；下次備份才含新表 | 資安 | Patrick | — | — | 10/2備份5.56MB於15:00前完成，**不含**之後新增的`company_tax_industry`與`company_field_log`（下次備份才會有）。完整性檢查（結尾標記、`CREATE TABLE public.`應20張、關鍵表COPY）PPC未回報，選做 |
 
 ---
 
@@ -231,15 +237,24 @@ Codex完成匯出（`taskboard-export-solution-finder-20260929-154517.json`）�
 
 ---
 
+---
+
 # 2026-10-02
 
-1. **開工掃描**：資料庫、CSP（正式站連續3天零新增）、MCP、文件皆穩定；Codex三件（免費試用label、資策會產業調查改名、`.gitignore`）仍未交件；本週封存未做
-2. **首次每週輕量檢查（Chrome）**：三大來源持平；**發現雲市集工業館基準只涵蓋三頁之一**，漏掉疑似最多與成長最快的兩頁；政府軟體採購網建立基準；商業服務業專區有新公告但117家所屬系列未記錄
-3. **週備份 5.56 MB**（+11%合理）；**刪除兩個多餘專案**（演練測試專案、從未使用的空專案），組織只剩正式站
-4. **確認官網讀 Supabase**：首頁累計方案 2,268；Airtable 已落後 232 家，退場階段1前提成立
+1. **開工掃描**：資料庫穩定、CSP正式站連續3天零新增、MCP今早有被使用；Codex三件（免費試用label、資策會產業調查改名、`.gitignore`）仍未交件；本週封存未做
+2. **首次每週輕量檢查（Chrome）**：三大來源持平；**發現雲市集工業館基準只涵蓋三頁之一**，漏掉疑似最多與成長最快的兩頁；政府軟體採購網建立基準
+3. **週備份5.56 MB＋刪除兩個多餘Supabase專案**（9/10演練測試專案、從未使用的空專案），組織只剩正式站
+4. **確認官網讀Supabase**：首頁累計方案2,268；Airtable已落後232家，退場階段1前提成立
 5. **稅籍名冊可行性評估→定案→執行**：只充實現有1,103家；849家寫入4碼行業代號與順序、補346家地區、留痕1,541筆；「先標示不排序」
-6. **Codex 規格書：稅籍主業標示**（只標示、不改排序）已交付
-7. **MCP v1.0.3 部署**：稅籍欄位、`matches_industry_keyword`、伺服器端 `page_summary`；不需重新連線
+6. **商業服務業專區117筆來源結案**：是單店導入入選名單（服務提供者上架的有標價方案），不是整合型補助；`data_sources` SRC-002補齊並移除貼錯的網址
+7. **PR #200（稅籍主業標示）merge並於正式站驗證**
+8. **PR #199（資策會產業調查改名）merge後，資料庫同步改名**（3張表135列，單一交易），官網來源篩選132筆
+9. **MCP v1.0.2驗收4／4完成；部署v1.0.3與v1.0.4**：v1.0.4修正獲獎少報（49筆vs272筆）
+10. **組長邀請信備妥**；MCP驗收項目d待她完成測試1
+11. **儀表板「近期更新」名實不符**：只算新建立、不含資料校正；PPC選「新增資料維護區塊」，資料庫函式完成、Codex規格書備妥
+12. **資安查證**：MCP路徑實測無任何寫入途徑；匿名身分在12張內部表有寫入類授權（被RLS擋住，待收斂）
+13. **repo存檔全部完成**（`solution-finder` 5檔、`weekly-report` 2檔，雜湊逐檔核對、機密掃描0命中）
+14. **週報與status封存**
 
 <details>
 <summary>展開細節</summary>
@@ -252,6 +267,8 @@ Codex完成匯出（`taskboard-export-solution-finder-20260929-154517.json`）�
 
 **官網資料來源確認**：首頁「AI 將從 2,268 筆方案中精選」「累計方案 2,268 筆」＝Supabase 當日前台可見數，證明 `DB_SOURCE_SOLUTIONS=supabase`（Airtable 未同步9/30變更，不可能剛好2,268）；companies／cases 同日設定、合理推斷相同，可用儀表板公司數1,103驗證。Airtable Companies 匯出871家 vs Supabase 1,103。「9/30變更被覆蓋」疑慮結案。
 
+**確認開啟的網站版本與資料庫一致**：PPC貼來來源篩選截圖——「資策會產業調查」chip旁有「？」提示，篩出132筆，第一筆「中後台第1個使用帳號」（科威資訊）同時顯示「稅籍主業：其他資料處理、主機及網站代管服務」與「資訊服務為主要登記項目」（代號631299屬63且排第1），表示#199與#200協同運作。
+
 **稅籍名冊（資服業者總表_0130，63,114筆）**：
 - 本質：財政部營業登記擷取，6位數行業代號最多4個（未填為0）、組織別、資本額、設立日期（民國）、縣市100%填寫。PPT第7頁：以**25個行業代號**過濾167萬筆再刪資本額≤1,000得63,573筆，代號含46批發（464111電腦設備批發19,667家、464112套裝軟體批發8,595家）、48零售、58軟體出版、27／77／85／95周邊，**不只62/63**，故51%列無62/63是設計使然
 - 重疊：SF 1,103家中849家（77%）在名冊；62/63位置：第1碼424、第2碼141、第3碼91、第4碼29、無164、不在名冊254。名冊「新創公司V」＝設立2018年後，與SF `is_startup` 定義不同，不覆蓋。29列重複統編（4個內容不同）取第一列；一格含四代號者拆開；5碼代號（13099、32212）略過；429099無名稱
@@ -262,8 +279,24 @@ Codex完成匯出（`taskboard-export-solution-finder-20260929-154517.json`）�
 - 設計原則：資料庫存數字（`it_code_rank`，NULL≠0），畫面顯示事實（「稅籍主業：○○」），62/63在第1碼者加「資訊服務為主要登記項目」小標籤；對外用「稅籍登記」字眼不說「主力業務」；排序分三階段（標示→平手加分→加權），不整批匯入6萬家（在精不在多）。實例：思偉達（AI客服）稅籍第1碼為電腦設備批發、rank 2，直接加權會把合理結果往下壓
 - 產出：`稅籍名冊比對匯入_可行性評估_2026-10-02.md`、`稅籍比對結果_SF1103家_2026-10-02.csv`、`20261002_company_tax_industry.sql`（含回滾）、`codex_規格書_稅籍主業標示_2026-10-02.md`
 
-**MCP v1.0.3**（Edge Function第5版）：`search_solutions` 回傳每筆 `tax_primary_industry`、`it_code_rank`、`matches_industry_keyword`，以及伺服器端 `page_summary`（正常／疑似／未填地區／在名冊／命中產業詞），notes 要求引用 page_summary 不要自行點算（10/1驗收Claude連續三次手算出錯）；`get_solution` 公司欄位加三欄並回傳 `tax_industries` 清單；`describe_data` 新增第八節稅籍說明。型別檢查通過；以組長MCP權杖與anon實測新表可讀、`company_field_log` 兩者皆拒。未改工具參數，不需重新連線。`ids_only` 改列v1.1。
+**商業服務業專區117筆來源結案**：`data_sources` SRC-002原記「計畫名稱／年度／協辦單位待補」，且備註的「另一參考網址」（`sme.gov.tw/drsme/…plan_more?id=ecf4d02e…`）我抓下來一看，頁面是**雲市集工業館－雲端解決方案**（產業發展署／中國生產力中心），為8/26貼錯。我寫了Chrome任務請它以14家公司名稱比對各候選公告：14家全部出現在`service-ai.php`提供者名單（17頁、每頁約18筆，全站約300筆，並非原記的「僅18筆精選頁」）；整合型補助第三梯（9/02）入選名單16家為一般店家（天仁茶業、全國電子、統一精工），與本庫0家重疊。兩份單店導入名單PDF Chrome讀不到，我從搜尋結果的文字層取得第一梯（2026-04-15公告，smebiz nid=228）前20筆，**19筆在本庫**，且`SOL-BIZ-0001`起編號依PDF序號排列（唯一未收：序號7組合方案）。結論：117筆＝「提升商業服務業營運效能強化韌性計畫（個案補助－單店導入）AI解決方案入選名單」，第二梯（2026-07-15公告，nid=248）推定亦含在內（7/21匯入、`SOL-BIZ-0022／0023`的MantaGO等重複方案），待逐筆比對。業者流程是先入選、再於`service-ai.php`上架，所以頁面方案帶標價與「10／30／50人版」。已更新SRC-002（計畫名稱、年度115年、執行單位TISSA、技術備註更正、備註移除貼錯網址並寫明證據）；其他12列未被動到。第三梯上架申請受理2026-10-01～10-20，名單預計10/20後公告。
 
-**我的錯誤與更正**：（1）稅籍比對結果中把3家寫成「現有資料的錯誤」，執行快照才看到它們SF有填city，是登記地與營運地差異，未覆蓋；（2）第一次把名冊「優先選62/63」當前提，PPT證明是25個代號；（3）status更新腳本一度因字串引號失敗，重跑。
+**PR #200與#199的審查、合併順序與資料庫改名**：GitHub API被限流、`.diff`網址被轉到我連不到的主機，改用`codeload`下載各PR的`refs/pull/N/head`與main逐檔比對。#200：3檔改動與規格一致，`manufacturing.html`的`item.tax`有`escapeHtml`、`.badge-indigo`本來就有、`.badge-slate`新增；Codex多補`api/solutions.js`的資料列→公司物件對應（必要，規格書漏列）；合併前實測匿名身分以PR的欄位清單讀`companies`，1,103家全部讀得到（848家有主業名稱，1家第一個代號無名稱故不顯示），排除「匿名身分讀不到新欄位導致`/api/solutions`整個失敗」的部署風險。#199：前端改`PROGRAMS`、`sources.html`、`dashboard.html`、`strategy-guide.html`並加「非政府審核」揭露；風險是**前端以字串精確比對`program_type`而資料庫仍是舊名**，不同步改則來源篩選0筆、揭露說明不顯示。兩PR在`index.html`、`manufacturing.html`的三方合併預演0衝突。順序：先merge #200並於正式站驗證→merge #199→Vercel Ready→資料庫改名。選「先merge、後改資料庫」的理由是#199部署若出問題要revert時資料庫仍是舊名，回復最乾淨。舊名存在3處（`solutions.program_type` 133筆、`program_sources` 1筆、`data_sources.source_name` 1筆SRC-013），先確認`program_type`無外鍵、`program_sources`主鍵為`program_type`但新名不存在、三表無觸發器，單一交易內做筆數檢查（不符即回滾），之後另開呼叫驗證：新名133、舊名0、全庫2,487、前台可見2,268不變、來源種類10；MCP`data_status`顯示「資策會產業調查：正常132／疑似0／已下架1／共133」。官網篩選132筆（133筆含1筆已下架不顯示）。遷移檔`20261002_rename_iii_industry_survey.sql`已存檔（含回滾）。
+
+**MCP v1.0.2驗收完成，v1.0.3與v1.0.4**：第4題補測通過（日誌07:43連續10個請求全200、版本5；Claude引用`page_summary`的數字與資料庫完全一致）。v1.0.3：搜尋結果與`get_solution`帶稅籍欄位、`matches_industry_keyword`旗標、伺服器端`page_summary`；`ids_only`改列v1.1。**v1.0.4（Edge Function第6版）**：10/2下午在官網截圖發現思偉達卡片有「獲獎肯定」而MCP回報「獲獎／認證：無」，查證官網取自`awards`（公司層級，思偉達有2024年國家級數位新創應用獎勵計畫），MCP只讀`solutions.has_award`，**有效方案中has_award=true僅49筆，但公司在awards有紀錄的有效方案達272筆，少報約5倍**。修正：搜尋結果加`has_company_award`／`company_award_count`／`company_award_best_level`（國際級＞國家級＞產業級）與`page_summary.with_company_award`，`get_solution`加`company_awards`（最多10筆），`describe_data`新增第九節（獲獎是公司層級、不代表方案本身得獎）。實測發現`awards`的欄位語意與我假設**相反**：`award_category`存層級（國家級／產業級／國際級），`award_level`存得獎結果（獲獎、金獎、精品獎），照猜寫會把層級判斷寫反。驗證：型別檢查通過、層級判斷6案例單獨測試全過、組長MCP權杖讀得到`awards`（148筆、79家公司）、`get_solution` SOL-0911的回答含2024年國家級獲獎並註明公司層級。repo的`index.ts`雜湊`ec43417540a3c353`與部署所用檔案相同。
+
+**儀表板「近期更新」盲點與「資料維護」區塊**：PPC問「今天不是有更新Supabase嗎，近期更新沒有紀錄？」。查`api/stats.js`：本週新增以`created_at`計算，「最新寫入項目」依建立時間排序，**只量新建立的列，不量修改**；截圖三格+0／最新項目35天前，與資料庫一致（近7天方案、公司、案例新建立皆0；同日849家公司被修改）。順帶澄清：公司累計1,102而資料庫1,103，是`stats.js`第169行排除`company_status='暫停營業'`（1家：馬可波羅科技）；累計真實案例85而`cases`共115，是只算`is_real=true`。我事前預測「應為1,103」是沒讀過濾條件的錯。PPC選「加資料維護欄」。實作：資料庫函式`maintenance_activity(p_days)`（`SECURITY DEFINER`，上限90天），只回日期×類型的彙總數字，不含原因文字與個別編號。測試中發現設計問題：10/2「稅籍登記主業849」與「公司所在地346」是同一批公司，前端相加會得1,195家，故函式另回傳`day=NULL、label=__total__`的窗口內不重複總數。匿名身分實測：直讀`solution_status_log`為0筆（RLS）、直讀`company_field_log`被拒、呼叫函式拿得到彙總。預期值：方案校正39（不重複方案；9/30留痕61列但同方案改名與改狀態各一筆）、公司補充849；約10/7後9/30列滾出7天窗口、10/9後10/2列滾出屬正常。Codex規格書已備妥（只改`api/stats.js`、`public/dashboard.html`；`fetchMaintenance`失敗隔離、回`null`不得讓`/api/stats`500；前端僅用`textContent`；驗收8項含既有數字不變、RPC改錯名稱仍回200、手機寬度）。
+
+**資安：MCP路徑無任何寫入途徑，以及匿名授權的發現**：PPC問「MCP不能改資料是原本就合理的設定嗎」。實測四層：①MCP程式6個工具皆`readOnlyHint`、`insert／update／upsert／delete`呼叫0個，只呼叫4個唯讀函式與讀6張表；②進場需白名單且權杖帶`client_id`；③`authenticated`對public寫入類授權0個物件、RLS寫入類policy 0個、可執行的volatile函式0個；④唯一對它開放的`SECURITY DEFINER`函式是`maintenance_activity`（只回彙總）。關鍵原則：**權限鎖在最靠近資料的一層**——MCP登入拿到的是真的Supabase JWT，若被取出繞過MCP直接打資料庫API，第①層「程式沒有寫入工具」即失效，能擋的只剩資料庫授權。但書：Supabase建新表預設把完整權限給`anon`與`authenticated`，今天兩張新表是手動收回，其餘靠紀律；Auth自助功能（改自己的密碼與個人資料）不碰SF資料。**同時查到與MCP無關的風險**：匿名身分在14個物件有寫入類授權，其中12張內部表RLS啟用且無anon寫入policy（預設全拒、現況無法利用），`pm_survey_responses`為刻意的帶存取碼INSERT，`companies_public`為`security_invoker`視圖且匿名對`companies`無寫入授權。風險在於只剩RLS一層，且`TRUNCATE`不受RLS約束（網站API不會執行）。已列P1，待PPC核准後`REVOKE`。
+
+**跨平台重複列與無公司編號**（10/2驗收評論搜尋時發現）：有效方案中同名＋同公司的組有95組、涉及198筆（前幾組如「AI EDP企業資料整合平台」同時在SME AI平台、臺灣雲市集、雲市集工業館），因為同一產品上架多個平台各存一列；205筆（約9%）沒有公司編號，故公司名、地區、稅籍、獲獎皆空。影響「累計2,268」與所有「有幾筆」的解讀，屬產品決策，未動資料。
+
+**組長邀請與MCP驗收項目d**：信件含設定6步（含前置「帳號需支援自訂連接器」、授權頁驗證網址與回呼、6個工具改Always allow）與測試1～6。標準答案換成補完地區後的新數字：公司所在地未填由543→291、北部由1,292→1,475、北部＋AI＋客服由99→112（皆以組長自己的MCP權杖實測）。使用指南第二節同步更新（「約24%」改13%、獲獎與稅籍已有）。測試6請她問一個真實會被問到的問題，作為v1.1優先序依據。密碼另行私訊，信件含連線網址與帳號，不放公開repo與本檔。驗收項目d待她完成`whoami`後以日誌確認user id與版本。
+
+**repo存檔與核對**：`solution-finder`：`supabase/functions/sf-mcp/index.ts`（v1.0.4）、`migrations/`四個SQL、`tests/sf-mcp/`測試產生器；`weekly-report`：`status.md`、`sop/freshness-audit-log.md`。操作上踩到：先放錯到`weekly-report`且檔名帶底線，提交前截圖發現並更正；`index.ts`覆蓋時一度停在編輯畫面未Commit，以`codeload`雜湊發現repo仍是v1.0.3。
+
+**我的錯誤與更正**：（1）稅籍比對結果中把3家寫成「現有資料的錯誤」，執行快照才看到它們SF有填city，是登記地與營運地差異，未覆蓋；（2）第一次把名冊「優先選62/63」當前提，PPT證明是25個代號；（3）status更新腳本一度因字串引號失敗，重跑。（8）預測儀表板公司累計為1,103，沒讀`stats.js`的過濾條件，實為1,102（排除暫停營業1家）。（9）10/2驗收第3題時我只核對「MCP讀的同一個欄位」`has_award`為false，沒有與官網顯示的信任訊號交叉比對，少報獲獎因此晚到下午才發現。（10）假設`awards.award_level`是層級，實測才知`award_category`才是層級。（11）第一次套用v1.0.4修改時工作目錄被環境重置，修改根本沒套用；發現後以雜湊與repo相同的v1.0.3重建再套用。（12）測試腳本誤留佔位文字`EXCEPTION_PLACEHOLDER`造成一次執行失敗，無資料影響。（13）儀表板函式第一版若直接相加會重複計算（1,195家對849家），測試時發現並加`__total__`修正，未上線。
+
+**方法論收穫（補充）**：（1）驗收MCP要**與使用者實際看到的畫面交叉比對**，不是只核對MCP自己讀的欄位。（2）權限鎖在最靠近資料的一層；程式層的「沒有寫入工具」不是防線，只是額外保險。（3）合併順序：先合併沒有外部依賴的PR並於正式站驗證，再合併需要資料庫同步的PR；先merge後改庫，回復最乾淨。（4）儀表板指標標題要寫清楚量的是「新建立」還是「修改」，否則使用者合理地以為涵蓋所有變動。（5）預測數字前先讀程式的過濾條件。（6）彙總數字若來自可重疊的分類，不可相加，需由來源端提供不重複總數。（7）提交檔案後以雜湊核對，「截圖看起來對」不等於「已提交」。
 
 </details>
