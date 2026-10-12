@@ -25,7 +25,7 @@
 | 稅籍名冊比對匯入後續：3家登記地與SF city不同、254家不在名冊、排序分三階段 | 資料品質 | Patrick | Patrick | — | 10/2已完成資料庫第一階段與前端「標示」階段（PR #200）；排序仍未動。待決：①`22023793`／`50767268`／`83764072`的SF city（高雄／台南／彰化）與稅籍登記地（新北／臺北）不同，疑為營運據點vs登記地，**未覆蓋**；②254家不在名冊，建議用財政部開放資料最新月檔補查；③排序：先標示→平手加分→加權，權重由Alex／組長拍板 |
 | ~~儀表板「近期更新」新增「資料維護」區塊（Codex）~~ | 前端 | Patrick | Patrick | — | **10/5完成**：PR #201 merge，正式站驗收數字正確（方案校正39、公司補充898、列表4行，既有+0／2,268、+0／1,102不變）；PPC發現列表字級與其他區塊不一致、日期在左，由PR #202修正（以「最新寫入項目」為模板，日期移右）並merge |
 | ~~收回`anon`對12張內部表的寫入類授權~~ | 資安 | Patrick | Patrick | — | **10/5完成**（PPC核准、PPC在SQL Editor執行）：`REVOKE INSERT, UPDATE, DELETE, TRUNCATE ... FROM anon`共13個物件——`companies_public`（視圖）、`company_cdm_categories`、`csp_violations`、`data_sources`、`gov_registrations`、`industry_codes`、`program_promotions`、`program_sources`、`solution_reviews`、`solution_status_log`、`source_monitoring_checks`、`source_monitoring_targets`、`users`；保留`pm_survey_responses`的INSERT。單一交易內自檢（剩餘寫入授權=1）通過，交易外獨立驗證只剩`pm_survey_responses｜INSERT`。事前查證網站無anon寫入路徑（讀取類API用anon、`csp-report.js`與`company-detail.js`用service_role、`feedback.js`寫Airtable）。SELECT授權未處理，另列P2 |
-| Airtable退場階段1：三條紀錄寫入遷移、移除API的Airtable分支、確認Vercel環境值 | 後端 | Patrick | Patrick | — | 10/1評估（見當日細節）：`api/ask.js`（Ask_Logs）、`api/claude.js`（Search_Logs）、`api/feedback.js`僅寫Airtable，無Supabase路徑；`solutions`／`companies`／`stats`／`cases`四支有`DB_SOURCE_*`雙來源切換，預設`airtable`。~~待PPC確認Vercel正式環境值~~ **10/2確認首頁累計方案2,268＝Supabase**，`DB_SOURCE_SOLUTIONS`確定為supabase（companies／cases合理推斷同），前提成立；另Airtable Companies匯出僅871家（Supabase 1,103），Airtable已落後。待寫Codex規格書。PPC決定三步驟：①移轉Supabase ②Airtable備著 ~~③移除另兩位使用權、只留PPC（約US$20／月）~~ **③10/12確認已完成**：10/3扣款Airtable月費NT$764（1人），9/3為NT$1,517（2人），現只剩PPC一個管理者席位。①仍待：Ask_Logs／Search_Logs／feedback三條寫入遷移。不要降到免費方案（筆數上限）；遷移完成後做一次最終完整匯出並撤掉或改唯讀`AIRTABLE_TOKEN` |
+| Airtable退場階段1：~~三條紀錄寫入遷移~~、移除API的Airtable讀取分支、確認Vercel環境值 | 後端 | Patrick | Patrick | — | 10/1評估（見當日細節）：`api/ask.js`（Ask_Logs）、`api/claude.js`（Search_Logs）、`api/feedback.js`僅寫Airtable，無Supabase路徑；`solutions`／`companies`／`stats`／`cases`四支有`DB_SOURCE_*`雙來源切換，預設`airtable`。~~待PPC確認Vercel正式環境值~~ **10/2確認首頁累計方案2,268＝Supabase**，`DB_SOURCE_SOLUTIONS`確定為supabase（companies／cases合理推斷同），前提成立；另Airtable Companies匯出僅871家（Supabase 1,103），Airtable已落後。待寫Codex規格書。PPC決定三步驟：①移轉Supabase ②Airtable備著 ~~③移除另兩位使用權、只留PPC（約US$20／月）~~ **③10/12確認已完成**：10/3扣款Airtable月費NT$764（1人），9/3為NT$1,517（2人），現只剩PPC一個管理者席位。①仍待：Ask_Logs／Search_Logs／feedback三條寫入遷移。不要降到免費方案（筆數上限）；遷移完成後做一次最終完整匯出並撤掉或改唯讀`AIRTABLE_TOKEN`。**10/12①寫入遷移完成**：Supabase新建`ask_logs`／`search_logs`／`feedback_submissions`（RLS、無policy、明確REVOKE anon／authenticated）；PR #203 merge（三支API改service_role寫入、共用`_lib/supabase-insert.js`、錯誤log不含內容）；歷史匯入ask 802、search 1,212（`source='airtable_import'`）；Feedback唯一1筆為測試不搬。**剩**：`solutions`／`cases`／`stats`／`companies`四支API的Airtable讀取分支、`strategy-guide.html`第740行Airtable字樣（另開PR）；之後才能停Airtable訂閱 |
 | MCP改進：Skill（A）、v1.2（B＋D＋E）、限流（F） | 後端 | Patrick | Patrick／Alex | — | 10/5組長回饋「劉姥姥進大觀園」：問題想很久、列方案時已下架解釋過多，建議建Skills或加強input／output schema（附MCP規格Tools頁）。整理為A～H八個方向（詳見10/5細節）。**待決三項**：①已下架揭露改「預設一行、被問才展開」（PPC＋Alex）②推薦類只列「正常」由Skill指示`normal_only`、伺服器預設仍與官網一致 ③限流閾值（組長峰值106次／分）。v1.2的B、D、E合併一次發布，讓使用者只重連一次 |
 
 ### P2
@@ -74,8 +74,9 @@
 | MCP信任訊號缺口：資安CDM分類、案例實績佐證、跨N種計畫 | 後端 | Patrick | — | — | 10/2：官網卡片有、MCP未帶；獲獎已於v1.0.4補上。CDM表已對`authenticated`收回SELECT，若要提供需先評估；v1.1依組長測試6的真實問題決定優先序，另含`ids_only`模式與服務範圍篩選 |
 | ~~備份檔完整性三項檢查未回報；下次備份才含新表~~ | 資安 | Patrick | — | — | **10/12完成**：`backup_20261012.sql` 6.30 MB；結尾標記1、`CREATE TABLE public.` 22張（10/2的20張＋`company_tax_industry`、`company_field_log`）、`companies`／`solutions`／`company_field_log`／`company_tax_industry`的`COPY`皆在。22張作為下次比對基準 |
 | ~~Claude API Credit餘額確認~~ | 後端 | Patrick | — | — | **10/12查證結案**：Console餘額US$11.00、自動儲值開啟（低於$5補到$20）。Invoice history：4/24 US$10、6/1 US$20、6/17 US$20（另5/1免費US$0.07），對應費用表301＋629＋629＝1,559，**6月後無自動扣款、無漏記**（費用表把6/1那筆記為5月，金額一致）。本月用量US$0.04、近7天15K tokens |
-| 方案探索使用量極低（10月僅約2次） | 專案管理 | Patrick | Alex | — | 10/12：Anthropic Console本月花費US$0.04，以8/14實測單次約NT$0.6（≈US$0.02）換算約2次搜尋。是產品使用度訊號而非費用問題；可與PM需求調查一併檢視（同仁實際需要什麼、為何不用）。注意：Console只算API呼叫，看不到未觸發AI的一般搜尋 |
+| ~~方案探索使用量極低（10月僅約2次）~~ AI功能使用量：方案探索仍有使用、AI顧問問答停用 | 專案管理 | Patrick | Alex | — | **10/12下午更正**：上午以8/14單價（約NT$0.6／次）把Console US$0.04換算成「約2次」是錯的——方案探索AI搜尋（`api/claude.js`）用Haiku、max 300 tokens，單次約US$0.002；Search_Logs顯示10月1–12日**11次**（9月134次），與US$0.04相符。真正停用的是AI顧問問答（`api/ask.js`，Sonnet），最後一筆9/7。使用分布：5–6月測試期集中（ask 793／802、search 925／1,212），之後明顯下降。可與PM需求調查一併檢視 |
 | ~~Codex檔案交付流程首次實測~~ | 專案管理 | Patrick | — | — | **10/12完成**：`codex_delivery_20261012_sop_v2.zip`成功push（`2e494be`），Claude獨立核對通過。weekly-report本機clone：`C:\Users\S25036\Documents\Codex\repos\weekly-report`。solution-finder本機路徑尚未補入SOP 4-0，首次以交付包更新solution-finder前確認 |
+| Airtable CSV備份與私密檔清理 | 資安 | Patrick | — | — | 10/12：Ask_Logs、Logs、Feedback三份CSV存OneDrive備份資料夾（Airtable停訂閱後即原始資料最後副本）；刪除下載資料夾的`20261012_import_airtable_history_PRIVATE.sql`（含使用者問題內容） |
 | `anon`與`authenticated`的SELECT授權盤點 | 資安 | Patrick | Patrick | — | 10/5寫入類已收斂；10/2原計畫「連同SELECT一起處理」未做。需先列出網站API實際讀取的表（`solutions`／`companies`／`cases`／`industry_codes`／`maintenance_activity`等），再決定其餘內部表是否收回SELECT |
 | repo存檔待補：v1.1原始碼、台→臺遷移檔 | 專案管理 | Patrick | — | — | 10/5：`supabase/functions/sf-mcp/index.ts`仍為v1.0.4，需以`sf-mcp_index_v1.1.0_PREPARED_未部署.ts`覆蓋（雜湊`9ff1f4be00e46d79`）；`migrations/20261002_normalize_city_taiwan.sql`待上傳（檔內已註明實際執行日10/5） |
 | PR #202：方案探索頁SOL-0005真實Preview截圖未取得 | 前端 | Patrick | — | — | 10/5：方案探索頁無名稱搜尋入口，Codex以本機fixture補驗，並在SYNC中標明「非Preview截圖」；首頁兩筆（SOL-0005正向、SOL-0911反向）為真實Preview。正式站有機會遇到時順手確認即可 |
@@ -86,7 +87,11 @@
 
 1. **休假返回開工掃描**（10/6～10/11休假）：`solution-finder` main與10/5 merge PR #202後相同、無新commit；SF MCP線上v1.1.0，`data_status`總數2,487／正常1,080／疑似1,188／已下架219／前台2,268，與10/5相同
 2. **週備份補做**：`backup_20261012.sql` 6.30 MB，完整性三項檢查通過，已存OneDrive
-3. **補10/5那週週報與status封存**
+3. **補10/5那週週報與status封存**；費用改四類（資料庫使用／開發／AI推論／一次性採購），累計至10/12為33,358
+4. **repo存檔**：MCP v1.1原始碼、台→臺遷移檔進`solution-finder`
+5. **Codex檔案交付SOP v1.1**（`sop/codex-delivery-sop.md`）：建立並實測成功2次
+6. **Airtable退場①寫入遷移完成**：建3張表→PR #203 merge→歷史匯入2,014筆
+7. **更正**：上午「方案探索10月約2次」錯誤，實為11次（已在週報更正）
 
 <details>
 <summary>展開細節</summary>
@@ -97,7 +102,7 @@
 
 **費用（週報第七節）**：沿用8/14分類——資料庫營運費用只計Airtable（未來含Supabase／CDN／Vercel），Claude、OpenAI／Codex訂閱屬AI開發工具費用、不計營運成本。10月：營運764（Airtable 1人，9月2人1,517）＋開發3,868（Claude 3,178改Max方案、OpenAI 690）＝4,632。截至9/9分類累計驗算＝28,726（Airtable 15,134／Claude 3,986／OpenAI 4,897／API Credit 1,559／Crunchbase 3,150）。三項皆月付、9月三筆（9/3、9/8、9/9）已含在28,726，9/10～9/30無訂閱付款，累計至10/12為33,358（資料庫使用15,898／開發12,751／AI推論1,559／一次性採購3,150）。原總覽列「其他非營運項目」會誤導：API Credit是隨使用量成長的營運性成本，改為「AI推論費用（隨使用量成長）」與「一次性採購」兩類分列。9/11週報只列平表，未沿用分類，本次修正。
 
-**API Credit**：Console餘額US$11.00、自動儲值開啟；Invoice三筆（4/24 $10、6/1 $20、6/17 $20）＝費用表1,559，無漏記；本月US$0.04≈2次方案探索。原先「6月後未儲值、用完會停止」的判斷前提不成立（未考慮自動儲值），已在週報更正。
+**API Credit**：Console餘額US$11.00、自動儲值開啟；Invoice三筆（4/24 $10、6/1 $20、6/17 $20）＝費用表1,559，無漏記；本月US$0.04（⚠️下午更正：對應約11次方案探索AI搜尋，見下方「更正」段）。原先「6月後未儲值、用完會停止」的判斷前提不成立（未考慮自動儲值），已在週報更正。
 
 **Airtable退場第三步完成**：PPC確認只剩自己一個管理者席位。
 
@@ -105,6 +110,21 @@
 
 **Codex檔案交付SOP v1**（`sop/codex-delivery-sop.md`）：上述三次錯誤的共通點是都靠人眼判斷，改為Claude產出交付包（zip第一層為repo名、MANIFEST含動作與SHA-256、內附CODEX_PROMPT.md），Codex依雜湊比對後commit（weekly-report直接main、solution-finder開PR），Claude以codeload獨立核對；Codex無權限或失敗時轉手動。PPC觸發說法：「產出CODEX更新」。本SOP即以交付包實測：`_sop.zip`三次停在第1步（「週報更新」資料夾非git clone；clone至`Documents\Codex\repos\weekly-report`後，shell的`Get-Location`仍為`OneDrive…\ChatGPT\weekly-report`空repo，兩次），皆無副作用；SOP改v1.1（4-0本機路徑表、git一律`git -C <絕對路徑>`），`_sop_v2.zip`成功，commit `2e494be`，Claude以codeload逐位元組核對兩檔一致、無其他變更。⚠️「shell預設在OneDrive資料夾」為推測（可能為`$PROFILE`的`Set-Location`），Codex未回報第0步結果，待下次交付確認。
 
+**Airtable寫入遷移（退場①）**：決定——直接切換不雙寫（10月AI搜尋約每天1次、ask自9/7無使用，雙寫期間收不到足夠資料對照，改以Preview主動測試）；先切換再匯入歷史（切換後Airtable無新資料，匯出即完整）；Feedback唯一1筆為測試（部門＝測試）不搬，CSV存OneDrive（在精不在多）。CSV欄位與程式碼一致；Ask_Logs 802筆、Logs（程式稱Search_Logs）1,212筆。時間格式為**日/月/年**（376／527筆第一段>12，按月/日/年解析會報錯或靜默轉錯如1/6→1月6日）、時區為台灣（排除法：最後一筆09:36若為GMT即台灣17:36，當時尚未到）；數值匯出為「6.0」形式，驗證全為整數後轉換。
+建表`20261012_create_airtable_replacement_tables.sql`：交易內自檢（表3、RLS 3、anon／authenticated授權0、service_role INSERT 3）；獨立驗證3表rls=true、公開授權0、policy 0、service_role有全部7種權限（Supabase預設，正常）。⚠️Supabase預設把public新表權限授予anon／authenticated，必須明確REVOKE，不能只靠RLS（feedback含同仁姓名）。
+PR #203（`feat/airtable-write-migration-2026-10-12`）：三支API改`SUPABASE_SERVICE_ROLE_KEY`寫入、不送id／created_at／source、單次不重試；錯誤log只記status／table／code／time（Postgres CHECK違規訊息可能含整列資料，`csp-report.js`印body的做法不可沿用），code另以正規式限英數字。失敗行為不變：ask／claude照常回傳、feedback回502。規格外新增`.gitattributes`（只對該migration檔`-text`，防換行轉換改變雜湊），判定可接受。追加：`feedback.html`第181行「寫入內部Airtable回饋表」→「寫入內部資料庫」（規格書原列前端不動而漏掉）；`strategy-guide.html`第740行留待讀取分支PR。push時`git-remote-https.exe`崩潰一次，重試成功、diff確認未受影響。merge後main 8檔與審查版逐位元組相同。
+Preview實測（同一Supabase資料庫）：ask 1、search 2（詢問AI前又搜尋一次）、feedback 1筆寫入成功；以`source='api'`＋10/12日期＋筆數自檢1／2／1的交易清除（未用SYNC版清除SQL：僅以「【測試】」前綴判斷、無自檢）。merge後重新匯出CSV，與上午比對兩表皆無增減（證實Preview未寫入Airtable）。匯入SQL（含使用者內容，`PRIVATE`，不入repo）：先檢查無`airtable_import`→匯入→筆數與最早／最晚時間自檢；先在沙盒PostgreSQL演練（含第2次執行被防重複擋下）。執行後獨立驗證：ask 802（05-22 12:54～09-07 14:59）、search 1,212（05-22 12:51～10-12 09:36），台灣時間，與CSV一致；merge後尚無`source='api'`新資料。
+
+**更正（方案探索使用量）**：上午用8/14「單次約NT$0.6」把US$0.04換算成約2次，但該單價不對應方案探索（Haiku）。查Search_Logs為10月11次、程式確認`claude.js`用Haiku／`ask.js`用Sonnet，Console數字與11次相符。教訓：用單價反推次數前，先確認單價對應哪個功能與模型；有實際紀錄時以紀錄為準。
+
 **封存**：`report.md`（10/5～10/9）同時存為`report/report-2026-10-09.md`；10/5版status.md存為`status/status_20261005-1009.md`。該週只有10/5一天。
 
 </details>
+
+**本日教訓**
+- 上傳卡三次的共通點是「靠人眼判斷」→ 交給機器比對（交付包＋雜湊）
+- 同名資料夾（兩個weekly-report）讓肉眼判斷失效：一律用絕對路徑
+- 有些保護（防重複匯入）只在出錯情境才觸發，要在沙盒演練，不在正式資料庫試
+- 資料加上來源標記（`source`）＝資料血緣，撤回、防重複、解讀精度都靠它
+- 用單價反推使用次數前，先確認單價對應的功能與模型；有實際紀錄就以紀錄為準
+- 規格書列「前端不動」時，仍要檢查前端是否有描述後端行為的文字
