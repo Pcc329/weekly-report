@@ -73,7 +73,8 @@
 | 系統性權限防線：新表預設權限與每月授權稽核 | 資安 | Patrick | — | — | 10/2：Supabase建新表時預設把完整權限給`anon`與`authenticated`，今天兩張新表是手動收回的。建議`ALTER DEFAULT PRIVILEGES`改為最小權限，並在每月稽核加一項「列出anon／authenticated寫入類授權與預期比對」；MCP路徑已實測無任何寫入途徑（見當日細節） |
 | MCP信任訊號缺口：資安CDM分類、案例實績佐證、跨N種計畫 | 後端 | Patrick | — | — | 10/2：官網卡片有、MCP未帶；獲獎已於v1.0.4補上。CDM表已對`authenticated`收回SELECT，若要提供需先評估；v1.1依組長測試6的真實問題決定優先序，另含`ids_only`模式與服務範圍篩選 |
 | ~~備份檔完整性三項檢查未回報；下次備份才含新表~~ | 資安 | Patrick | — | — | **10/12完成**：`backup_20261012.sql` 6.30 MB；結尾標記1、`CREATE TABLE public.` 22張（10/2的20張＋`company_tax_industry`、`company_field_log`）、`companies`／`solutions`／`company_field_log`／`company_tax_industry`的`COPY`皆在。22張作為下次比對基準 |
-| Claude API Credit餘額確認 | 後端 | Patrick | — | — | 10/12：最後一次儲值為6月（累計1,559），之後未再儲值；方案探索每次搜尋都呼叫Claude API，餘額用完AI推薦會停止。到Anthropic Console查目前餘額 |
+| ~~Claude API Credit餘額確認~~ | 後端 | Patrick | — | — | **10/12查證結案**：Console餘額US$11.00、自動儲值開啟（低於$5補到$20）。Invoice history：4/24 US$10、6/1 US$20、6/17 US$20（另5/1免費US$0.07），對應費用表301＋629＋629＝1,559，**6月後無自動扣款、無漏記**（費用表把6/1那筆記為5月，金額一致）。本月用量US$0.04、近7天15K tokens |
+| 方案探索使用量極低（10月僅約2次） | 專案管理 | Patrick | Alex | — | 10/12：Anthropic Console本月花費US$0.04，以8/14實測單次約NT$0.6（≈US$0.02）換算約2次搜尋。是產品使用度訊號而非費用問題；可與PM需求調查一併檢視（同仁實際需要什麼、為何不用）。注意：Console只算API呼叫，看不到未觸發AI的一般搜尋 |
 | `anon`與`authenticated`的SELECT授權盤點 | 資安 | Patrick | Patrick | — | 10/5寫入類已收斂；10/2原計畫「連同SELECT一起處理」未做。需先列出網站API實際讀取的表（`solutions`／`companies`／`cases`／`industry_codes`／`maintenance_activity`等），再決定其餘內部表是否收回SELECT |
 | repo存檔待補：v1.1原始碼、台→臺遷移檔 | 專案管理 | Patrick | — | — | 10/5：`supabase/functions/sf-mcp/index.ts`仍為v1.0.4，需以`sf-mcp_index_v1.1.0_PREPARED_未部署.ts`覆蓋（雜湊`9ff1f4be00e46d79`）；`migrations/20261002_normalize_city_taiwan.sql`待上傳（檔內已註明實際執行日10/5） |
 | PR #202：方案探索頁SOL-0005真實Preview截圖未取得 | 前端 | Patrick | — | — | 10/5：方案探索頁無名稱搜尋入口，Codex以本機fixture補驗，並在SYNC中標明「非Preview截圖」；首頁兩筆（SOL-0005正向、SOL-0911反向）為真實Preview。正式站有機會遇到時順手確認即可 |
@@ -94,6 +95,8 @@
 **週備份**：照SKILL固定指令（pooler端點、`$env:USERPROFILE`完整路徑）。PowerShell開在`C:\WINDOWS\system32`仍成功，因為輸出用完整路徑。大小6.30 MB，比10/2的5.56 MB多0.74 MB（+13%），對應10/2下午後新增的`company_tax_industry`與`company_field_log`（約1,950筆留痕）。完整性：`Select-String "PostgreSQL database dump complete"` Count=1；`^CREATE TABLE public\.` 22；`^COPY public\.(company_field_log|company_tax_industry|companies|solutions) ` 4行皆在。
 
 **費用（週報第七節）**：沿用8/14分類——資料庫營運費用只計Airtable（未來含Supabase／CDN／Vercel），Claude、OpenAI／Codex訂閱屬AI開發工具費用、不計營運成本。10月：營運764（Airtable 1人，9月2人1,517）＋開發3,868（Claude 3,178改Max方案、OpenAI 690）＝4,632。截至9/9分類累計驗算＝28,726（Airtable 15,134／Claude 3,986／OpenAI 4,897／API Credit 1,559／Crunchbase 3,150）。三項皆月付、9月三筆（9/3、9/8、9/9）已含在28,726，9/10～9/30無訂閱付款，累計至10/12為33,358（資料庫使用15,898／開發12,751／AI推論1,559／一次性採購3,150）。原總覽列「其他非營運項目」會誤導：API Credit是隨使用量成長的營運性成本，改為「AI推論費用（隨使用量成長）」與「一次性採購」兩類分列。9/11週報只列平表，未沿用分類，本次修正。
+
+**API Credit**：Console餘額US$11.00、自動儲值開啟；Invoice三筆（4/24 $10、6/1 $20、6/17 $20）＝費用表1,559，無漏記；本月US$0.04≈2次方案探索。原先「6月後未儲值、用完會停止」的判斷前提不成立（未考慮自動儲值），已在週報更正。
 
 **Airtable退場第三步完成**：PPC確認只剩自己一個管理者席位。
 
