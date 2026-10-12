@@ -75,7 +75,7 @@
 | ~~備份檔完整性三項檢查未回報；下次備份才含新表~~ | 資安 | Patrick | — | — | **10/12完成**：`backup_20261012.sql` 6.30 MB；結尾標記1、`CREATE TABLE public.` 22張（10/2的20張＋`company_tax_industry`、`company_field_log`）、`companies`／`solutions`／`company_field_log`／`company_tax_industry`的`COPY`皆在。22張作為下次比對基準 |
 | ~~Claude API Credit餘額確認~~ | 後端 | Patrick | — | — | **10/12查證結案**：Console餘額US$11.00、自動儲值開啟（低於$5補到$20）。Invoice history：4/24 US$10、6/1 US$20、6/17 US$20（另5/1免費US$0.07），對應費用表301＋629＋629＝1,559，**6月後無自動扣款、無漏記**（費用表把6/1那筆記為5月，金額一致）。本月用量US$0.04、近7天15K tokens |
 | 方案探索使用量極低（10月僅約2次） | 專案管理 | Patrick | Alex | — | 10/12：Anthropic Console本月花費US$0.04，以8/14實測單次約NT$0.6（≈US$0.02）換算約2次搜尋。是產品使用度訊號而非費用問題；可與PM需求調查一併檢視（同仁實際需要什麼、為何不用）。注意：Console只算API呼叫，看不到未觸發AI的一般搜尋 |
-| Codex檔案交付流程首次實測 | 專案管理 | Patrick | — | — | 10/12建立SOP v1，首個交付包`codex_delivery_20261012_sop.zip`（SOP新增＋status.md覆蓋）。待確認Codex是否有`weekly-report`存取權（`git remote -v`）；無則轉手動並另案clone |
+| ~~Codex檔案交付流程首次實測~~ | 專案管理 | Patrick | — | — | **10/12完成**：`codex_delivery_20261012_sop_v2.zip`成功push（`2e494be`），Claude獨立核對通過。weekly-report本機clone：`C:\Users\S25036\Documents\Codex\repos\weekly-report`。solution-finder本機路徑尚未補入SOP 4-0，首次以交付包更新solution-finder前確認 |
 | `anon`與`authenticated`的SELECT授權盤點 | 資安 | Patrick | Patrick | — | 10/5寫入類已收斂；10/2原計畫「連同SELECT一起處理」未做。需先列出網站API實際讀取的表（`solutions`／`companies`／`cases`／`industry_codes`／`maintenance_activity`等），再決定其餘內部表是否收回SELECT |
 | repo存檔待補：v1.1原始碼、台→臺遷移檔 | 專案管理 | Patrick | — | — | 10/5：`supabase/functions/sf-mcp/index.ts`仍為v1.0.4，需以`sf-mcp_index_v1.1.0_PREPARED_未部署.ts`覆蓋（雜湊`9ff1f4be00e46d79`）；`migrations/20261002_normalize_city_taiwan.sql`待上傳（檔內已註明實際執行日10/5） |
 | PR #202：方案探索頁SOL-0005真實Preview截圖未取得 | 前端 | Patrick | — | — | 10/5：方案探索頁無名稱搜尋入口，Codex以本機fixture補驗，並在SYNC中標明「非Preview截圖」；首頁兩筆（SOL-0005正向、SOL-0911反向）為真實Preview。正式站有機會遇到時順手確認即可 |
@@ -103,7 +103,7 @@
 
 **repo存檔完成**：`solution-finder`的`supabase/functions/sf-mcp/index.ts`更新為v1.1（`9ff1f4be00e46d79`，＝線上版）、新增`migrations/20261002_normalize_city_taiwan.sql`；`weekly-report`四檔。皆以codeload逐位元組核對。上傳過程卡三次（拿到舊版、貼上未commit、`migrations/`內又打`migrations/`）。
 
-**Codex檔案交付SOP v1**（`sop/codex-delivery-sop.md`）：上述三次錯誤的共通點是都靠人眼判斷，改為Claude產出交付包（zip第一層為repo名、MANIFEST含動作與SHA-256、內附CODEX_PROMPT.md），Codex依雜湊比對後commit（weekly-report直接main、solution-finder開PR），Claude以codeload獨立核對；Codex無權限或失敗時轉手動。PPC觸發說法：「產出CODEX更新」。本SOP即以第一個交付包`codex_delivery_20261012_sop.zip`實測。
+**Codex檔案交付SOP v1**（`sop/codex-delivery-sop.md`）：上述三次錯誤的共通點是都靠人眼判斷，改為Claude產出交付包（zip第一層為repo名、MANIFEST含動作與SHA-256、內附CODEX_PROMPT.md），Codex依雜湊比對後commit（weekly-report直接main、solution-finder開PR），Claude以codeload獨立核對；Codex無權限或失敗時轉手動。PPC觸發說法：「產出CODEX更新」。本SOP即以交付包實測：`_sop.zip`三次停在第1步（「週報更新」資料夾非git clone；clone至`Documents\Codex\repos\weekly-report`後，shell的`Get-Location`仍為`OneDrive…\ChatGPT\weekly-report`空repo，兩次），皆無副作用；SOP改v1.1（4-0本機路徑表、git一律`git -C <絕對路徑>`），`_sop_v2.zip`成功，commit `2e494be`，Claude以codeload逐位元組核對兩檔一致、無其他變更。⚠️「shell預設在OneDrive資料夾」為推測（可能為`$PROFILE`的`Set-Location`），Codex未回報第0步結果，待下次交付確認。
 
 **封存**：`report.md`（10/5～10/9）同時存為`report/report-2026-10-09.md`；10/5版status.md存為`status/status_20261005-1009.md`。該週只有10/5一天。
 
