@@ -12,7 +12,7 @@
 | 三張獨立Table（能量登錄／補助／得標）實際資料量 | 外部協作 | Rio Hsu | — | — | 已去信詢問，未回覆 |
 | PR #156（API身分驗證Phase2）~~已就緒~~ 分支已過期，待復工決策 | 資安 | Patrick | Patrick | — | ~~規格/實作/審查皆已完成，PPC決定延後……狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查~~ **10/5更正**：分支落後main（缺#173／#174／#199／#200／#201／#202），已不能直接merge；PPC決定短期不merge、保留紀錄。復工須先rebase跟上main並**重新審查**。13組帳號仍有效。⚠️「API身分驗證」仍是最高優先、尚未解決的資安項目 |
 | ~~篩選面板熱門篩選chip（官方認證供應商／免費試用）套用標籤未顯示~~ | 前端 | Patrick | — | — | ~~規格已交付~~ PR #172（9/23完成）於9/24驗收並merge |
-| 「返回首頁」按鈕語意與行為不符 | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理 |
+| ~~「返回首頁」按鈕語意與行為不符~~ | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理。**10/13結案（看板SOL-8）**：查main程式碼——主題區「返回首頁」與全站Logo為`resetToHome`（PR #169）、搜尋結果頁返回已改版（#170／#171）；方案詳情頁按鈕文字為「返回搜尋結果」、行為為退一步（`goBackInApp`），語意與行為一致，**本來就不是bug**。唯一未處理：瀏覽器上一頁退回首頁時popstate的else分支只清空搜尋字、未清空篩選與排序，影響小，依在精不在多不另開卡片，有人反映再處理 |
 | ~~Supabase advisor新增一項RLS policy警示待查證~~ | 資安 | Patrick | — | — | ~~需確認該policy屬讀取或寫入權限~~ 9/24已修正：`source_monitoring_checks`的公開INSERT權限為8/20海巡v1腳本試跑遺留（僅1筆資料），已移除；`source_monitoring_targets`僅開放SELECT，無相同問題 |
 | weekly-report為public repo，status.md含資安處理細節 | 資安 | Patrick | Patrick | — | 9/24發現；9/29已評估三個方向（private+付費/改寫法/換平台加密碼），PPC確認「必須記錄細節」排除改寫法，其餘兩個方向暫緩，優先度讓給看板功能，待之後有餘裕再處理 |
 | ~~「跨N種計畫」將非政府來源計入公部門計畫參與~~ | 後端 | Patrick | — | — | 9/29發現：`api/solutions.js`計算`pgc`／`pgList`時納入所有`program_type`，包含非政府平台的「資策會產業調查」（原領域型調查），導致公部門計畫參與度高估，屬語意膨脹；待開規格書，需決定排除清單（至少排除資策會產業調查）；10/2提醒：來源已改名，排除清單須使用新名「資策會產業調查」。**10/13完成（PR #204）**：判斷標準改為「出現在該來源能否佐證通過某政府計畫審核」，`api/solutions.js`新增**允許清單**`PROGRAM_EVIDENCE_SOURCES`（臺灣雲市集、雲市集工業館、新創嚴選網、商業服務業專區、農業雲市集-數位館、新北產業AI化輔導計畫；1,751／2,268筆）；不計入SME AI平台（網站無法證明隸屬計畫）、政府軟體採購網（採購資格非計畫）、資策會產業調查、案例反推補建。新來源預設不計入。影響：有徽章公司179→129（50家消失、70家數字變小） |
@@ -79,8 +79,12 @@
 | ~~Codex檔案交付流程首次實測~~ | 專案管理 | Patrick | — | — | **10/12完成**：`codex_delivery_20261012_sop_v2.zip`成功push（`2e494be`），Claude獨立核對通過。weekly-report本機clone：`C:\Users\S25036\Documents\Codex\repos\weekly-report`。solution-finder本機路徑尚未補入SOP 4-0，首次以交付包更新solution-finder前確認 |
 | Airtable CSV備份與私密檔清理 | 資安 | Patrick | — | — | 10/12：Ask_Logs、Logs、Feedback三份CSV存OneDrive備份資料夾（Airtable停訂閱後即原始資料最後副本）；刪除下載資料夾的`20261012_import_airtable_history_PRIVATE.sql`（含使用者問題內容） |
 | Vercel `DB_SOURCE_*`為Secret（不可讀）勿按Save | 資安 | Patrick | — | 11/12後 | 10/13發現三個變數設為Secret，編輯畫面Value顯示空白，按Save會寫入空值。PR #205後程式已不讀取，觀察期後直接刪除；之後非機密的設定值改用Config類型 |
+| 6張表RLS開啟但無policy待確認（看板SOL-9） | 資安 | Patrick | — | — | 9/23自舊看板移入，10/13同步看板時補進本表：INFO等級、預設拒絕，確認是否有功能需要anon讀取 |
+| SME AI平台：Genie CPO待人工確認（看板SOL-11） | 資料品質 | Patrick | — | — | 9/23自舊看板移入：27筆差異中26筆為截斷方法論瑕疵，僅此筆待確認 |
+| 新創嚴選網4筆疑似改名候選（看板SOL-24） | 資料品質 | Patrick | — | — | 9/23自舊看板移入：律果簽／Robotiive／ClimaMentor／EgentHub待人工核對 |
+| 農業雲市集「悠由農」容量參數落差30→32公頃（看板SOL-25） | 資料品質 | Patrick | — | — | 9/23自舊看板移入：屬內容更新待辦 |
 | `anon`與`authenticated`的SELECT授權盤點 | 資安 | Patrick | Patrick | — | 10/5寫入類已收斂；10/2原計畫「連同SELECT一起處理」未做。需先列出網站API實際讀取的表（`solutions`／`companies`／`cases`／`industry_codes`／`maintenance_activity`等），再決定其餘內部表是否收回SELECT |
-| repo存檔待補：v1.1原始碼、台→臺遷移檔 | 專案管理 | Patrick | — | — | 10/5：`supabase/functions/sf-mcp/index.ts`仍為v1.0.4，需以`sf-mcp_index_v1.1.0_PREPARED_未部署.ts`覆蓋（雜湊`9ff1f4be00e46d79`）；`migrations/20261002_normalize_city_taiwan.sql`待上傳（檔內已註明實際執行日10/5） |
+| ~~repo存檔待補：v1.1原始碼、台→臺遷移檔~~ | 專案管理 | Patrick | — | — | 10/5：`supabase/functions/sf-mcp/index.ts`仍為v1.0.4，需以`sf-mcp_index_v1.1.0_PREPARED_未部署.ts`覆蓋（雜湊`9ff1f4be00e46d79`）；`migrations/20261002_normalize_city_taiwan.sql`待上傳（檔內已註明實際執行日10/5）。**10/12完成**：兩檔已進`solution-finder`並以codeload逐位元組核對 |
 | PR #202：方案探索頁SOL-0005真實Preview截圖未取得 | 前端 | Patrick | — | — | 10/5：方案探索頁無名稱搜尋入口，Codex以本機fixture補驗，並在SYNC中標明「非Preview截圖」；首頁兩筆（SOL-0005正向、SOL-0911反向）為真實Preview。正式站有機會遇到時順手確認即可 |
 
 ---
@@ -152,6 +156,8 @@ Preview實測（同一Supabase資料庫）：ask 1、search 2（詢問AI前又�
 
 **MCP推廣**：PPC構想「資策會內部同仁、具MCP知識與Claude帳號、提供資訊後由PPC開通」。延伸：身分確認改以網域（`@iii.org.tw`、`@isd4.biz`——後者由資策會發放與管理，同仁的副帳號，委外人員亦有；PPC可用`isd4.biz`取代個人Gmail）；「具MCP知識」難驗證，改為提供教學＋自我檢核，真正門檻是Claude付費方案；資料會留在使用者個人Claude對話紀錄，需組織確認；帳號生命週期含停用（季度檢視需最後使用時間）。
 
+
+**GitHub Projects看板同步**：看板（Pcc329 user project #1）自9/23搬移後未更新，24張卡片（solution-finder Issues #175–198）。PC安裝GitHub CLI、`gh auth refresh -s project`後以`gh project item-list`匯出；首次匯出中文亂碼（PowerShell以系統編碼cp950讀取管線輸出，`Out-File -Encoding utf8`只決定寫出編碼，資訊已遺失不可逆），先設`[Console]::OutputEncoding = UTF8`重匯成功。比對：約15張一致、2張過時、4張只在看板、32項只在status。PPC決定：看板放未完成＋本月完成；資安類在公開Issue（solution-finder為公開repo）標題泛稱、內容寫「細節見內部紀錄」；看板獨有4張保留並補進本表。變更清單：更新4張、新增50張（未完成32、10月完成18），以`codex_delivery_20261013_project.zip`由Codex先預演、PPC確認後執行。SOL-8（返回首頁剩餘範圍）看板為Done、本表未劃線：查過去紀錄與main程式碼後確認已解決（見該列），看板維持Done、本表劃線。
 </details>
 
 **本日教訓**
@@ -160,3 +166,5 @@ Preview實測（同一Supabase資料庫）：ask 1、search 2（詢問AI前又�
 - 允許清單比排除清單保守：新來源預設不生效，要人判斷
 - Secret環境變數看不到值，判斷只能靠行為證據；看不到的設定，用實測輸出驗證
 - 等價性測試要確認「舊版」從哪來：真的舊程式碼（git show），而不是改寫過的副本
+- PowerShell管線讀取外部程式輸出時用系統編碼：中文先設`[Console]::OutputEncoding`為UTF-8；寫出編碼救不回讀入時已遺失的字元
+- 看板卡片是公開repo的Issue：任務標題本身也可能洩漏弱點
