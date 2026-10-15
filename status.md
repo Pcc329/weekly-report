@@ -10,7 +10,7 @@
 | AI顧問頁面架構方向（維持雙欄局部優化 vs 單欄循序流程） | 專案管理 | Patrick | Alex | — | 已示範兩版DEMO，Patrick決定暫緩，優先度後排 |
 | 五個政策問題是否符合實際使用情境 | 專案管理 | Patrick | Carrie | — | 待提案啟用時確認 |
 | 三張獨立Table（能量登錄／補助／得標）實際資料量 | 外部協作 | Rio Hsu | — | — | 已去信詢問，未回覆 |
-| PR #156（API身分驗證Phase2）~~已就緒~~ 分支已過期，待復工決策 | 資安 | Patrick | Patrick | — | ~~規格/實作/審查皆已完成，PPC決定延後……狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查~~ **10/5更正**：分支落後main（缺#173／#174／#199／#200／#201／#202），已不能直接merge；PPC決定短期不merge、保留紀錄。復工須先rebase跟上main並**重新審查**。13組帳號仍有效。⚠️「API身分驗證」仍是最高優先、尚未解決的資安項目。10/14看板SOL-6（公開Issue #179）標題改泛稱「資安加固項目D」 |
+| PR #156（API身分驗證Phase2）~~已就緒~~ 分支已過期，待復工決策 | 資安 | Patrick | Patrick | — | ~~規格/實作/審查皆已完成，PPC決定延後……狀態為「準備階段」：下次重啟工作時只需決定直接merge、或先調整後再上線，不需要重新規劃/重新審查~~ **10/5更正**：分支落後main（缺#173／#174／#199／#200／#201／#202），已不能直接merge；PPC決定短期不merge、保留紀錄。復工須先rebase跟上main並**重新審查**。13組帳號仍有效。⚠️「API身分驗證」仍是最高優先、尚未解決的資安項目。10/14看板SOL-6（公開Issue #179）標題改泛稱「資安加固項目D」。**10/15**：聯絡資訊卡開放email／手機後（PR #257），全站共用`SITE_PASSWORD`（session 7天、無個別帳號、無存取紀錄）成為聯絡資料唯一的存取控制，此項重要性提高 |
 | ~~篩選面板熱門篩選chip（官方認證供應商／免費試用）套用標籤未顯示~~ | 前端 | Patrick | — | — | ~~規格已交付~~ PR #172（9/23完成）於9/24驗收並merge |
 | ~~「返回首頁」按鈕語意與行為不符~~ | 前端 | Patrick | — | — | 9/18舊規格未實作，~~本次縮小範圍先修主題區詳情頁連結＋全站Logo兩處，規格已交付~~ PR #169/#170/#171已於9/23 merge（含搜尋結果頁返回按鈕改版與文字統一）；方案詳情頁返回鈕、popstate分支另案處理。**10/13結案（看板SOL-8）**：查main程式碼——主題區「返回首頁」與全站Logo為`resetToHome`（PR #169）、搜尋結果頁返回已改版（#170／#171）；方案詳情頁按鈕文字為「返回搜尋結果」、行為為退一步（`goBackInApp`），語意與行為一致，**本來就不是bug**。唯一未處理：瀏覽器上一頁退回首頁時popstate的else分支只清空搜尋字、未清空篩選與排序，影響小，依在精不在多不另開卡片，有人反映再處理 |
 | ~~Supabase advisor新增一項RLS policy警示待查證~~ | 資安 | Patrick | — | — | ~~需確認該policy屬讀取或寫入權限~~ 9/24已修正：`source_monitoring_checks`的公開INSERT權限為8/20海巡v1腳本試跑遺留（僅1筆資料），已移除；`source_monitoring_targets`僅開放SELECT，無相同問題 |
@@ -31,6 +31,9 @@
 | 新創嚴選網完整稽核（10/14輕量檢查146筆，基準145） | 資料品質 | Patrick | — | — | 10/14觸發。+1為淨值，可能同時有新增與下架，須逐筆名稱比對（9/30任務B做法）；資料庫152筆（正常128／疑似16／已下架8） |
 | 農業雲市集－數位館完整稽核（10/14輕量檢查77筆，基準75） | 資料品質 | Patrick | — | — | 10/14觸發。9/30為82→75（10筆消失、3筆新出現），本次+2；比照9/30編號比對（Content編號）＋逐筆驗證；資料庫93筆（正常73／疑似1／已下架19） |
 | MCP v1.2後續：組長重測、Skill安裝、限流第二階段、v1.2.1小修 | 後端 | Patrick | Patrick | 10/28 | 10/14 v1.2上線後：①組長重測（10/14已寄上線通知，附縣市計數演進圖、架構圖、驗證流程圖；請她重連後開新對話，回報速度、答案品質、已下架說明份量）②`normal_only`尚未真實環境實測（本對話工具清單為舊版，需新對話）③使用端Skill（`docs/sf-mcp-skill/SKILL.md`）尚未安裝到使用者端；回答格式能否落實視組長重測結果 ④限流第二階段：10/28依`sf_mcp_usage`實際分布檢視30次／分是否合理，再決定啟用阻擋（`RATE_LIMIT_ENFORCE`）⑤v1.2.1小修：`summary_line`照抄輸入「台北市」未轉「臺北市」；`describe_data`目錄第五節只截到「需求 → keyword：。」；`sf_search_solutions`空頁不回傳總數與縣市未填數（Codex已在notes揭露） |
+| ~~方案詳情頁「聯絡資訊」收合卡（B版）＋`company-detail`開放email／手機~~ | 前端 | Patrick | Alex | 10/15 | 10/15 PPC與Alex討論後同意對登入使用者顯示email／手機（推翻原「只回傳姓名／職稱／公司電話」的最小化設計；MCP欄位授權**不變**）。PR #257（`5194147`→`ebbbbfa`）Claude以實際diff審查通過，**10/15 PPC已merge**。部署專屬網址（`solution-finder-474zc3lal-…`）已確認三種情境正常（遮罩手機→暫無資訊、真實手機可點撥、`#`分機與`mailto:`連結正確）。~~**待**：以正式網域驗證~~ **10/15結案**：PPC於正式網域開啟QbiAI（人工智能，真實手機）詳情頁，聯絡資訊卡與可點撥手機皆顯示，新版API已上線，無需Promote（截圖未含網址列，依PPC操作步驟記錄） |
+| contacts手機來源遮罩：346筆為`09XX000000`（74種前綴）；email約19筆無效 | 資料品質 | Patrick | Patrick | — | 10/15發現：563筆手機中346筆後6碼為0，主要出自臺灣雲市集匯入（344筆；平台已停止服務，無法重抓原值），實際可用217筆（32%）。email 667筆中16筆為文字placeholder、19筆不含`@`，實際約648筆（96%）。目前由API層`isMaskedMobile`／`isInvalidEmail`過濾（PR #257 `ebbbbfa`），資料庫未改。**待決**：資料庫標記方式（改NULL／保留原值加狀態欄／原值移紀錄表），依mark-don't-delete與信心程度揭露原則；`office_phone` 344筆未做同樣檢查 |
+| `company-detail`存取紀錄 | 資安 | Patrick | Patrick | — | 10/15：開放email／手機後，任何持有共用密碼者皆可查詢，目前無紀錄可追查（例：廠商反映個資外洩時無法回應）。需新表（時間、`company_id`、IP）＋RLS＋明確REVOKE，依標準先做本機模擬測試。另：PR #257限流為in-memory（各serverless instance各自計數、冷啟動歸零），只是提高撈取成本，不是精確上限 |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -95,6 +98,10 @@
 | 每週輕量檢查自動化評估 | 後端 | Patrick | Patrick | — | 10/14：伺服器端抓取農業雲市集回傳SERVER_ERROR，瀏覽器正常（網站擋非瀏覽器請求，非網站故障）。自動化須：①結果分「存活／無法判定／失效」三種，抓取失敗先歸「無法判定」，兩個獨立管道都失敗才判「失效」②同一來源單次大量變動即停止 ③偵測與通知可自動，寫入`record_status`前須人工確認。單次連不上不等於方案下架 |
 | 關鍵字子字串誤中：英文單字含 ai（email、retail）也會命中「AI」 | 資料品質 | Patrick | — | — | 10/14：臺北市關鍵字「AI」169家，以`is_ai=true`篩為152家，差17家；可能為英文字誤中，或確有AI功能但`has_ai`未標。回答數字須說明定義（Skill已含「數字附定義」）；是否改為詞邊界比對，或推薦以`is_ai`為準，另評估 |
 | 選字即時搜尋：方案／公司內文左鍵選取 → 浮動提示 → Google搜尋 | 前端 | Patrick | Patrick | — | 10/14 PPC提出：串聯SF網站與網路搜尋，讓使用者即時查證、提升資料立論性；細節與製作順序待討論。設計原則（10/14討論）：①並陳不取代——提示框同時顯示SF查證資訊（來源／最後查證日／`record_status`）與Google入口；SF回答「能否透過政府計畫取得」，Google回答「市場上是否仍可買到」②線索要查證——使用者回報寫入`feedback_submissions`、原狀態不動、人工查證後新增紀錄（官網仍販售≠仍在計畫平台上架）③只宣稱實際做到的事——新鮮度揭露到每筆層級，不寫全站口號。參考：SME AI 279筆無網址，選字搜尋為其唯一查證管道 |
+| 網站沒有登出按鈕 | 前端 | Patrick | — | — | 10/15 PR #257驗收時發現：使用者無法主動登出，session維持7天；共用電腦上用完無法清除登入狀態。聯絡資訊含email／手機後重要性提高。驗收時以Console呼叫`fetch('/api/logout', {method:'POST'})`登出（`vercel.json`已有`/api/logout`路由，僅缺前端按鈕） |
+| `manufacturing.html`公司資料面板是否同步顯示email／手機 | 前端 | Patrick | Alex | — | 10/15：該頁同樣呼叫`/api/company-detail`，PR #257後API已回傳`email`／`mobile`，但面板未顯示（規格明訂不改此頁）。是否顯示另案決定 |
+| 向Alex同步聯絡資訊實際覆蓋率 | 專案管理 | Patrick | — | — | 10/15：同意開放手機時依據為帳面563支，實際可用217支（32%）；email約96%才是主要聯絡管道；聯絡人僅涵蓋568／1,017家公司（約44%公司展開後為「暫無資訊」） |
+| Supabase Advisors提示未查看 | 資安 | Patrick | — | — | 10/15 Dashboard左側Advisors顯示紅點，未點開；常見為RLS或function `search_path`提醒，與P2「6張表RLS無policy」可能重疊 |
 
 ---
 
@@ -248,3 +255,63 @@ Preview實測（同一Supabase資料庫）：ask 1、search 2（詢問AI前又�
 - 錯誤訊息要分兩種受眾：使用者看精簡訊息，後台日誌記完整原因
 - 規格用詞要精確：「不得回傳email」應寫明是第三方資料
 - 誤貼指令的影響範圍取決於對方權限，不只是對話所屬專案
+
+# 2026-10-15
+
+1. **開工查詢（SF MCP）**：`data_status`總數2,487／正常1,080／疑似1,188／已下架219／前台2,268，與10/14相同；以MCP查順立智慧、鉅碼科技聯絡資訊，兩家方案皆來自臺灣雲市集、皆為疑似已下架
+2. **聯絡資訊UI候選**：方案詳情頁收合按鈕四個位置（A標題卡內／B獨立收合卡／C Logo下浮出／D右下浮動），以Design畫布與獨立HTML展示；PPC選**B**
+3. **個資原則討論**：PPC原則「前端index不放、需要時再API call」；Claude補充盲點（見細節）
+4. **決策**：PPC認為顧問必須取得email／手機；**Alex同意**UI顯示；MCP欄位授權維持不變
+5. **規格書v1→v2**：v2含API開放`email`／`mobile`、IP限流、前端延遲載入＋快取；欄位名稱以SQL確認後寫入規格
+6. **PR #257**：Codex實作、Vercel Preview驗收（含401、429、空值、鍵盤、375px）；Claude以實際diff審查
+7. **資料品質發現**：手機346筆為來源遮罩值、email約19筆無效；PR #257補commit於API層過濾
+8. **PR #257 merge並結案**：部署專屬網址驗證三種情境正常；正式網域以QbiAI確認新版API上線
+9. **status.md交付**：`codex_delivery_20261015_status.zip`（1檔，Codex推送），Claude codeload核對待補
+
+<details>
+<summary>展開細節</summary>
+
+**UI候選（四版）**：A 公司名旁膠囊按鈕、展開在標題卡內；B 標題卡與費用卡之間獨立收合列，收合時副標列出欄位；C Logo下方小按鈕＋浮出小卡；D 右下浮動按鈕。B的優點是收合狀態就說明內容、結構清楚、手機好用。先以Design畫布展示，PPC要求不需登入Claude即可瀏覽，改輸出單一HTML檔（`SF_聯絡資訊按鈕_候選位置.html`）；選定後另出`SF_聯絡資訊_B版_demo.html`（預設收合、模擬0.6秒載入、顯示API請求次數、可切換1位／2位聯絡人、無聯絡人、API失敗、401五種情境，對應規格驗收項目）。
+
+**個資原則與盲點**：PPC原則「前端index不放聯絡資訊、需要時再API call」可擋整頁HTML爬取與搜尋引擎索引，屬「增加取得成本」而非「控制存取權限」。盲點：①按鈕觸發的請求在DevTools可見，API本身就是公開入口，且`solution_id`為連號（SOL-0001～2487），可直接迴圈列舉 ②若前端用anon key查詢，防線只剩RLS，contacts對anon可讀時可繞過API直接查REST ③無限流時延遲載入只多一步 ④個資法的蒐集目的問題與是否被爬無關。查證`company-detail.js`：已有`requireAuth`、以service_role在伺服器端查詢、回傳不含email／手機。
+
+**決策過程**：PPC表示「顧問必須知道這些資訊，這就是他們查資料庫的主要目的，可以公開」。Claude指出此決策推翻三處既有設計（`company-detail.js`資料最小化、`20261001_create_sf_mcp_access.sql`欄位層級授權、MCP回應說明），並查`api/auth.js`：登入為全站共用`SITE_PASSWORD`、session 7天、無個別帳號；`company-detail`無限流。建議補存取紀錄與限流，並由決策人確認。PPC與Alex討論後同意UI顯示email與手機。限流併入本次；存取紀錄需新表，另列P1；MCP不跟著改（Alex同意範圍為UI）。
+
+**repo查證（規格前）**：方案詳情頁為`public/index.html`的`renderDetail()`（React），方案物件已有`item.cid`、`item.tax`；`public/manufacturing.html`已有`companyDetailCache`（點了才抓、抓過就快取、loading／error／data三態），規格要求比照。GitHub API遭rate limit，改以`git clone`查證。
+
+**contacts欄位與覆蓋率（SQL，唯讀）**：`information_schema.columns`確認9欄：`contact_id`、`airtable_rec_id`、`company_id`、`contact_name`、`title`、`email`、`mobile`、`office_phone`、`created_at`。筆數：聯絡人677、涵蓋公司568（Companies共1,017）、有公司電話344、有email 667、有手機563、三者皆無8。計數一律用`COUNT(NULLIF(TRIM(col), ''))`，避免空字串與空白被算成有值。
+
+**規格書**：v1（不開放email／手機）作廢；v2（`codex_spec_contact_info_card_v2_2026-10-15.md`）改動項目0～5：欄位確認（已內嵌欄位表）、API select加`email,mobile`、IP限流（比照`feedback.js`，60秒30次，順序OPTIONS→method→限流→`requireAuth`→參數，超過回429）、收合卡（預設收合、`aria-expanded`／`aria-controls`）、延遲載入＋快取（只快取成功結果；401／429／其他錯誤各有訊息，401無重試鈕）、欄位內容（`tel:`轉換`#`→`,`、`mailto:`需含`@`、JSX輸出不用`dangerouslySetInnerHTML`）。防呆：不改auth、sf-mcp、migration、RLS、`manufacturing.html`；SYNC／PR／commit不得出現未遮罩email或手機（repo公開）。Codex指示文字另附隔離條件（新對話、從最新main開新branch、不碰PR #256）；送出前提醒選定專案並把推理強度由「輕度」改「高」。
+
+**PR #257 Codex實作與驗收**：commit `5194147`（feat）＋三個docs commit，最終`d31cd18`；改動`api/company-detail.js`（+26／-1）、`public/index.html`（+111）、SYNC。Codex額外以`pending` Map對同一公司的同時請求去重。驗收在Vercel Preview以真實資料完成：未展開前無請求、首次展開恰好1次、收合重開不增加、同公司換方案不重抓；同IP第31次請求回429（前30次皆401，證明限流在認證之前）；429後重試於視窗結束後恢復，錯誤未快取；`cid`為空的方案不發請求；375px無水平捲動。
+
+**401驗收過程**：Codex請PPC在Preview分頁登入（密碼不在對話中提供）。登出時：①Chrome網站資訊面板工具無法操作 ②DevTools刪除`sf_session`後`/api/session-check`仍回`authenticated:true`（推測刪錯網域列）③改在session-check分頁Console執行`fetch('/api/logout', {method:'POST'})`回`{ok:true}`，重新整理後`{"authenticated":false}`（Console的紅色401為session-check未登入時的正常回應）。Claude提醒**快取陷阱**：已成功展開過的公司會命中快取、不發請求，無法證明401處理正確，須改用本次session從未展開過的公司；Codex改用Shopass（`recvOVaf88wEB4WHZ`），13:06:25.340恰好一筆GET 401並顯示「登入已過期」。證據來源為Vercel Request Logs，Codex如實註明未取得Chrome Network面板截圖；Codex亦在session仍為true時拒絕宣稱401已驗證。
+
+**Claude審查（`d31cd18`）**：改動範圍、select欄位、限流順序與IP取法（同`feedback.js`）、只快取成功結果、`cid`為空不發請求、JSX輸出、未動auth／solutions／manufacturing／MCP皆符合；SYNC以regex掃描無未遮罩email／手機。非阻擋建議兩項：`mailto:${encodeURIComponent(email)}`會把`@`編為`%40`（部分桌面郵件程式不解碼）；`key={item.id}`應同列表寫法`item.id || item.s`。
+
+**資料品質（SQL，唯讀；Supabase SQL Editor一次多段只顯示最後一段，須分開執行）**：
+- 4a 手機：有值563、台灣手機格式563、末三碼000為**346**、6個以上連續相同數字**346**（兩欄相同）
+- 4b 重複號碼：前10組皆為`09xx-xxx-000`，每組掛在8～14家**不同公司**
+- 4d `^09\d{2}0{6}$`（前4碼＋6個0）＝346，74種前綴 → 來源端遮罩
+- 4e 依`program_type`：臺灣雲市集344／391（一家公司可有多來源方案，各列加總會重複計算；對照政府軟體採購網3／103）→ 遮罩出自臺灣雲市集匯入
+- 5 email：含`*`為0、文字placeholder（nan／none／null／-／n/a）16、不含`@` 19
+- 實際可用：手機217（32%）、email約648（96%）
+
+**PR #257補commit（`ebbbbfa`）**：`api/company-detail.js`新增具名函式`isMaskedMobile`（去除非數字後比對`^09\d{2}0{6}$`）、`isInvalidEmail`（不含`@`或屬placeholder清單；空值亦回空字串），方便資料清理後移除；`index.html`改`mailto:${email}`、`key={item.id || item.s}`。Preview三項驗收：鉅碼手機改「暫無資訊」、email正常；人工智能（真實手機）保留且`tel:`正確；大創新零售email `-`被清空、無`mailto:`。Claude拉diff確認，SYNC再掃描0命中。
+
+</details>
+
+**merge後驗證**：PPC於部署專屬網址`solution-finder-474zc3lal-…vercel.app`展開三家公司（七法、人工智能、人易科技）：遮罩手機顯示「暫無資訊」、真實手機為`tel:`連結、公司電話`#`分機與email `mailto:`連結正確、稅籍主業共列、免責小字顯示。部署專屬網址不等於正式網域（Instant Rollback前例），另以正式網域確認：選擇手機為真實號碼的QbiAI，因為顯示「暫無資訊」無法區分舊版API與被過濾，顯示號碼才能證明新版上線。截圖含真實聯絡資料，不入公開repo。
+
+**本日教訓**
+- 部署專屬網址≠正式網域：驗證上線要看使用者實際開的那個網址
+- 驗證樣本要選「新舊版本結果會不同」的那一筆：空值兩版都顯示「暫無資訊」，證明不了任何事
+- 延遲載入是「增加取得成本」，不是「控制存取權限」；兩者都要，但只做前者防不了有心人
+- 推翻既有安全設計時，先列出它散落在哪些地方（API、資料庫授權、MCP說明），再由決策人確認範圍
+- 「需要登入」要看登入機制本身：共用密碼＋無紀錄＝無法追查是誰看的
+- 快取會讓測試失效：驗證錯誤處理時，要用從未命中快取的資料
+- 登出靠伺服器清除HttpOnly cookie：呼叫網站自己的登出API比手動刪cookie可靠，順帶驗證登出API
+- 格式檢查抓不到遮罩值：346支手機格式全對，靠「末三碼分布」「同號碼跨公司」這種統計異常才看得出來
+- 帳面覆蓋率≠實際可用率：決策依據的數字（563支）要先做品質檢查
+- 多來源JOIN的計數會重複：解讀時看「最大來源」與「對照組」，不直接加總
+- 證據不足就說不足：Codex在session仍為true時不宣稱401已驗證，是本專案`record_status`原則的同一回事
