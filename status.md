@@ -33,7 +33,7 @@
 | MCP v1.2後續：組長重測、Skill安裝、限流第二階段、v1.2.1小修 | 後端 | Patrick | Patrick | 10/28 | 10/14 v1.2上線後：①組長重測（10/14已寄上線通知，附縣市計數演進圖、架構圖、驗證流程圖；請她重連後開新對話，回報速度、答案品質、已下架說明份量）②`normal_only`尚未真實環境實測（本對話工具清單為舊版，需新對話）③使用端Skill（`docs/sf-mcp-skill/SKILL.md`）尚未安裝到使用者端；回答格式能否落實視組長重測結果 ④限流第二階段：10/28依`sf_mcp_usage`實際分布檢視30次／分是否合理，再決定啟用阻擋（`RATE_LIMIT_ENFORCE`）⑤v1.2.1小修：`summary_line`照抄輸入「台北市」未轉「臺北市」；`describe_data`目錄第五節只截到「需求 → keyword：。」；`sf_search_solutions`空頁不回傳總數與縣市未填數（Codex已在notes揭露） |
 | ~~方案詳情頁「聯絡資訊」收合卡（B版）＋`company-detail`開放email／手機~~ | 前端 | Patrick | Alex | 10/15 | 10/15 PPC與Alex討論後同意對登入使用者顯示email／手機（推翻原「只回傳姓名／職稱／公司電話」的最小化設計；MCP欄位授權**不變**）。PR #257（`5194147`→`ebbbbfa`）Claude以實際diff審查通過，**10/15 PPC已merge**。部署專屬網址（`solution-finder-474zc3lal-…`）已確認三種情境正常（遮罩手機→暫無資訊、真實手機可點撥、`#`分機與`mailto:`連結正確）。~~**待**：以正式網域驗證~~ **10/15結案**：PPC於正式網域開啟QbiAI（人工智能，真實手機）詳情頁，聯絡資訊卡與可點撥手機皆顯示，新版API已上線，無需Promote（截圖未含網址列，依PPC操作步驟記錄） |
 | contacts手機來源遮罩：346筆為`09XX000000`（74種前綴）；email約19筆無效 | 資料品質 | Patrick | Patrick | — | 10/15發現：563筆手機中346筆後6碼為0，主要出自臺灣雲市集匯入（344筆；平台已停止服務，無法重抓原值），實際可用217筆（32%）。email 667筆中16筆為文字placeholder、19筆不含`@`，實際約648筆（96%）。目前由API層`isMaskedMobile`／`isInvalidEmail`過濾（PR #257 `ebbbbfa`），資料庫未改。**10/15補查`office_phone`**：344筆中空值類（`''`、空白、placeholder）皆為0，但36筆主號碼為同規則遮罩（`^\d{4}0{6}$`，35筆出自臺灣雲市集），實際可用308筆；已由PR #258 `isMaskedOfficePhone`過濾並於正式站確認。**待決**：資料庫標記方式（改NULL／保留原值加狀態欄／原值移紀錄表），依mark-don't-delete與信心程度揭露原則——遮罩值屬「推定無效」，應標記並記錄判斷依據而非直接刪除；分機若用「分機」「ext」等非`#`寫法不會被過濾（只漏不誤殺，影響小） |
-| `company-detail`存取紀錄 | 資安 | Patrick | Patrick | — | 10/15：開放email／手機後，任何持有共用密碼者皆可查詢，目前無紀錄可追查（例：廠商反映個資外洩時無法回應）。需新表（時間、`company_id`、IP）＋RLS＋明確REVOKE，依標準先做本機模擬測試。另：PR #257限流為in-memory（各serverless instance各自計數、冷啟動歸零），只是提高撈取成本，不是精確上限 |
+| ~~`company-detail`存取紀錄~~ | 資安 | Patrick | Patrick | — | ~~10/15列入~~ **10/19結案（PR #259，merge `d392cbc`）**：新表`contact_access_logs`記錄每次成功回傳聯絡資訊（公司統編、聯絡人筆數、有無email／手機、登入方式、IP與session的加鹽HMAC，不存原始IP／cookie）；RLS開、無policy、明確REVOKE公開角色；service_role收斂為僅INSERT、SELECT（append-only，第二支migration）。正式站以QbiAI確認寫入。180天清理SQL由PPC手動執行（未排程）；限流仍為in-memory |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -104,7 +104,7 @@
 | Supabase Advisors提示未查看 | 資安 | Patrick | — | — | 10/15 Dashboard左側Advisors顯示紅點，未點開；常見為RLS或function `search_path`提醒，與P2「6張表RLS無policy」可能重疊 |
 | `sop/maintenance_checklist.md` 🔴區塊對應的首頁元素已不存在 | 文件 | Patrick | — | — | 10/19週封存時依清單檢查`index.html`：`ws-date`、`ws-conclusion`、`ws-item`、`decision-item`只剩CSS定義，頁面已無對應元素，「69筆真實案例」字樣亦不在；首頁已改版但清單未更新，清單待依現行首頁改寫 |
 | 同事公司名單查詢（臺灣雲市集上架年份） | 外部協作 | Patrick | — | — | 10/19已回信：SF無上架年度；18家中5家有雲市集方案、3家來源非雲市集、10家查無。**待對方**：110～113年名單（收到後以統編優先比對，若為完整名單可評估回補SF雲市集缺漏，須先確認來源與使用授權）、1家登記名稱不同之統編、四題功能調查。年份為對方需求，未回覆不主動追 |
-| 公司查詢功能（第二種使用目的：以公司查資料） | 前端 | Patrick | Alex | — | 10/19完成核心功能、情境、UI/UX評估與DEMO（見10/19細節）。建議A單筆查詢＋公司檔案頁→B批次比對；C暫不做。**前提**：需求證據（目前1個案例，待同事四題回覆與PM問卷）、P1 `company-detail`存取紀錄先完成、批次結果不含聯絡資訊、限流以筆數計 |
+| 公司查詢功能（第二種使用目的：以公司查資料） | 前端 | Patrick | Alex | — | 10/19定案：首頁B1雙入口（查公司／找方案兩張等大卡片各帶搜尋框，不採單一框自動判斷）；單筆查詢＋公司檔案頁先做，批次比對延後；資料結構圖（業務版ERD）只放資料來源頁、首頁與其他頁不加引導連結。進行方式：先在Preview做出可操作成果，再向Alex報告後merge。拆3個PR：**PR 1存取紀錄＋搜尋紀錄欄位 ✅（#259）**→PR 2公司搜尋與公司檔案API→PR 3首頁、公司頁、ERD。D2～D5採預設：名稱「查公司」、公司頁已下架預設隱藏、名稱只比公司名（去後綴）、查無時提示開頭相同的公司 |
 
 ---
 
@@ -117,6 +117,9 @@
 5. **交付**：`codex_delivery_20261019_weekly.zip`（2檔，Codex推送`6f51674`；補OneDrive確認後再推`12e4158`），Claude codeload核對通過（兩檔逐位元組相同、第二次僅status.md改2行）
 6. **同事公司名單查詢**：18家公司詢問臺灣雲市集上架年份；以SF MCP逐家查（含已下架），SF無上架年度欄位，回信說明並請對方提供110～113年名單以便比對
 7. **公司查詢功能評估**：同事需求屬「以公司查資料」，與現行「以需求找方案」不同；完成核心功能、情境與UI/UX評估及DEMO，回信中附四題意見調查
+8. **首頁與資料結構圖定案**：首頁採B1雙入口；業務版ERD（10個實體）只放資料來源頁，不在首頁加引導
+9. **PR #259 聯絡資訊存取紀錄**：新表＋`search_logs`三欄；Preview反向測試→PPC執行migration→發現service_role權限過大→追加append-only migration→真實驗收→merge，正式站確認寫入
+10. **交付核對**：`f83875d`（status待辦）、`18f47d9`（週報＋封存）codeload逐位元組相同
 
 <details>
 <summary>展開細節</summary>
@@ -133,6 +136,13 @@
 
 **封存檢查（`maintenance_checklist.md`）**：以repo內`index.html`（最後異動`fc09bf2`，10/14）比對🔴區塊：`ws-date`、`ws-conclusion`、`ws-item`、`decision-item`僅存在於CSS，頁面無對應元素；「案例分析功能開放測試提案」的「69筆真實案例」字樣不在。判斷為首頁改版後清單未同步，非內容過期，列P2改寫清單。
 
+
+**首頁雙入口與ERD**：A／B／C三版（純雙入口、卡片內嵌搜尋、主次入口）比較後選B；B再延伸5版（原版、左右色塊、橫向長卡、單一框自動判斷、記住上次），選B1。B1 vs B4差別在「誰決定查公司或找方案」：B1由使用者選、可靠且能直接統計兩入口使用量；B4系統代猜，簡稱（例如只輸入公司簡稱）會判斷錯。決定先B1，以使用數據決定是否升級。資料結構圖採業務版（公司、聯絡人、獲獎、政府能量登錄、資安分類、稅籍行業、方案、來源平台、狀態查證紀錄、導入案例），對照migration與API確認關係；不畫內部紀錄表（資安：不提供表名地圖；可讀性；避免頻繁過期）；純HTML／SVG不引外部套件。PPC決定不在首頁或情境頁放引導連結，先最精簡、有實際需求再加。原則：新功能先做出Preview成果再向Alex報告，不先送決策請示。
+
+**PR #259（公司查詢PR 1／3）**：規格改用`sop/codex_規格書範本_v2.md`（v2.1；先前兩份誤用專案資料夾v1）。PPC先在Vercel新增`LOG_HASH_SALT`（Secret，Production＋Preview，附註「輪換後新舊紀錄無法比對」；新增後不需Redeploy）。Codex：`7519a55` feat→本機PostgreSQL 16模擬（重現Supabase預設ALL授權、故意失敗、回滾）→Preview反向測試（表不存在時展開順立，API 200、卡片正常、Vercel僅一行`table=contact_access_logs code=PGRST205`）→PPC在SQL Editor執行migration、獨立驗證三段（RLS true、公開授權0、policy 0、12欄、5索引）。**發現**：service_role實際權限為ALL（Supabase新表預設），規格只寫GRANT未REVOKE，自檢也只查「含INSERT」；存取紀錄應append-only，避免金鑰外流時紀錄被刪改→`c1e5d40`追加`20261019b_contact_access_logs_append_only.sql`（REVOKE五項，自檢同時查直接授權與has_table_privilege有效權限及欄位層級）→獨立驗證僅INSERT、SELECT為true。第三段驗收：首次展開→快取重開→另一家→manufacturing，筆數0→1→1→2→3；登出401不寫入；anon REST 401／42501。Claude審diff：寫入在200之前await、try/catch隔離、`has_email`／`has_mobile`以過濾後值判斷、select與過濾函式未改。merge後正式站一度查無新紀錄：部署正常，原因是正式站尚無人展開（紀錄在使用時才產生）；以新分頁展開QbiAI，Network 200，SQL新增一筆（session雜湊與Preview不同、IP雜湊相同）。另：Codex指出指示「只改三檔」與規格要求SYNC矛盾，確認SYNC納入PR（指示應寫「程式只改三檔，另加SYNC」）。
+
+**權限分層（教學）**：anon（前端公開）碰不到；service_role（伺服器，金鑰在Vercel）僅新增讀取；postgres（SQL Editor，需Supabase帳號登入）全部權限，用於180天清理。鑰匙越容易外流，權限越小。
+
 </details>
 
 **本日教訓**
@@ -142,3 +152,8 @@
 - 「查不到」要說成「SF未收錄」：資料庫的缺口不等於事實不存在
 - 介面解決不了資料問題：公司查詢做得再好，沒有年份欄位就答不出年份
 - 好方案的前提要先到位：排程寄信需要個別身分，共用密碼下先用不存狀態的做法
+- 權限驗收要寫「恰為」不是「含」：只查該有的，抓不到多出來的；Supabase新表預設把ALL給service_role，GRANT不會收回
+- 稽核紀錄要append-only：寫紀錄的鑰匙不該能刪紀錄
+- 優雅降級要在migration前測：表一旦建好，就再也測不到「表不存在」的情況
+- 快取會讓驗收失效：驗收寫入次數要換沒查過的公司、開新分頁
+- 部署完成≠有資料：紀錄是使用時才產生，驗收要實際操作一次
