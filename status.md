@@ -109,7 +109,7 @@
 # 2026-10-19
 
 1. **補做上週五例行工作**（10/16週五PPC請假）：週備份＋週封存
-2. **週備份**：`backup_20261019.sql` 6.58 MB，完整性三項檢查通過
+2. **週備份**：`backup_20261019.sql` 6.58 MB，完整性三項檢查通過，已存OneDrive
 3. **週封存**：`status/status_20261012-1016.md`（10/12～10/15，含10/15第13條codeload核對結果）；本檔清空每日記事、保留待追蹤事項
 4. **封存檢查**：`maintenance_checklist.md` 🔴區塊對應的首頁元素已不存在，列P2
 5. **交付**：`codex_delivery_20261019_weekly.zip`（2檔，Codex推送），Claude codeload核對待補
@@ -117,7 +117,7 @@
 <details>
 <summary>展開細節</summary>
 
-**週備份**：照SKILL固定指令（pooler端點、`$env:USERPROFILE`完整路徑；PowerShell開在`C:\WINDOWS\system32`仍成功）。大小6.58 MB（6.5754），比10/12的6.30 MB多約0.28 MB（+4%），對應10/12後新建的`ask_logs`、`search_logs`、`feedback_submissions`與10/14的`sf_mcp_usage`及其紀錄。完整性：`PostgreSQL database dump complete` Count=1；`^CREATE TABLE public\.` **26**（10/12的22張＋上述4張，與migration推算一致）；`COPY public.companies／contacts／search_logs／sf_mcp_usage／solutions` 5行皆在。26張作為下次比對基準。OneDrive複製（SKILL步驟5）截圖未含，待PPC確認。
+**週備份**：照SKILL固定指令（pooler端點、`$env:USERPROFILE`完整路徑；PowerShell開在`C:\WINDOWS\system32`仍成功）。大小6.58 MB（6.5754），比10/12的6.30 MB多約0.28 MB（+4%），對應10/12後新建的`ask_logs`、`search_logs`、`feedback_submissions`與10/14的`sf_mcp_usage`及其紀錄。完整性：`PostgreSQL database dump complete` Count=1；`^CREATE TABLE public\.` **26**（10/12的22張＋上述4張，與migration推算一致）；`COPY public.companies／contacts／search_logs／sf_mcp_usage／solutions` 5行皆在。26張作為下次比對基準。已依SKILL步驟5以`Copy-Item`複製至OneDrive（無錯誤輸出）。
 
 **週封存**：依10/5～10/9慣例，封存檔為本週status.md完整內容（待追蹤事項＋每日記事），本檔保留待追蹤事項（含劃線已結案項目）並清空每日記事。封存前確認遠端`status.md`為10/15第二次交付版本（`432afb1`），本週無其他推送。
 
