@@ -57,7 +57,7 @@
 | ~~商業服務業專區117家名單所屬系列未記錄~~ | 資料品質 | Patrick | Patrick | — | **10/2結案**：117筆＝「提升商業服務業營運效能強化韌性計畫（個案補助－單店導入）AI解決方案入選名單」（服務提供者上架的有標價方案，非整合型補助的店家名單）。證據：Chrome比對14家公司全在`service-ai.php`提供者名單、整合型第三梯16家與本庫0家重疊；我補：第一梯名單PDF前20筆19筆在本庫、`SOL-BIZ-0001`起依PDF序號排列。`data_sources` SRC-002已補計畫名稱／年度／執行單位，並移除貼錯的工業館計畫頁網址。**未完成**：第二梯（7/15公告）逐筆比對、網站約300筆而本庫僅117筆（在精不在多，不擴充，但要記錄覆蓋範圍）、第三梯受理至10/20後的新名單追蹤。10/14輕量檢查：10/05公告「個案補助－多店升級（第二梯次）」入選名單，屬不同路線，另列P2 |
 | 政府軟體採購網基準建立：本庫100筆為同仁挑選子集，與網站總數不可比 | 資料品質 | Patrick | — | — | 10/2：網站套裝軟體5,804／雲端服務36／資安健診27；本庫100筆（資安合規67等）7/21由III同仁提供、81筆無網址。每週只看存活與最新消息日期 |
 | ~~舊空專案`Pcc329's Project`與9/10演練測試專案~~ | 資安 | Patrick | — | — | 10/2兩者皆已刪除。空專案查證：Storage下載為22 bytes空zip；Resume後0張資料表、0使用者、Storage從未初始化、9.7MB系統基本大小，repo無引用。組織只剩正式站，12月季度演練有名額 |
-| 備份SKILL改進：密碼寫在指令裡會進PowerShell歷史；歷史參考數字缺9/24與10/2 | 資安 | Patrick | — | — | 10/2週備份5.56MB（9/10為5.01MB，+11%合理：csp_violations 433筆、兩輪稽核留痕、MCP表）。建議改用環境變數或備份後清除歷史；SKILL為PPC外掛，由PPC更新；10/12：歷史參考數字待補10/2 5.56 MB、10/12 6.30 MB，完整性三項檢查指令可一併寫入SKILL |
+| 備份SKILL改進：密碼寫在指令裡會進PowerShell歷史；歷史參考數字缺9/24與10/2 | 資安 | Patrick | — | — | 10/2週備份5.56MB（9/10為5.01MB，+11%合理：csp_violations 433筆、兩輪稽核留痕、MCP表）。建議改用環境變數或備份後清除歷史；SKILL為PPC外掛，由PPC更新；10/12：歷史參考數字待補10/2 5.56 MB、10/12 6.30 MB，完整性三項檢查指令可一併寫入SKILL；10/19：再補10/19 6.58 MB，資料表基準改為26張 |
 | ~~確認9/30 Supabase變更未被Airtable同步覆蓋~~ | 後端 | Patrick | — | — | 10/1抽查15筆保留、repo無同步程式；10/2確認官網讀Supabase、Airtable已落後232家且無回寫，**結案** |
 | 本機工作區整理（solution-finder-pr-work） | 專案管理 | Patrick | — | — | ~~9/23盤點，8個舊副本待刪除~~ 9/24已刪除8個（內容皆在GitHub）；`api-auth-phase1`經`git cherry`確認4個commit未在GitHub，保留待PR #156復工時確認；taskboard workspace路徑待建立正式工作區後更新 |
 | ~~「免費試用」按鈕與資料值「提供試用」語意一致性~~ | 資料品質 | Patrick | — | — | **10/5完成**：PR #202 merge，`index.html`第107行label改「提供試用」，`id: free-trial`與第464行篩選邏輯未動；Preview篩出53筆 |
@@ -102,235 +102,29 @@
 | `manufacturing.html`公司資料面板是否同步顯示email／手機 | 前端 | Patrick | Alex | — | 10/15：該頁同樣呼叫`/api/company-detail`，PR #257後API已回傳`email`／`mobile`，但面板未顯示（規格明訂不改此頁）。是否顯示另案決定 |
 | 向Alex同步聯絡資訊實際覆蓋率 | 專案管理 | Patrick | — | — | 10/15：同意開放手機時依據為帳面563支，實際可用217支（32%）；email約96%才是主要聯絡管道；聯絡人僅涵蓋568／1,017家公司（約44%公司展開後為「暫無資訊」） |
 | Supabase Advisors提示未查看 | 資安 | Patrick | — | — | 10/15 Dashboard左側Advisors顯示紅點，未點開；常見為RLS或function `search_path`提醒，與P2「6張表RLS無policy」可能重疊 |
+| `sop/maintenance_checklist.md` 🔴區塊對應的首頁元素已不存在 | 文件 | Patrick | — | — | 10/19週封存時依清單檢查`index.html`：`ws-date`、`ws-conclusion`、`ws-item`、`decision-item`只剩CSS定義，頁面已無對應元素，「69筆真實案例」字樣亦不在；首頁已改版但清單未更新，清單待依現行首頁改寫 |
 
 ---
 
-# 2026-10-12
+# 2026-10-19
 
-1. **休假返回開工掃描**（10/6～10/11休假）：`solution-finder` main與10/5 merge PR #202後相同、無新commit；SF MCP線上v1.1.0，`data_status`總數2,487／正常1,080／疑似1,188／已下架219／前台2,268，與10/5相同
-2. **週備份補做**：`backup_20261012.sql` 6.30 MB，完整性三項檢查通過，已存OneDrive
-3. **補10/5那週週報與status封存**；費用改四類（資料庫使用／開發／AI推論／一次性採購），累計至10/12為33,358
-4. **repo存檔**：MCP v1.1原始碼、台→臺遷移檔進`solution-finder`
-5. **Codex檔案交付SOP v1.1**（`sop/codex-delivery-sop.md`）：建立並實測成功2次
-6. **Airtable退場①寫入遷移完成**：建3張表→PR #203 merge→歷史匯入2,014筆
-7. **更正**：上午「方案探索10月約2次」錯誤，實為11次（已在週報更正）
+1. **補做上週五例行工作**（10/16週五PPC請假）：週備份＋週封存
+2. **週備份**：`backup_20261019.sql` 6.58 MB，完整性三項檢查通過
+3. **週封存**：`status/status_20261012-1016.md`（10/12～10/15，含10/15第13條codeload核對結果）；本檔清空每日記事、保留待追蹤事項
+4. **封存檢查**：`maintenance_checklist.md` 🔴區塊對應的首頁元素已不存在，列P2
+5. **交付**：`codex_delivery_20261019_weekly.zip`（2檔，Codex推送），Claude codeload核對待補
 
 <details>
 <summary>展開細節</summary>
 
-**休假期間漏掉的例行工作**：10/9週備份（最後一次為10/2，10/5的台→臺409家與anon授權收回不在任何備份中，10/12補做後已涵蓋）、10/9每週輕量檢查與雲市集工業館兩頁基準、10/9週報與status封存。
+**週備份**：照SKILL固定指令（pooler端點、`$env:USERPROFILE`完整路徑；PowerShell開在`C:\WINDOWS\system32`仍成功）。大小6.58 MB（6.5754），比10/12的6.30 MB多約0.28 MB（+4%），對應10/12後新建的`ask_logs`、`search_logs`、`feedback_submissions`與10/14的`sf_mcp_usage`及其紀錄。完整性：`PostgreSQL database dump complete` Count=1；`^CREATE TABLE public\.` **26**（10/12的22張＋上述4張，與migration推算一致）；`COPY public.companies／contacts／search_logs／sf_mcp_usage／solutions` 5行皆在。26張作為下次比對基準。OneDrive複製（SKILL步驟5）截圖未含，待PPC確認。
 
-**週備份**：照SKILL固定指令（pooler端點、`$env:USERPROFILE`完整路徑）。PowerShell開在`C:\WINDOWS\system32`仍成功，因為輸出用完整路徑。大小6.30 MB，比10/2的5.56 MB多0.74 MB（+13%），對應10/2下午後新增的`company_tax_industry`與`company_field_log`（約1,950筆留痕）。完整性：`Select-String "PostgreSQL database dump complete"` Count=1；`^CREATE TABLE public\.` 22；`^COPY public\.(company_field_log|company_tax_industry|companies|solutions) ` 4行皆在。
+**週封存**：依10/5～10/9慣例，封存檔為本週status.md完整內容（待追蹤事項＋每日記事），本檔保留待追蹤事項（含劃線已結案項目）並清空每日記事。封存前確認遠端`status.md`為10/15第二次交付版本（`432afb1`），本週無其他推送。
 
-**費用（週報第七節）**：沿用8/14分類——資料庫營運費用只計Airtable（未來含Supabase／CDN／Vercel），Claude、OpenAI／Codex訂閱屬AI開發工具費用、不計營運成本。10月：營運764（Airtable 1人，9月2人1,517）＋開發3,868（Claude 3,178改Max方案、OpenAI 690）＝4,632。截至9/9分類累計驗算＝28,726（Airtable 15,134／Claude 3,986／OpenAI 4,897／API Credit 1,559／Crunchbase 3,150）。三項皆月付、9月三筆（9/3、9/8、9/9）已含在28,726，9/10～9/30無訂閱付款，累計至10/12為33,358（資料庫使用15,898／開發12,751／AI推論1,559／一次性採購3,150）。原總覽列「其他非營運項目」會誤導：API Credit是隨使用量成長的營運性成本，改為「AI推論費用（隨使用量成長）」與「一次性採購」兩類分列。9/11週報只列平表，未沿用分類，本次修正。
-
-**API Credit**：Console餘額US$11.00、自動儲值開啟；Invoice三筆（4/24 $10、6/1 $20、6/17 $20）＝費用表1,559，無漏記；本月US$0.04（⚠️下午更正：對應約11次方案探索AI搜尋，見下方「更正」段）。原先「6月後未儲值、用完會停止」的判斷前提不成立（未考慮自動儲值），已在週報更正。
-
-**Airtable退場第三步完成**：PPC確認只剩自己一個管理者席位。
-
-**repo存檔完成**：`solution-finder`的`supabase/functions/sf-mcp/index.ts`更新為v1.1（`9ff1f4be00e46d79`，＝線上版）、新增`migrations/20261002_normalize_city_taiwan.sql`；`weekly-report`四檔。皆以codeload逐位元組核對。上傳過程卡三次（拿到舊版、貼上未commit、`migrations/`內又打`migrations/`）。
-
-**Codex檔案交付SOP v1**（`sop/codex-delivery-sop.md`）：上述三次錯誤的共通點是都靠人眼判斷，改為Claude產出交付包（zip第一層為repo名、MANIFEST含動作與SHA-256、內附CODEX_PROMPT.md），Codex依雜湊比對後commit（weekly-report直接main、solution-finder開PR），Claude以codeload獨立核對；Codex無權限或失敗時轉手動。PPC觸發說法：「產出CODEX更新」。本SOP即以交付包實測：`_sop.zip`三次停在第1步（「週報更新」資料夾非git clone；clone至`Documents\Codex\repos\weekly-report`後，shell的`Get-Location`仍為`OneDrive…\ChatGPT\weekly-report`空repo，兩次），皆無副作用；SOP改v1.1（4-0本機路徑表、git一律`git -C <絕對路徑>`），`_sop_v2.zip`成功，commit `2e494be`，Claude以codeload逐位元組核對兩檔一致、無其他變更。⚠️「shell預設在OneDrive資料夾」為推測（可能為`$PROFILE`的`Set-Location`），Codex未回報第0步結果，待下次交付確認。
-
-**Airtable寫入遷移（退場①）**：決定——直接切換不雙寫（10月AI搜尋約每天1次、ask自9/7無使用，雙寫期間收不到足夠資料對照，改以Preview主動測試）；先切換再匯入歷史（切換後Airtable無新資料，匯出即完整）；Feedback唯一1筆為測試（部門＝測試）不搬，CSV存OneDrive（在精不在多）。CSV欄位與程式碼一致；Ask_Logs 802筆、Logs（程式稱Search_Logs）1,212筆。時間格式為**日/月/年**（376／527筆第一段>12，按月/日/年解析會報錯或靜默轉錯如1/6→1月6日）、時區為台灣（排除法：最後一筆09:36若為GMT即台灣17:36，當時尚未到）；數值匯出為「6.0」形式，驗證全為整數後轉換。
-建表`20261012_create_airtable_replacement_tables.sql`：交易內自檢（表3、RLS 3、anon／authenticated授權0、service_role INSERT 3）；獨立驗證3表rls=true、公開授權0、policy 0、service_role有全部7種權限（Supabase預設，正常）。⚠️Supabase預設把public新表權限授予anon／authenticated，必須明確REVOKE，不能只靠RLS（feedback含同仁姓名）。
-PR #203（`feat/airtable-write-migration-2026-10-12`）：三支API改`SUPABASE_SERVICE_ROLE_KEY`寫入、不送id／created_at／source、單次不重試；錯誤log只記status／table／code／time（Postgres CHECK違規訊息可能含整列資料，`csp-report.js`印body的做法不可沿用），code另以正規式限英數字。失敗行為不變：ask／claude照常回傳、feedback回502。規格外新增`.gitattributes`（只對該migration檔`-text`，防換行轉換改變雜湊），判定可接受。追加：`feedback.html`第181行「寫入內部Airtable回饋表」→「寫入內部資料庫」（規格書原列前端不動而漏掉）；`strategy-guide.html`第740行留待讀取分支PR。push時`git-remote-https.exe`崩潰一次，重試成功、diff確認未受影響。merge後main 8檔與審查版逐位元組相同。
-Preview實測（同一Supabase資料庫）：ask 1、search 2（詢問AI前又搜尋一次）、feedback 1筆寫入成功；以`source='api'`＋10/12日期＋筆數自檢1／2／1的交易清除（未用SYNC版清除SQL：僅以「【測試】」前綴判斷、無自檢）。merge後重新匯出CSV，與上午比對兩表皆無增減（證實Preview未寫入Airtable）。匯入SQL（含使用者內容，`PRIVATE`，不入repo）：先檢查無`airtable_import`→匯入→筆數與最早／最晚時間自檢；先在沙盒PostgreSQL演練（含第2次執行被防重複擋下）。執行後獨立驗證：ask 802（05-22 12:54～09-07 14:59）、search 1,212（05-22 12:51～10-12 09:36），台灣時間，與CSV一致；merge後尚無`source='api'`新資料。
-
-**更正（方案探索使用量）**：上午用8/14「單次約NT$0.6」把US$0.04換算成約2次，但該單價不對應方案探索（Haiku）。查Search_Logs為10月11次、程式確認`claude.js`用Haiku／`ask.js`用Sonnet，Console數字與11次相符。教訓：用單價反推次數前，先確認單價對應哪個功能與模型；有實際紀錄時以紀錄為準。
-
-**封存**：`report.md`（10/5～10/9）同時存為`report/report-2026-10-09.md`；10/5版status.md存為`status/status_20261005-1009.md`。該週只有10/5一天。
+**封存檢查（`maintenance_checklist.md`）**：以repo內`index.html`（最後異動`fc09bf2`，10/14）比對🔴區塊：`ws-date`、`ws-conclusion`、`ws-item`、`decision-item`僅存在於CSS，頁面無對應元素；「案例分析功能開放測試提案」的「69筆真實案例」字樣不在。判斷為首頁改版後清單未同步，非內容過期，列P2改寫清單。
 
 </details>
 
 **本日教訓**
-- 上傳卡三次的共通點是「靠人眼判斷」→ 交給機器比對（交付包＋雜湊）
-- 同名資料夾（兩個weekly-report）讓肉眼判斷失效：一律用絕對路徑
-- 有些保護（防重複匯入）只在出錯情境才觸發，要在沙盒演練，不在正式資料庫試
-- 資料加上來源標記（`source`）＝資料血緣，撤回、防重複、解讀精度都靠它
-- 用單價反推使用次數前，先確認單價對應的功能與模型；有實際紀錄就以紀錄為準
-- 規格書列「前端不動」時，仍要檢查前端是否有描述後端行為的文字
-
-# 2026-10-13
-
-1. **組長MCP v1.1重測信寄出**：客觀數字（時間、次數）交系統日誌與Claude查詢紀錄，主觀判斷留給組長
-2. **PR #204 merge**：「跨N種計畫」改為只計入可佐證政府計畫的來源（允許清單6個），有徽章公司179→129
-3. **PR #205 merge**：四支API移除Airtable讀取分支，網站與Airtable完全脫鉤
-4. **MCP推廣規劃**（列為P1待辦）：身分規則、13項前置作業、試辦→開放
-5. 每週輕量檢查再延一天（10/14上午）
-6. **組長MCP v1.1重測完成**：15次工具呼叫（上次約330次）、驗收項目d完成；發現掃描上限300筆造成計數少算，v1.2改由資料庫篩選與計數
-
-<details>
-<summary>展開細節</summary>
-
-**開工掃描**：兩個repo自10/12收尾後無變動；MCP v1.1正常，`data_status`與10/12相同。
-
-**組長重測信**：Claude（claude.ai）沒有時鐘，查詢時間交Edge Function日誌；工具次數請Claude每題自列（「只列實際呼叫，不要估算」），再與日誌交叉比對；速度感、答案好壞、已下架說明多寡只能由使用者判斷。`whoami`為SF資料庫連接器8個工具之一，回傳id、email、server_version，用於完成驗收項目d。
-
-**跨N種計畫**：PPC指出「資料來自政府網站≠參與政府計畫」（例：SME AI平台爬回的方案，網站無法證明隸屬計畫）。分三層：①計畫佐證 ②政府平台收錄 ③非政府／內部；PPC確認新創嚴選網屬①、政府軟體採購網屬②。原考慮把分類記在`data_sources`表，但查證`data_sources.source_name`是網頁層級（工業館3列、新北2列、新創嚴選2列），與`solutions.program_type`名稱不一致，以名稱對應會靜默漏掉方案，改為程式內**允許清單**（新來源預設不計入）。名稱核對：10個值合計2,268，允許清單6名逐字相符（含「農業雲市集-數位館」為半形連字號0x2d），清單內1,751筆。影響範圍：179→129（179−50=129自洽）。PR #204改動僅常數與一行判斷；沙盒執行10項測試通過。Preview實測：思邁智能（MaiAgent，3→1）徽章消失、以力股份（Bearify，6→5）顯示跨5種計畫。
-
-**移除Airtable讀取分支（PR #205）**：四支API以`DB_SOURCE_SOLUTIONS`／`_COMPANIES`／`_CASES`決定來源，程式預設`'airtable'`。三變數在Vercel為Secret無法讀值，改以間接證據：方案卡片顯示「臺北市」（10/5只在Supabase更新）→solutions、companies為Supabase；儀表板公司1,102（Airtable 834）→stats為Supabase；cases無證據→以Preview與正式站並排比對。等價性測試以`git show a64548b`（當時main）取出舊版程式，與新版餵同一fixture比對，另測舊變數設為airtable／未設／亂填時新版仍讀Supabase；codeload壓縮檔無`.git`會失敗，改以git clone重跑：寫入54＋徽章10＋等價性54＝118項通過。保留`airtable_rec_id`回應欄位（solutions 2處、companies 1處與main相同）與「Airtable端空值回空字串」對齊邏輯。PR #204的Airtable分支測試改為「舊來源設定被忽略」。Preview：首頁南部・AI方案・≤3萬兩邊16筆且首筆相同；案例知識庫兩邊85筆、10頁，第1筆（杉恆壹樹農創）、中間（公園61號民宿）、最後一筆（沃龍工業）逐項相同。merge後main與審查版相同；正式站巡檢2,268／973／1,102／NT$40,000、案例85、公司圖譜、搜尋皆正常。
-
-**MCP推廣**：PPC構想「資策會內部同仁、具MCP知識與Claude帳號、提供資訊後由PPC開通」。延伸：身分確認改以網域（`@iii.org.tw`、`@isd4.biz`——後者由資策會發放與管理，同仁的副帳號，委外人員亦有；PPC可用`isd4.biz`取代個人Gmail）；「具MCP知識」難驗證，改為提供教學＋自我檢核，真正門檻是Claude付費方案；資料會留在使用者個人Claude對話紀錄，需組織確認；帳號生命週期含停用（季度檢視需最後使用時間）。
-
-
-**GitHub Projects看板同步**：看板（Pcc329 user project #1）自9/23搬移後未更新，24張卡片（solution-finder Issues #175–198）。PC安裝GitHub CLI、`gh auth refresh -s project`後以`gh project item-list`匯出；首次匯出中文亂碼（PowerShell以系統編碼cp950讀取管線輸出，`Out-File -Encoding utf8`只決定寫出編碼，資訊已遺失不可逆），先設`[Console]::OutputEncoding = UTF8`重匯成功。比對：約15張一致、2張過時、4張只在看板、32項只在status。PPC決定：看板放未完成＋本月完成；資安類在公開Issue（solution-finder為公開repo）標題泛稱、內容寫「細節見內部紀錄」；看板獨有4張保留並補進本表。變更清單：更新4張、新增50張（未完成32、10月完成18），以`codex_delivery_20261013_project.zip`由Codex先預演、PPC確認後執行。SOL-8（返回首頁剩餘範圍）看板為Done、本表未劃線：查過去紀錄與main程式碼後確認已解決（見該列），看板維持Done、本表劃線。
-
-**MCP架構對照（組長提供的書，圖2-3）**：Host＝claude.ai（Claude模型負責意圖分析與工具選擇）；Client＝「SF資料庫」連接器（與server 1:1）；Transfer layer＝Streamable HTTP＋JSON-RPC 2.0，請求帶OAuth 2.1權杖；連線時`initialize`→`tools/list`取得8個工具，每次查詢送`tools/call`；Server＝Supabase Edge Function `sf-mcp` v1.1.0，Capabilities只有Tools（Resources、Prompts未提供；client端Sampling、Notification未使用）；Data source＝Supabase Postgres，以RPC呼叫`sf_search_solutions`並以登入者身分受RLS限制。
-
-**掃描上限原理**：`sf_search_solutions`在資料庫**全表**搜尋並回傳完整`total_matches`；Edge Function只分頁取回前300筆（`SCAN_CAP`），在這300筆內篩縣市、依公司彙整，超過時回報⚠️。即「資料庫看完整本書，助理只影印前300頁回來數」。組長推測「為了流暢度」對一半：上限是為了不每次搬回全部資料，但根因是v1.1刻意不改資料庫、把縣市篩選放在Edge Function。
-</details>
-
-**本日教訓**
-- 「名字看起來要刪、其實不能刪」：`airtable_rec_id`、空值對齊邏輯——規格書要事先點名
-- 兩張表名稱粒度不同時，以名稱對應會靜默漏資料；先查證再設計
-- 允許清單比排除清單保守：新來源預設不生效，要人判斷
-- Secret環境變數看不到值，判斷只能靠行為證據；看不到的設定，用實測輸出驗證
-- 等價性測試要確認「舊版」從哪來：真的舊程式碼（git show），而不是改寫過的副本
-- PowerShell管線讀取外部程式輸出時用系統編碼：中文先設`[Console]::OutputEncoding`為UTF-8；寫出編碼救不回讀入時已遺失的字元
-- 看板卡片是公開repo的Issue：任務標題本身也可能洩漏弱點
-- 計算結果取決於「截斷」放在哪一步：截斷在篩選之前會靜默少算；篩選與計數應交給看得到全部資料的那一層
-
-# 2026-10-14
-
-1. **開工掃描**：`solution-finder` MCP原始碼雜湊`9ff1f4be00e46d79`＝10/13記錄；SF MCP v1.1.0，`data_status`與10/13相同（2,487／前台2,268）；`weekly-report`最新commit為`codex_delivery_20261013_project_v2.zip`
-2. **status.md交付（v3 A部分）**：commit `03670a0`，Claude以codeload核對`5bd38d16df729026`一致、僅status.md變更
-3. **GitHub Projects看板同步完成（v3.1）**：74張（Done 22／Backlog 16／To Do 34／In Progress 2）；中途在SOL-28停止一次，關閉步驟改為冪等後續跑
-4. **每週輕量檢查（第二次例行）**：6個來源全部存活；新創嚴選+1、農業雲市集+2觸發提前完整稽核；雲市集工業館三頁基準建立（SOL-34結案）
-5. **`data_sources` SRC-010（SME AI平台）網址更新**：舊網域改為`smelearning.sme.gov.tw/smeai/`，單一交易＋自檢，交易外獨立驗證通過
-6. **新增待辦**：選字即時搜尋（含三條設計原則）、兩項完整稽核、工業館完整稽核、商業服務業多店升級名單、輕量檢查自動化評估、SME AI 279筆無網址
-7. **MCP v1.2三項決策定案**：已下架揭露一句帶過、推薦只列正常（`normal_only`）、限流30次／分先只記錄
-8. **資料庫遷移`20261014_sf_mcp_v1_2.sql`執行**：執行前於本機模擬環境實測（含負向測試）；交易內自檢通過；交易外V1～V3驗證通過
-9. **PR #256 merge、Edge Function部署1.2.0**：審查發現2處問題（錯誤未記日誌、whoami移除本人email），修正後merge；main與線上`index.ts`一致
-10. **部署後實測**：臺北市關鍵字「AI」169家、476筆，1次呼叫（v1.1首查87家）；用量表記錄4次呼叫
-11. **組長回饋處理結果與上線通知已寄出**，附三張圖
-
-<details>
-<summary>展開細節</summary>
-
-**看板同步過程**：v2交付包（10/13 `4b935df`）只完成status.md，看板部分未寫入（截圖仍為9/29的24張、`sync/`無10/13紀錄），改送v3。Codex在v2同一串對話執行，回覆時明確宣告v2指令作廢。v3預演：更新4、新增50、略過0，統計符合，但SOL-9原標題「6張表RLS開啟但無policy待確認」已改為「資安加固項目C」；另PPC決定SOL-6改「資安加固項目D」（原標題含「PR #156 API身分驗證Phase2」）、SOL-64改「資料庫權限收斂」（原含「（寫入類）」，暗示讀取類未做）。以v3.1重新預演（`project_changes.json` SHA-256 `051a3979…`），並要求Codex印出14張資安相關卡片內文全文與54張變更卡片的關鍵字掃描（`@`、`http`、`.sql`、`key`、`token`、`password`、密碼、金鑰、帳號、`anon`、`authenticated`、`policy`、`RLS`、表名），0命中；內文僅「執行人／決策人／目前狀態／來源」四行，0命中合理。SOL-6內文保留「分支落後main…須先rebase」——因既有Issue改名後時間軸仍可見原標題，內文不增加新資訊，判定可接受。
-
-**執行中斷與冪等修正**：依「任一步失敗即停止」，在SOL-28（#208）的`closeIssue`報錯「Could not close the issue」後停止，唯讀查詢#208實際已CLOSED；SOL-26～28（#206～#208）已建立，其餘47張未建。#208事件紀錄關閉者為`Pcc329`，看板Workflows 6項皆啟用（含Auto-close issue、Item closed）。修改`execute_v3_1.py`關閉步驟：關閉前查狀態（CLOSED→記「已關閉（跳過）」）、OPEN才呼叫關閉並容許報錯、關閉後再查一次須為CLOSED、未知狀態報錯；建立前依`[SOL-N] in:title`搜尋已存在即跳過。續跑：跳過3、新建47（SOL-29～75＝Issue #209～#255）、18張最終CLOSED（SOL-58～75）。關閉統計：已關閉（跳過）7、關閉後確認11、close_error 0——腳本尚未呼叫關閉時已有7張被關閉，判斷為看板Auto-close issue workflow在狀態設為Done後自動關閉，與腳本形成競態；事件紀錄記為Pcc329推測是workflow代改狀態者執行（未查證）。PPC看板截圖獨立驗證：各欄16／34／2／0／22，SOL-27＝#207、SOL-34＝#214、SOL-58＝#238。
-
-**每週輕量檢查（瀏覽器，只讀取；原定10/9因休假延至今日）**：新創嚴選146（基準145，+1）；農業雲市集77（75，+2；伺服器端抓取回傳SERVER_ERROR，瀏覽器正常——網站擋非瀏覽器請求）；SME AI 266（`page=17` n＝10、`page=18` 0張，＝基準）；工業館SRC-005 111／10頁（＝基準）、SRC-003 179／15頁、SRC-004 187／16頁（首次）；商業服務業專區（`smebiz.org.tw/news-list.php`）10/05「提升商業服務業營運效能強化韌性計畫」個案補助－多店升級（第二梯次）入選名單（有附件），10/01另有「整合型補助申請須知（115年10月修正）」（規則修訂，非名單），9/23「智慧雨林創生計畫－智慧商業服務領域」核定名單（不同計畫，**PPC決定暫不追蹤**）；政府軟體採購網5,804／36／27（＝基準），最新公告10/06。
-
-**SRC-010網址更新**：SME AI網域搬遷9/30已記錄於稽核log（每週檢查方式已改用新網域），但`data_sources` SRC-010的`url`仍為`https://www.smeai.tw/service/category-card`。唯讀查詢：SME AI 279筆`website_url`全為空值（合計279自檢通過），網址欄位只有`data_sources.url`與`solutions.website_url`，影響僅1筆。瀏覽器確認舊網址轉至`https://smelearning.sme.gov.tw/smeai/service/category-card`（路徑不變）。單一交易：防呆（未填新網址即中止）→前置檢查舊值→UPDATE `url`並在`technical_note`附加「2026-10-14 網域變更（每週輕量檢查發現）」→`row_count`＝1自檢→commit。Supabase SQL Editor不顯示`raise notice`，交易外獨立查詢確認新`url`、新備註、原備註結尾（「JS動態載入」）保留。另：SQL Editor一次執行多段查詢只顯示最後一段結果，第一次查詢因此只看到③，改合併為單一查詢重跑。
-
-**選字即時搜尋討論**：PPC提出功能與「網站揭露定時更新、比對多家網站、Google可能非即時」構想。修正兩點：①Google常比SF新（廠商官網為第一手），SF價值在標明自身查證時間與狀態 ②只揭露實際做到的事（臺灣雲市集1,031筆為「未逐筆驗證」）。「疑似已下架」描述的是方案在該計畫平台上的上架狀態，不是產品是否存在；官網仍販售時應維持原狀態並備註，不以Google結果直接覆蓋。Google搜不到不能證明不存在。三條設計原則記於待辦。
-
-**更正**：Claude上午兩度把「商業服務業117家所屬系列」寫成10/2起待確認，實際10/2已結案（單店導入第一、二梯，SRC-002已補）；經查過去紀錄更正。另「續跑需關閉16張」為Claude算錯，實為18張（Codex預演時指出）；「#208較可能是API單次異常」的判斷被18張關閉統計推翻。
-
-
-**MCP v1.2決策過程**：PPC先問「改Edge Function讓它先篩選計數再截斷」是否也可行——可行且結果正確，但須每次搬回符合關鍵字的全部資料（寬鬆詞可能上千筆），搜尋邏輯也會多一份；因推廣尚未開始、無急迫需求，選擇直接做資料庫版本（避免做兩次，即不先借技術債）。原規劃G單獨上線（不改參數、免重連），三項決策定案後併回v1.2一次發布。已下架揭露屬可逆決策，PPC自行決定、上線時告知組長，不再來回確認。
-
-**遷移設計**：`sf_private.sf_ranked`為評分排序唯一實作（本體逐字沿用10/1的`sf_search_solutions`，多帶出公司縣市），放在API不開放的schema；`sf_search_solutions`改為其外層（新增`p_cities`、`p_normal_only`，參數名不變、向下相容v1.1）；新增`sf_search_companies`（公司總數在全部結果上計算、一律至少回傳一列總數）；`sf_mcp_usage`＋`sf_mcp_touch()`（SECURITY DEFINER、只寫`auth.uid()`本人那一列、上限寫死於函式內）。前置檢查：線上`sf_search_solutions`定義雜湊須為`43b3ed96…`（10/14匯出比對，與repo 10/1版逐字相同）。遷移檔SHA-256 `0c06539e…`。
-
-**本機模擬測試（執行前）**：Claude在本機PostgreSQL 16模擬Supabase（`auth.uid()`／`auth.jwt()`、RLS、白名單、`anon`／`authenticated`預設授權），以舊函式建基準：新舊版10組參數398列逐列一致（含順序）、縣市計數5組與舊函式翻完全部頁面結果一致、`p_normal_only`總數一致；白名單／非白名單／`anon`三種身分分別為可查、0筆、無權限；直接讀用量表被拒；連續呼叫33次記錄超標3次。**負向測試**：故意改錯排序、故意重現300筆截斷，兩版皆被交易內自檢擋下並整份撤銷——證明自檢本身有效。此流程定為資料庫遷移執行前的標準做法。
-
-**執行與驗證**：Supabase SQL Editor執行前跳出兩個警告——「破壞性操作」為預期中的`drop function`舊版；「建立資料表未啟用RLS」為誤判（腳本有啟用，警告應由暫存表觸發），選「Run without RLS」（照原樣執行，不由Supabase自動插入指令）。交易外：V1函式8個`anon`皆不可執行、僅`sf_mcp_touch`為definer；V2臺北市「AI」476筆、169家、縣市未填207筆；V3用量表0筆、RLS啟用（亦為對前述警告的獨立查證）。另以`is_ai=true`查得152家。更正：Claude曾稱「組長分批查詢仍少算17家」，但組長紀錄為「約152家以上」且為關鍵字定義，不能直接與169相減。
-
-**PR #256審查**：codeload下載`686d881`：遷移檔、Skill與交付版逐位元組相同；`SCAN_CAP`等全部移除；唯一寫入為`sf_mcp_touch`；套件版本未變；8工具皆經`runTool`。發現：①handler與touch錯誤只回精簡訊息、伺服器端完全未記錄原因（維運端的靜默錯誤）②規格「不得回傳email」被照字面解讀，連`whoami`本人email也移除——規格寫得不夠精確。修正版`5921a78`核對通過。PPC曾將修正意見誤貼至週報對話，codeload確認weekly-report未變；修正在產業資料庫對話處理時已存在於PR，判斷為週報對話的Codex先行處理（Codex的GitHub權限不限單一repo），內容正確。Codex如實回報兩項介面限制：方案空頁無總數、含已下架時「非疑似」包含已下架。
-
-**部署與實測**：部署前先Download備份v1.1；貼上693行（`714e6c675a647f89`），以M標記消失與「9 days ago」變為「a few seconds ago」確認部署。實測（舊工具清單）：`whoami` 1.2.0含email；`search_companies`臺北市「AI」169家／476筆、`summary_line`一句含分布與缺口、limit=3總數不變；「入住自動化」0筆附`next_step`；`describe_data`預設回目錄。重連後連接器權限畫面工具名稱為中文（D項`title`經實測確認claude.ai會使用）。用量表記錄4次（Claude原估約6次，誤把`tool_search`計入；`tool_search`不呼叫伺服器）。
-
-**上線通知**：寄組長，逐項列出5項回饋處理結果、169家實測數字與兩種AI定義（關鍵字169／標記152），附三張圖：縣市計數演進（篩選與計數從Host→Server→資料庫）、v1.2架構圖（Anthropic提供 vs 本專案負責）、上線前驗證流程（AI模擬測試與負向測試）。
-</details>
-
-**本日教訓**
-- 統計數字對不代表內容對：74張總數正確時，公開標題仍可能洩漏弱點，須逐張看內容
-- 公開Issue改名會在時間軸留下舊標題：泛稱要在第一次建立時就做到
-- 冪等＝不論執行幾次最後狀態相同；把「做一個動作」改寫成「確保達到一個狀態」。代表狀態的資料（卡片、Issue）要冪等，代表事件的資料（`search_logs`）不該冪等，但搬資料的動作要冪等
-- 以結果驗證的寫法不需先查出根因：先查、容錯、再查，兩種成因都能正確處理
-- 單筆事件紀錄可能誤導，多次統計才看得出競態
-- 淨變化會掩蓋總變化：+2可能是新增5、下架3，所以要逐筆比對
-- 錯誤碼是線索不是判決：「被擋」與「掛了」要靠第二個獨立管道區分
-- 自動化可偵測與通知，改變資料狀態的那一步要人工確認
-- 有實際紀錄先查紀錄再下結論（117家來源、關閉張數）
-- 靜默錯誤最危險：v1.1快速給出看起來合理的「87家」；AI只對明確訊號反應，不會覺得數字不對勁——與其靠警告，不如讓錯誤不會發生
-- 計算放在看得到全部資料的那一層：越往資料庫，資料越完整、搬運越少
-- 技術債可以借，但要記帳並知道何時還；沒有急迫需求就不必借
-- 可逆決策自己定、告知相關人；不可逆決策（公開資訊、刪除）才需事先確認
-- 負向測試：故意放錯，證明檢查本身有效；只測正確版本會通過不夠
-- 工具警告也是線索不是判決：逐項對照腳本後再決定
-- 錯誤訊息要分兩種受眾：使用者看精簡訊息，後台日誌記完整原因
-- 規格用詞要精確：「不得回傳email」應寫明是第三方資料
-- 誤貼指令的影響範圍取決於對方權限，不只是對話所屬專案
-
-# 2026-10-15
-
-1. **開工查詢（SF MCP）**：`data_status`總數2,487／正常1,080／疑似1,188／已下架219／前台2,268，與10/14相同；以MCP查順立智慧、鉅碼科技聯絡資訊，兩家方案皆來自臺灣雲市集、皆為疑似已下架
-2. **聯絡資訊UI候選**：方案詳情頁收合按鈕四個位置（A標題卡內／B獨立收合卡／C Logo下浮出／D右下浮動），以Design畫布與獨立HTML展示；PPC選**B**
-3. **個資原則討論**：PPC原則「前端index不放、需要時再API call」；Claude補充盲點（見細節）
-4. **決策**：PPC認為顧問必須取得email／手機；**Alex同意**UI顯示；MCP欄位授權維持不變
-5. **規格書v1→v2**：v2含API開放`email`／`mobile`、IP限流、前端延遲載入＋快取；欄位名稱以SQL確認後寫入規格
-6. **PR #257**：Codex實作、Vercel Preview驗收（含401、429、空值、鍵盤、375px）；Claude以實際diff審查
-7. **資料品質發現**：手機346筆為來源遮罩值、email約19筆無效；PR #257補commit於API層過濾
-8. **PR #257 merge並結案**：部署專屬網址驗證三種情境正常；正式網域以QbiAI確認新版API上線
-9. **status.md交付**：`codex_delivery_20261015_status.zip`（1檔，Codex推送，commit `9111388`），Claude codeload核對通過（逐位元組相同、僅status.md變更）
-10. **公司電話遮罩發現**：分層計數確認`office_phone`空值全為`NULL`；以「同號碼跨公司＋名稱無關＋末三碼000」與「結尾0個數分布」找出36筆遮罩值
-11. **PR #258**：`company-detail`過濾公司電話遮罩值（含分機一併清除），Claude審查diff後merge，正式站以卓碼資訊確認
-12. **SQL課**：`NULL`與`''`差別、五種「看起來沒有值」、分層計數與驗算、以機率基準（每多一個0約少十倍）判斷異常
-
-<details>
-<summary>展開細節</summary>
-
-**UI候選（四版）**：A 公司名旁膠囊按鈕、展開在標題卡內；B 標題卡與費用卡之間獨立收合列，收合時副標列出欄位；C Logo下方小按鈕＋浮出小卡；D 右下浮動按鈕。B的優點是收合狀態就說明內容、結構清楚、手機好用。先以Design畫布展示，PPC要求不需登入Claude即可瀏覽，改輸出單一HTML檔（`SF_聯絡資訊按鈕_候選位置.html`）；選定後另出`SF_聯絡資訊_B版_demo.html`（預設收合、模擬0.6秒載入、顯示API請求次數、可切換1位／2位聯絡人、無聯絡人、API失敗、401五種情境，對應規格驗收項目）。
-
-**個資原則與盲點**：PPC原則「前端index不放聯絡資訊、需要時再API call」可擋整頁HTML爬取與搜尋引擎索引，屬「增加取得成本」而非「控制存取權限」。盲點：①按鈕觸發的請求在DevTools可見，API本身就是公開入口，且`solution_id`為連號（SOL-0001～2487），可直接迴圈列舉 ②若前端用anon key查詢，防線只剩RLS，contacts對anon可讀時可繞過API直接查REST ③無限流時延遲載入只多一步 ④個資法的蒐集目的問題與是否被爬無關。查證`company-detail.js`：已有`requireAuth`、以service_role在伺服器端查詢、回傳不含email／手機。
-
-**決策過程**：PPC表示「顧問必須知道這些資訊，這就是他們查資料庫的主要目的，可以公開」。Claude指出此決策推翻三處既有設計（`company-detail.js`資料最小化、`20261001_create_sf_mcp_access.sql`欄位層級授權、MCP回應說明），並查`api/auth.js`：登入為全站共用`SITE_PASSWORD`、session 7天、無個別帳號；`company-detail`無限流。建議補存取紀錄與限流，並由決策人確認。PPC與Alex討論後同意UI顯示email與手機。限流併入本次；存取紀錄需新表，另列P1；MCP不跟著改（Alex同意範圍為UI）。
-
-**repo查證（規格前）**：方案詳情頁為`public/index.html`的`renderDetail()`（React），方案物件已有`item.cid`、`item.tax`；`public/manufacturing.html`已有`companyDetailCache`（點了才抓、抓過就快取、loading／error／data三態），規格要求比照。GitHub API遭rate limit，改以`git clone`查證。
-
-**contacts欄位與覆蓋率（SQL，唯讀）**：`information_schema.columns`確認9欄：`contact_id`、`airtable_rec_id`、`company_id`、`contact_name`、`title`、`email`、`mobile`、`office_phone`、`created_at`。筆數：聯絡人677、涵蓋公司568（Companies共1,017）、有公司電話344、有email 667、有手機563、三者皆無8。計數一律用`COUNT(NULLIF(TRIM(col), ''))`，避免空字串與空白被算成有值。
-
-**規格書**：v1（不開放email／手機）作廢；v2（`codex_spec_contact_info_card_v2_2026-10-15.md`）改動項目0～5：欄位確認（已內嵌欄位表）、API select加`email,mobile`、IP限流（比照`feedback.js`，60秒30次，順序OPTIONS→method→限流→`requireAuth`→參數，超過回429）、收合卡（預設收合、`aria-expanded`／`aria-controls`）、延遲載入＋快取（只快取成功結果；401／429／其他錯誤各有訊息，401無重試鈕）、欄位內容（`tel:`轉換`#`→`,`、`mailto:`需含`@`、JSX輸出不用`dangerouslySetInnerHTML`）。防呆：不改auth、sf-mcp、migration、RLS、`manufacturing.html`；SYNC／PR／commit不得出現未遮罩email或手機（repo公開）。Codex指示文字另附隔離條件（新對話、從最新main開新branch、不碰PR #256）；送出前提醒選定專案並把推理強度由「輕度」改「高」。
-
-**PR #257 Codex實作與驗收**：commit `5194147`（feat）＋三個docs commit，最終`d31cd18`；改動`api/company-detail.js`（+26／-1）、`public/index.html`（+111）、SYNC。Codex額外以`pending` Map對同一公司的同時請求去重。驗收在Vercel Preview以真實資料完成：未展開前無請求、首次展開恰好1次、收合重開不增加、同公司換方案不重抓；同IP第31次請求回429（前30次皆401，證明限流在認證之前）；429後重試於視窗結束後恢復，錯誤未快取；`cid`為空的方案不發請求；375px無水平捲動。
-
-**401驗收過程**：Codex請PPC在Preview分頁登入（密碼不在對話中提供）。登出時：①Chrome網站資訊面板工具無法操作 ②DevTools刪除`sf_session`後`/api/session-check`仍回`authenticated:true`（推測刪錯網域列）③改在session-check分頁Console執行`fetch('/api/logout', {method:'POST'})`回`{ok:true}`，重新整理後`{"authenticated":false}`（Console的紅色401為session-check未登入時的正常回應）。Claude提醒**快取陷阱**：已成功展開過的公司會命中快取、不發請求，無法證明401處理正確，須改用本次session從未展開過的公司；Codex改用Shopass（`recvOVaf88wEB4WHZ`），13:06:25.340恰好一筆GET 401並顯示「登入已過期」。證據來源為Vercel Request Logs，Codex如實註明未取得Chrome Network面板截圖；Codex亦在session仍為true時拒絕宣稱401已驗證。
-
-**Claude審查（`d31cd18`）**：改動範圍、select欄位、限流順序與IP取法（同`feedback.js`）、只快取成功結果、`cid`為空不發請求、JSX輸出、未動auth／solutions／manufacturing／MCP皆符合；SYNC以regex掃描無未遮罩email／手機。非阻擋建議兩項：`mailto:${encodeURIComponent(email)}`會把`@`編為`%40`（部分桌面郵件程式不解碼）；`key={item.id}`應同列表寫法`item.id || item.s`。
-
-**資料品質（SQL，唯讀；Supabase SQL Editor一次多段只顯示最後一段，須分開執行）**：
-- 4a 手機：有值563、台灣手機格式563、末三碼000為**346**、6個以上連續相同數字**346**（兩欄相同）
-- 4b 重複號碼：前10組皆為`09xx-xxx-000`，每組掛在8～14家**不同公司**
-- 4d `^09\d{2}0{6}$`（前4碼＋6個0）＝346，74種前綴 → 來源端遮罩
-- 4e 依`program_type`：臺灣雲市集344／391（一家公司可有多來源方案，各列加總會重複計算；對照政府軟體採購網3／103）→ 遮罩出自臺灣雲市集匯入
-- 5 email：含`*`為0、文字placeholder（nan／none／null／-／n/a）16、不含`@` 19
-- 實際可用：手機217（32%）、email約648（96%）
-
-**PR #257補commit（`ebbbbfa`）**：`api/company-detail.js`新增具名函式`isMaskedMobile`（去除非數字後比對`^09\d{2}0{6}$`）、`isInvalidEmail`（不含`@`或屬placeholder清單；空值亦回空字串），方便資料清理後移除；`index.html`改`mailto:${email}`、`key={item.id || item.s}`。Preview三項驗收：鉅碼手機改「暫無資訊」、email正常；人工智能（真實手機）保留且`tel:`正確；大創新零售email `-`被清空、無`mailto:`。Claude拉diff確認，SYNC再掃描0命中。
-
-
-**公司電話遮罩（SQL，唯讀）**：
-- 分層計數：677筆中`office_phone` `IS NULL` 333、`''` 0、只有空白 0、placeholder 0，`no_phone_basic` 333＝677−344，驗算吻合；`office_phone`的ETL乾淨。對照email有16筆placeholder（同表同次匯入），推論email placeholder為廠商於來源平台自行填寫，而非pandas轉換問題（推測）
-- 跨公司重複：以`SPLIT_PART(office_phone, '#', 1)`去分機取主號碼，重複出現於多家公司的前10組中8組末三碼000，且公司名稱互不相關（如一組7家），不符集團、共享辦公、代理商、總機分機等正常情況
-- 結尾0個數分布（344筆）：0個255、1個37、2個9、3個10、**6個34、7個2**；以每位數為0機率約1/10為基準（6個0理論值≈0），6、7個0為遮罩。7個0為「保留前4碼、後6碼歸零」且第4碼本身為0的自然變形（預期約3.6筆，實際2筆，吻合）
-- 依`program_type`：臺灣雲市集35／341（對照農業雲市集0／18、政府軟體採購網0／2）。同平台手機遮罩約88%、公司電話約10%，推測平台將手機視為個資遮罩（推測）
-- 驗收樣本：原指定的智雲聯網唯一方案SOL-0753為「已下架_公司歇業佐證」，前台不顯示；改以MCP查得卓碼資訊（SOL-0361，疑似下架但前台可見）
-
-**PR #258（`02f7ade`程式、`ed583b3` SYNC）**：從`581c978`開`fix/office-phone-mask`，僅改`api/company-detail.js`（+6／−1）新增`isMaskedOfficePhone`（以`#`切開取主號碼、去非數字、比對`^\d{4}0{6}$`），遮罩時整欄回傳空字串（分機一併清除：主號碼無效則分機無從轉接）。Preview驗收：卓碼暫無資訊且無分機殘留、QbiAI分機正常、鉅碼公司電話正常且手機仍暫無資訊。Claude拉diff確認，SYNC掃描僅命中統編與Request ID。merge後正式站以卓碼確認（截圖未含網址列，依PPC操作步驟記錄）。另觀察：卓碼聯絡人姓名與email帳號名稱不一致，可能窗口換人僅部分更新，屬欄位間矛盾類資料品質訊號，未處理。
-
-**SQL課重點**：`NULL`＝沒有盒子（不知道／未提供），`''`＝空盒子（有值，內容長度0）；`COUNT(欄位)`只跳過`NULL`，`''`、空白、`'nan'`、遮罩值都會被算進去。五種「看起來沒有值」依發現難度：`NULL`→`''`→只有空白→文字placeholder→假資料（格式正確、只能靠統計異常發現）。前四種為「確定沒有」，假資料為「推定沒有」，應標記並保留判斷依據。不只要不漏算，還要分層算：同樣是沒有，原因不同修法就不同。`NULL`在比較運算中為「不知道」，`WHERE 欄位 <> 'x'`會排除`NULL`列。
-
-</details>
-
-**merge後驗證**：PPC於部署專屬網址`solution-finder-474zc3lal-…vercel.app`展開三家公司（七法、人工智能、人易科技）：遮罩手機顯示「暫無資訊」、真實手機為`tel:`連結、公司電話`#`分機與email `mailto:`連結正確、稅籍主業共列、免責小字顯示。部署專屬網址不等於正式網域（Instant Rollback前例），另以正式網域確認：選擇手機為真實號碼的QbiAI，因為顯示「暫無資訊」無法區分舊版API與被過濾，顯示號碼才能證明新版上線。截圖含真實聯絡資料，不入公開repo。
-
-**本日教訓**
-- 部署專屬網址≠正式網域：驗證上線要看使用者實際開的那個網址
-- 驗證樣本要選「新舊版本結果會不同」的那一筆：空值兩版都顯示「暫無資訊」，證明不了任何事
-- 延遲載入是「增加取得成本」，不是「控制存取權限」；兩者都要，但只做前者防不了有心人
-- 推翻既有安全設計時，先列出它散落在哪些地方（API、資料庫授權、MCP說明），再由決策人確認範圍
-- 「需要登入」要看登入機制本身：共用密碼＋無紀錄＝無法追查是誰看的
-- 快取會讓測試失效：驗證錯誤處理時，要用從未命中快取的資料
-- 登出靠伺服器清除HttpOnly cookie：呼叫網站自己的登出API比手動刪cookie可靠，順帶驗證登出API
-- 格式檢查抓不到遮罩值：346支手機格式全對，靠「末三碼分布」「同號碼跨公司」這種統計異常才看得出來
-- 帳面覆蓋率≠實際可用率：決策依據的數字（563支）要先做品質檢查
-- 多來源JOIN的計數會重複：解讀時看「最大來源」與「對照組」，不直接加總
-- 證據不足就說不足：Codex在session仍為true時不宣稱401已驗證，是本專案`record_status`原則的同一回事
-- 找到一個欄位的問題，要用同一套方法檢查同表其他欄位：手機的遮罩規則在公司電話上也成立
-- 方法可以沿用、規則要依資料調整：公司電話要先切掉分機才能看結尾分布
-- 先建立「正常」的基準再判斷異常：每多一個0數量約少十倍，6個0出現34支就不可能是巧合
-- 挑驗收樣本前先確認它在測試環境看得到：資料庫2,487筆、前台只有2,268筆
+- 例行工作跳過一次就要補：Free方案沒有自動備份，少一週就是少一個還原點
+- 檢查清單本身也會過期：照清單檢查時發現清單指向不存在的東西，要修的是清單
