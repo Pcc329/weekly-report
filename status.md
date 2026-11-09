@@ -60,12 +60,12 @@
 | 主要業者名單來源資訊待提供者回覆 | 外部協作 | 元甫 | 元甫 | — | 11/06已以LINE說明分工（提供者負責來源與收錄決定；PPC負責正確性QC與簡報）並附QC檔。待回覆：Landscape平台正式名稱、匯出日期、比對依據（統編或名稱）；解散10家、經濟部查無資料32家是否保留。報告目前全數保留並揭露 |
 | 四來源完整稽核（11/06週輕量檢查觸發） | 資料品質 | Patrick | — | 下週 | 新創嚴選152（基準151，+1）、SME AI 267（第17頁11張，基準265，+2）、工業館AI工具庫201／17頁（基準193，+8）、Lite 210／18頁（基準201，+9）。淨值會隱藏變化，須逐筆比對（11/02方法）；建議先做工業館兩頁（變動最大，三頁合併），再做SME AI、新創。11/06抽查工業館`SOL-MOE-0399`：DB「Vital Knowledge-AOAI智能生成模型」74,500，官網已改為「Vital Knowledge+AOAI智能生成嘗鮮版」75,000（4個月），屬改名＋調價，完整稽核時一併處理 |
 | 週輕量檢查讀不到：商業服務業專區、政府軟體採購網 | 資料品質 | Patrick | — | 下週五前 | 11/06：商服`smebiz.org.tw`於Chrome Claude顯示憑證錯誤（未略過警告，屬正確處置），待PPC以一般瀏覽器確認；政府軟體採購網因基準表只記「導向`/portal/`」無完整網址，Claude推測`gsp.gov.tw`為不存在網域（NXDOMAIN），非網站失效。以`select * from public.data_sources`查正確網址後補入稽核log基準表 |
-| 205筆上架方案無`company_id` | 資料品質 | Patrick | — | — | 延續P2既有列（10/2發現，10/14、10/15、11/02陸續補充個案，已加刪除線併入本列）；11/06 VERIFY 05量化（`company_id is null`且未下架，205筆），並確認會使MCP但書缺值計數灌水。違反「方案必屬於某公司」原則；逐筆對應公司，對不上者標示，清完後評估`solutions.company_id`加`NOT NULL`（另列P2） |
+| 205筆上架方案無`company_id` | 資料品質 | Patrick | — | — | 延續P2既有列（10/2發現，10/14、10/15、11/02陸續補充個案，已加刪除線併入本列）；11/06 VERIFY 05量化（`company_id is null`且未下架，205筆），並確認會使MCP但書缺值計數灌水。違反「方案必屬於某公司」原則；逐筆對應公司，對不上者標示，清完後評估`solutions.company_id`加`NOT NULL`（另列P2）。11/09：Airtable匯出中已有219筆方案無`company_id`，問題早於遷移（原始匯入即無對應公司） |
 | `companies`混入需求方企業約59家 | 資料品質 | Patrick | — | — | 11/06：`cases.linked_company_id`（導入企業）62筆全在`companies`，其中僅3家有方案、0家為提供廠商；`provider_linked_company_id`25筆全在SF。影響：含金量分層、資本額涵蓋率分母（1,103含需求方）、公司統計皆須先區分角色 |
-| 歐易亞科技（80232586）無任何方案：Airtable查證 | 資料品質 | Patrick | — | **11/12前** | 11/06：資本額1.5億、有`airtable_rec_id` `recFFrgtokYT9INdy`、公司介紹完整（iChannels通路王），但`solutions`、`contacts`、`awards`、`digital_needs`皆0筆，方案名稱與描述搜尋「通路王／iChannels」無結果。待查Airtable該筆Solutions連結欄位：有連結＝遷移漏接；空＝原本就無方案。另以`not exists`全表查「完全沒有方案」的公司數判斷是否系統性問題 |
-| Airtable退場前最終完整匯出封存 | 後端 | Patrick | Patrick | **11/12前** | 11/06：歐易亞案例顯示部分問題只能回Airtable查證，退場後即無證據；匯出各Table（含連結欄位）封存後再撤`AIRTABLE_TOKEN` |
+| 歐易亞科技（80232586）無任何方案：Airtable查證 | 資料品質 | Patrick | — | **11/12前** | 11/06：資本額1.5億、有`airtable_rec_id` `recFFrgtokYT9INdy`、公司介紹完整（iChannels通路王），但`solutions`、`contacts`、`awards`、`digital_needs`皆0筆，方案名稱與描述搜尋「通路王／iChannels」無結果。待查Airtable該筆Solutions連結欄位：有連結＝遷移漏接；空＝原本就無方案。另以`not exists`全表查「完全沒有方案」的公司數判斷是否系統性問題。**11/09結案**：Airtable Companies的`Solutions`連結欄位為空，Airtable時期即無方案，非遷移漏接。全表「完全沒有方案」公司333家（另34家只有已下架方案，合計367＝VERIFY 02）；以Airtable匯出比對：212家`airtable_rec_id`為null（Supabase上線後新增）、20家`MANUAL-`（案例導入企業）、97家來自Airtable且Airtable亦無方案、4家Airtable有方案→其中永源智能（95445361／60676875）、靈知科技（96970805／97414836）為同名重複建檔且方案已歸另一筆，今略行銷SOL-0072、創意金點SOL-0730於Airtable為空白紀錄（無名稱）。結論：遷移無有內容資料遺失 |
+| Airtable退場前最終完整匯出封存 | 後端 | Patrick | Patrick | **11/12前** | 11/06：歐易亞案例顯示部分問題只能回Airtable查證，退場後即無證據；匯出各Table（含連結欄位）封存後再撤`AIRTABLE_TOKEN`。**11/09完成**：14張Table匯出CSV，各表筆數與Airtable頁面一致（Solutions首次匯出僅13筆，原因為既有Grid view設有篩選，改用無篩選view重新匯出2,485筆）；無附件欄位。筆數：Companies 871、Solutions 2,485、Contacts 677、Awards 148、Cases 59、Digital_needs 145、Solution_Domains 2,770、Service_Domains 31、Program_Promotions 16、Ask_Logs 802、Logs 1,212、Feedback 1、Test_Ask_Results 100、Test_Search_Results 100（SHA-256見11/09） |
 | 資本額品質標準定案 | 資料品質 | Patrick | Patrick | 11/13前 | 11/06草案（依用途：內部探索已可用；對外引用未達標）：完整性以有上架方案736家為分母（目前552／736＝75.0%，全表600／1,103＝54.4%）、口徑單一並記`capital_basis`、已知錯誤0、記`capital_checked_at`；有效性已符合（無0或負值） |
-| 方案圖片（提升瀏覽體驗） | 前端 | Patrick | 組長 | 下週優先 | 11/03評估。未取得授權前不使用第三方圖片：hotlink與存副本皆有著作權與條款疑慮（廠商授權對象為政府平台；SME AI、農業部網站禁止自動擷取），圖片上的價格與版本文字也不在資料治理控管內。可先做（不需授權）：共用16:9相框（contain＋同圖模糊背景，小圖不放大）＋列表卡片文字圖（依類別配色、不仿廠商品牌）；詳情頁缺圖整塊隱藏；PDF缺圖以圖框揭露原因與查核日。真實圖片待授權（洽廠商或平台），需組長決策。DEMO頁已發布（僅PPC可見，`https://claude.ai/artifact/74D5WoP9X4nb1FNTLq8Sip`）。上線後以「列表→詳情」點擊比例驗證。**11/06 PPC決定下週優先，由P2移至P1**。兩種顯示：①有圖＝共用16:9相框，圖片完整縮放（contain）＋同一張圖模糊放大作背景填滿空白；②缺圖＝列表卡片文字圖（類別配色）、詳情頁整塊隱藏、PDF圖框揭露原因與查核日。下週步驟：①向組長確認授權方向（洽廠商／洽平台／暫不處理）②Codex規格書（範本v2）先做相框元件＋文字圖③Preview驗收。**11/06實作（同日）**：PPC決定不再評估、直接做共用相框＋圖片（組長要求看到圖片）。規格`codex_spec_solution_images_v1_2026-11-06.md`；PR #302（分支`codex/solution-images-v1`，未merge）review通過：`api/solutions.js`以`fetchOptionalSupabaseColumn`讀`solution_images`（失敗回空Map，不會500）、`public/solution-image.js`（16:9、主圖`scale-down`＋同圖模糊背景、https限定、名稱跳脫、`onerror`退回）。SQL Editor已執行`migrations/20261109_solution_images.sql`（權限確認anon／authenticated僅SELECT）與試點寫入：新創嚴選128筆（rows 128、distinct_urls 128），Preview詳情頁Jubo（SOL-0771）顯示正常。**圖片來源**：新創嚴選網公開商品API（`startup.sme.gov.tw/startupselect/prod-api/api/products`）的`main_image.image_url`，每商品一張主圖；Chrome抄錄152筆並逐頁SHA-256核對；DB存固定網址`https://startup.sme.gov.tw/startupselect/prod-api/api/image/<uuid>`，瀏覽器請求時轉址至新創嚴選的AWS S3預簽網址（`new-startup-image.s3.ap-east-2.amazonaws.com`，有期限，不存）；無痕視窗驗證免登入。**不存副本**：Supabase（資料庫只存網址文字）、Storage、Vercel、repo皆無圖檔，圖片由使用者瀏覽器直接向新創嚴選取得；每列`source`記「新創嚴選網」、`checked_at` 2026-11-06、`note`記新創嚴選商品ID（UUID）。配對：DB正常128筆與官網152筆以NFKC正規化名稱一對一配對128／128；官網24筆DB未收錄（收錄候選）。SOL-1200、SOL-1211官網公司為蘿蔔科技、暴風數位（可補`company_id`）。**待**：Preview列表（文字圖是否太滿）、詳情頁圖片位置（目前在費用卡片之後）、手機版→一次彙整修改清單給Codex（另含：圖片請求兩次、`updated_at`無trigger、桌機圖片在箭頭右側）→merge；SME AI、農業部網站條款禁止自動擷取，擴大來源前須另定取得方式。**11/06上線**：PR #302 squash merge為`e6964eb`（Claude以codeload核對5個關鍵檔與review版本逐位元組一致）；正式站新創嚴選128筆有圖。上架方案2,250筆中有圖128（5.7%）、文字圖2,122；臺灣雲市集1,031筆平台已停止服務無來源可取。**工業館暫緩**：抽查叡揚兩方案（Vital OD+OCR辨識、Vital Knowledge+AOAI智能生成嘗鮮版）使用同一張圖庫照片，圖片無法區分方案、資訊量低，圖庫照片授權也可能不涵蓋第三方引用；待再抽2～3家確認。下一個候選：資策會產業調查132筆（可直接向廠商取得授權）。**v1.1改進清單**：主圖載入後再設定背景（避免同圖請求兩次）、`updated_at` trigger、桌機圖片在箭頭右側、詳情頁圖片位置（目前在費用卡片之後）、文字圖是否保留、圖片失效定期檢查（併入每月稽核，失效改`status=broken`）；另比較有圖／文字圖卡片的點擊率 |
+| 方案圖片（提升瀏覽體驗） | 前端 | Patrick | 組長 | 下週優先 | 11/03評估。未取得授權前不使用第三方圖片：hotlink與存副本皆有著作權與條款疑慮（廠商授權對象為政府平台；SME AI、農業部網站禁止自動擷取），圖片上的價格與版本文字也不在資料治理控管內。可先做（不需授權）：共用16:9相框（contain＋同圖模糊背景，小圖不放大）＋列表卡片文字圖（依類別配色、不仿廠商品牌）；詳情頁缺圖整塊隱藏；PDF缺圖以圖框揭露原因與查核日。真實圖片待授權（洽廠商或平台），需組長決策。DEMO頁已發布（僅PPC可見，`https://claude.ai/artifact/74D5WoP9X4nb1FNTLq8Sip`）。上線後以「列表→詳情」點擊比例驗證。**11/06 PPC決定下週優先，由P2移至P1**。兩種顯示：①有圖＝共用16:9相框，圖片完整縮放（contain）＋同一張圖模糊放大作背景填滿空白；②缺圖＝列表卡片文字圖（類別配色）、詳情頁整塊隱藏、PDF圖框揭露原因與查核日。下週步驟：①向組長確認授權方向（洽廠商／洽平台／暫不處理）②Codex規格書（範本v2）先做相框元件＋文字圖③Preview驗收。**11/06實作（同日）**：PPC決定不再評估、直接做共用相框＋圖片（組長要求看到圖片）。規格`codex_spec_solution_images_v1_2026-11-06.md`；PR #302（分支`codex/solution-images-v1`，未merge）review通過：`api/solutions.js`以`fetchOptionalSupabaseColumn`讀`solution_images`（失敗回空Map，不會500）、`public/solution-image.js`（16:9、主圖`scale-down`＋同圖模糊背景、https限定、名稱跳脫、`onerror`退回）。SQL Editor已執行`migrations/20261109_solution_images.sql`（權限確認anon／authenticated僅SELECT）與試點寫入：新創嚴選128筆（rows 128、distinct_urls 128），Preview詳情頁Jubo（SOL-0771）顯示正常。**圖片來源**：新創嚴選網公開商品API（`startup.sme.gov.tw/startupselect/prod-api/api/products`）的`main_image.image_url`，每商品一張主圖；Chrome抄錄152筆並逐頁SHA-256核對；DB存固定網址`https://startup.sme.gov.tw/startupselect/prod-api/api/image/<uuid>`，瀏覽器請求時轉址至新創嚴選的AWS S3預簽網址（`new-startup-image.s3.ap-east-2.amazonaws.com`，有期限，不存）；無痕視窗驗證免登入。**不存副本**：Supabase（資料庫只存網址文字）、Storage、Vercel、repo皆無圖檔，圖片由使用者瀏覽器直接向新創嚴選取得；每列`source`記「新創嚴選網」、`checked_at` 2026-11-06、`note`記新創嚴選商品ID（UUID）。配對：DB正常128筆與官網152筆以NFKC正規化名稱一對一配對128／128；官網24筆DB未收錄（收錄候選）。SOL-1200、SOL-1211官網公司為蘿蔔科技、暴風數位（可補`company_id`）。**待**：Preview列表（文字圖是否太滿）、詳情頁圖片位置（目前在費用卡片之後）、手機版→一次彙整修改清單給Codex（另含：圖片請求兩次、`updated_at`無trigger、桌機圖片在箭頭右側）→merge；SME AI、農業部網站條款禁止自動擷取，擴大來源前須另定取得方式。**11/06上線**：PR #302 squash merge為`e6964eb`（Claude以codeload核對5個關鍵檔與review版本逐位元組一致）；正式站新創嚴選128筆有圖。上架方案2,250筆中有圖128（5.7%）、文字圖2,122；臺灣雲市集1,031筆平台已停止服務無來源可取。**工業館暫緩**：抽查叡揚兩方案（Vital OD+OCR辨識、Vital Knowledge+AOAI智能生成嘗鮮版）使用同一張圖庫照片，圖片無法區分方案、資訊量低，圖庫照片授權也可能不涵蓋第三方引用；待再抽2～3家確認。下一個候選：資策會產業調查132筆（可直接向廠商取得授權）。**v1.1改進清單**：主圖載入後再設定背景（避免同圖請求兩次）、`updated_at` trigger、桌機圖片在箭頭右側、詳情頁圖片位置（目前在費用卡片之後）、文字圖是否保留、圖片失效定期檢查（併入每月稽核，失效改`status=broken`）；另比較有圖／文字圖卡片的點擊率。**11/09 v1.1上線**：PPC決定列表無圖不顯示相框（刪除文字圖）、詳情頁圖片上移至聯絡資訊之前；PR #303 squash merge `915bed8`（Claude以codeload核對4個關鍵檔一致）；背景圖改主圖`onload`後才載入；SQL Editor執行`20261110_solution_images_updated_at.sql`，`pg_trigger`確認`solution_images_touch_updated_at`啟用，`update … set note = note`驗證`updated_at`由11/06更新為11/09（首次測試在migration前執行故未變動）。**剩**：比較有圖／無圖卡片點擊情形、圖片失效定期檢查（併入每月稽核）、下一個來源（資策會產業調查） |
 
 ### P2
 | 項目 | 分類 | 執行人 | 決策人 | 預計時間 | 狀態 |
@@ -163,3 +163,42 @@
 | `solutions.company_id`加`NOT NULL` | 後端 | Patrick | Patrick | — | 依賴P1「205筆上架方案無`company_id`」清理完成；含已下架方案一併檢查 |
 
 ---
+
+# 2026-11-09
+
+1. **上週收尾**：`codex_delivery_20261106e_status.zip`（`62e140d`），Claude以codeload核對4檔與交付包一致、main無其他推送；含週報補「下週計畫」AI雲平台修改、儀表板中央／地方分頁、20縣市初篩（與寄給世威的信一致）
+2. **AI雲平台暫停**：PPC 11/09決定暫停（目前沒有新計畫），儀表板中央／地方分頁與地方平台20縣市初篩一併暫停
+3. **方案圖片v1.1上線**：PPC決定列表無圖不顯示相框、詳情頁圖片上移；規格`codex_spec_solution_images_v1_1_2026-11-09.md`→PR #303 review→squash merge `915bed8`→trigger migration→驗證
+4. **11/12結案檢查清單**：第一階段（11/12前）①完全沒有方案的公司數②歐易亞查證③Airtable最終匯出④匯出核對，四項完成；第二階段（11/12）刪除Vercel `DB_SOURCE_SOLUTIONS`／`_COMPANIES`／`_CASES`／`AIRTABLE_TOKEN`（三環境、Secret勿按Save）、Airtable Developer hub撤銷token、網站冒煙測試；第三階段：停止Airtable訂閱（12/3下次扣款前，待PPC決定取消或降級）、GitHub組織移轉測試、清理repo殘留Airtable腳本
+5. **333家無方案公司分類**：見待追蹤「歐易亞」列；新增待辦：212家Supabase上線後新增且無方案的公司來源（含大學、財團法人、會計師事務所等非資服業者）
+6. **本週排程調整**：PPC 11/14（六）iPAS考試，資本額寫回＋SF資料修正、四來源完整稽核延至下週；保留11/11 469家人工確認、11/12 Airtable退場、11/13例行作業
+
+<details>
+<summary>展開細節：Airtable匯出檔SHA-256</summary>
+
+| Table | 筆數 | SHA-256（前16碼） |
+|---|---:|---|
+| Ask_Logs | 802 | `d41d742358c588d0` |
+| Program_Promotions | 16 | `f7638f1cb96bf9f2` |
+| Test_Ask_Results | 100 | `d693d051f4595a08` |
+| Feedback | 1 | `438f8b290b393e4e` |
+| Logs | 1,212 | `9dbd2df8465fa1c1` |
+| Cases | 59 | `2e86ca30f832105c` |
+| Solution_Domains | 2,770 | `520e95a3bcf74b33` |
+| Test_Search_Results | 100 | `621a5d398b4e0d4e` |
+| Awards | 148 | `27b00ed50b7b42cd` |
+| Contacts | 677 | `97c8ba0560b43ac4` |
+| Digital_needs | 145 | `d79bc2d8939d1bd9` |
+| Service_Domains | 31 | `d71a4a55d922e035` |
+| Companies | 871 | `9eaed655bec3c32b` |
+| Solutions | 2,485 | `b279ca4665f6cf5a` |
+
+匯出檔存於PPC OneDrive `Airtable_最終匯出_20261109`。
+
+</details>
+
+**本日教訓**
+- 匯出前先建立無篩選的新view：既有view的篩選條件不會顯示在CSV，13筆和2,485筆都是「成功匯出」
+- 測試結果不如預期時，先確認前提是否成立（trigger是否存在），再懷疑程式
+- 欄位預設值只在INSERT生效，UPDATE要靠trigger
+- 疑似遷移遺失先用`airtable_rec_id`分類，333家縮小到4家再逐筆查
