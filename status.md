@@ -283,3 +283,6 @@
 4. **類別髒值**：`industry_category`另有6種值，皆屬案例反推補建，見P2
 5. **協作模式**：PPC提出減少Claude與Codex間的複製貼上，列入規劃（P2）
 6. **色彩主題DEMO**：三主題，見P2
+7. **海巡收尾推送**：稽核log（基準表、11/23檢查紀錄與完整稽核段落）、SOP第四節第7點、status.md經Codex推送weekly-report（`b23bcdf`），三檔blob與交付檔一致；寫入SQL正本存檔PR #316（`migrations/20261123_freshness_audit_write.sql`，只新增1檔、blob一致，內文註明已於正式站執行、勿再執行），merge由PPC執行。推送前Codex核對本機main與`origin/main`同為`51d44f5`、以位元組複製並逐檔核對SHA-256／blob／大小、暫存區blob再核對一次，push前後以完整SHA比對遠端
+8. **協作模式第一階段實施**：PR #315、#316皆由Codex push後，Claude直接自GitHub fetch核對diff與blob，PPC不需上傳diff
+9. **明日候選**：ETL清單（收錄候選426、SME AI缺公司64）、修4個寫死hash的測試（兩檔載入失敗致API測試失效，可兼作MCP串接試點）、IAM規格、類別髒值6筆（待PPC確認`SOL-CASE-0002`分類）
