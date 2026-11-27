@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2c3e50">
+<title>小隊任務看板</title>
+<style>
+/* VOICE: 院內工作看板，冷靜、可快速掃讀，與週報網站同一套視覺
+   IDEA: 週會白板——一行一件事，翻開背面才看到目的與細節
+   PICTURE: 看板本體就是畫面，北極星目標在上、任務列表在下
+   COLOUR and TYPE: 沿用週報站 navy #2c3e50 + teal #1D9E75，Segoe UI / 微軟正黑體
+   LAYOUT: 單欄 780px，成員篩選列置頂黏著，手機直接堆疊 */
+:root{color-scheme:light dark;
+ --primary:light-dark(#2c3e50,#dfe7ef);--teal:#1D9E75;--teal-ink:light-dark(#0F6E56,#5DCAA5);
+ --bg:light-dark(#f0f2f5,#14181d);--card:light-dark(#ffffff,#1c2229);--ink:light-dark(#1f2933,#e6eaee);
+ --sub:light-dark(#5f6b77,#a3adb8);--muted:light-dark(#7b8794,#8a94a0);--line:light-dark(#dde2e8,#2c343d);
+ --head:light-dark(#2c3e50,#1c2733)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;margin:0;padding:0}
+body{font:16px/1.6 'Segoe UI','Microsoft JhengHei','Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);padding-bottom:56px;overflow-x:clip}
+header{background:var(--head);color:#fff;padding:26px 20px 22px;text-align:center}
+header h1{font-size:1.5rem;letter-spacing:.5px;margin-bottom:4px}
+header p{opacity:.65;font-size:.85rem}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+.goal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:18px}
+.goal .lbl{font-size:.78rem;color:var(--muted)}
+.goal h2{font-size:1.12rem;color:var(--primary);margin:2px 0 6px;line-height:1.4}
+.goal .meta{font-size:.8rem;color:var(--sub)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.stat{background:var(--bg);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:.75rem;color:var(--sub)}
+.stat b{font-size:1.35rem;color:var(--primary)}
+.bar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 10px;margin-top:6px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--sub);font:inherit;font-size:.86rem;font-weight:700;padding:8px 15px;border-radius:999px;cursor:pointer;min-height:40px}
+.chip[aria-pressed=true]{background:var(--primary);color:var(--card);border-color:var(--primary)}
+.chip:focus-visible,summary:focus-visible{outline:3px solid #7fc9ae;outline-offset:2px}
+.chip.add{border-style:dashed;cursor:default;font-weight:400}
+.who{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:6px;font-size:.88rem;color:var(--sub)}
+.who.on{display:flex;gap:12px;align-items:center}
+.who b{color:var(--ink);font-size:.98rem}
+.grp{display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;color:var(--sub);margin:18px 2px 8px}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+details[open]{border-color:var(--teal)}
+summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:center;min-height:52px}
+summary::-webkit-details-marker{display:none}
+.av{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
+.tt{flex:1;font-size:.95rem;line-height:1.4}
+.done .tt{color:var(--muted);text-decoration:line-through}
+.pl{flex:none;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.wk{background:#e1f5ee;color:#085041}.p1{background:#fcebeb;color:#791f1f}.p2{background:#faeeda;color:#633806}.sg{background:#eeedfe;color:#3c3489}
+.due{flex:none;font-size:.78rem;color:var(--muted);min-width:3.2em;text-align:right;white-space:nowrap}
+.cv{flex:none;color:var(--muted);transition:transform .2s}
+details[open] .cv{transform:rotate(180deg)}
+.dl{padding:2px 16px 14px 54px;font-size:.88rem;color:var(--sub);display:grid;gap:6px}
+.dl div{display:grid;grid-template-columns:5.2em minmax(0,1fr);gap:8px}
+.dl b{color:var(--ink);font-weight:700}
+.legend{font-size:.78rem;color:var(--muted);margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.note{font-size:.78rem;color:var(--muted);margin-top:8px}
+.sec{font-size:1.02rem;font-weight:700;color:var(--primary);margin:22px 2px 10px;padding-left:10px;border-left:4px solid var(--primary);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec small{font-size:.75rem;font-weight:400;color:var(--muted)}
+.gbox{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+.gin{min-width:760px;padding:10px 12px 12px}
+.grow{display:grid;grid-template-columns:11.5em minmax(0,1fr);align-items:center;min-height:30px}
+.glane{font-size:.74rem;font-weight:700;color:var(--muted);padding:10px 0 2px}
+.gl{font-size:.8rem;display:flex;gap:6px;align-items:center;padding-right:8px;line-height:1.25}
+.gl .av{width:20px;height:20px;font-size:.65rem}
+.gt{position:relative;height:22px}
+.gw{position:absolute;top:-4px;bottom:-4px;background:light-dark(rgba(44,62,80,.045),rgba(255,255,255,.04))}
+.gb{position:absolute;top:3px;height:16px;border-radius:4px;min-width:6px}
+.gb.plan{background:transparent;border:1.5px dashed}
+.gb.cont::after{content:'→';position:absolute;right:-14px;top:-3px;font-size:.8rem;color:var(--muted)}
+.gm{position:absolute;top:2px;width:12px;height:12px;transform:translateX(-6px) rotate(45deg);background:var(--primary)}
+.gm.plan{background:transparent;border:2px solid var(--primary)}
+.gnow{position:absolute;top:0;bottom:0;width:2px;background:#c0392b;z-index:2}
+.gnow span{position:absolute;top:-2px;left:4px;font-size:.68rem;color:#c0392b;white-space:nowrap;font-weight:700}
+.ghd{font-size:.7rem;color:var(--muted);position:relative;height:18px}
+.ghd span{position:absolute;white-space:nowrap}
+.glg{display:flex;flex-wrap:wrap;gap:12px;font-size:.74rem;color:var(--muted);margin-top:8px;padding:0 12px 10px}
+.glg i{display:inline-block;width:18px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.log details summary{min-height:44px}
+.log .dt{flex:none;font-weight:700;color:var(--teal-ink);font-size:.86rem;width:4.4em}
+.log ul{padding:0 16px 12px 34px;font-size:.86rem;color:var(--sub);display:grid;gap:4px}
+.tip{display:block;margin-top:4px;font-size:.78rem;color:light-dark(#854F0B,#FAC775);background:light-dark(#FAEEDA,rgba(239,159,39,.12));border-radius:6px;padding:3px 8px;line-height:1.45}
+.tip b{font-weight:700}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--sub);font-size:.9rem}
+@media(max-width:600px){.log ul{padding-left:30px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dl{padding-left:16px}.dl div{grid-template-columns:1fr;gap:0}.due{min-width:0}}
+@media(prefers-reduced-motion:reduce){.cv{transition:none}}
+@media print{.bar{position:static}details{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+ <h1>小隊任務看板</h1>
+ <p>資服產業資料庫 · 每週五更新</p>
+</header>
+
+<main class="wrap">
+ <section class="goal" aria-labelledby="goal-title">
+  <div class="lbl">北極星目標</div>
+  <h2 id="goal-title">讓院內同仁用自己的帳號，找到可用的方案與案例</h2>
+  <div class="meta" id="meta"></div>
+  <div class="stats" id="stats" aria-live="polite"></div>
+ </section>
+
+ <div class="bar">
+  <div class="chips" id="chips" role="group" aria-label="依成員篩選"></div>
+ </div>
+ <div class="who" id="who"></div>
+
+ <h2 class="sec">時程<small>自 11/17 kick-off 起 · 虛線為規劃草案</small></h2>
+ <div class="gbox"><div class="gin" id="gantt"></div>
+  <div class="glg"><span><i style="background:#0F6E56"></i>已完成</span><span><i style="border:1.5px dashed #0F6E56"></i>規劃中</span><span>◆ 里程碑</span><span style="color:#c0392b">｜今天</span></div>
+ </div>
+
+ <h2 class="sec">工作回顧<small>11/17–11/27 · 點日期展開</small></h2>
+ <div class="log" id="log"></div>
+
+ <h2 class="sec">任務看板<small id="kcount"></small></h2>
+ <div id="list"></div>
+
+ <div class="legend">
+  <span class="pl p1">P1</span>本月必做
+  <span class="pl p2">P2</span>排程中
+  <span class="pl sg">建議</span>嘉華提議，待主管確認後生效
+  <span class="pl wk">每週</span>例行項目
+ </div>
+ <p class="note">點任務可展開目的、執行細節與下一步；時程上的色條可停留查看說明。工作回顧為嘉華的工作紀錄。進度、備註或提醒請回報嘉華，每週五統一更新。</p>
+</main>
+
+<script>
+{
+ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const fail = msg => { document.getElementById('list').innerHTML = `<div class="empty">${msg}</div>`; };
+ fetch('team.json', { cache: 'no-store' })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(start)
+  .catch(() => fail('看板資料載入失敗，請重新整理；若持續發生請通知嘉華。'));
+
+ function start(D) {
+ const byId = Object.fromEntries(D.members.map(m => [m.id, m]));
+ const $ = id => document.getElementById(id);
+
+ $('meta').textContent = `Project owner：${D.owner} · 成員 ${D.members.length} 人 · 更新於 ${D.updated}`;
+
+ const Y = 2026, P = s => { const [m, d] = s.split('-').map(Number); return new Date(Y, m - 1, d); };
+ const T0 = P(D.timeline.start), N = Math.round((P(D.timeline.end) - T0) / 864e5) + 1;
+ const ix = s => Math.round((P(s) - T0) / 864e5);
+ const pct = i => (i / N * 100).toFixed(3) + '%';
+ const weekendBands = (() => { let o = ''; for (let i = 0; i < N; i++) { const w = new Date(T0.getTime() + i * 864e5).getDay(); if (w === 6) o += `<div class="gw" style="left:${pct(i)};width:${pct(2)}"></div>`; } return o; })();
+ const nowLine = `<div class="gnow" style="left:${pct(ix(D.timeline.today) + 0.5)}"></div>`;
+
+ const renderGantt = f => {
+  const rows = D.gantt.filter(r => f === 'all' || r.owner === f);
+  let hd = '';
+  for (let i = 0; i < N; i++) { const d = new Date(T0.getTime() + i * 864e5); if (d.getDay() === 1) hd += `<span style="left:${pct(i)}">${d.getMonth() + 1}/${d.getDate()}</span>`; }
+  let o = `<div class="grow"><div></div><div class="ghd">${hd}<span style="left:${pct(ix(D.timeline.today) + 0.5)};color:#c0392b;font-weight:700;transform:translateX(4px)">今天</span></div></div>`;
+  o += `<div class="grow"><div class="gl" style="color:var(--muted)">里程碑</div><div class="gt">${weekendBands}${nowLine}${D.milestones.map(m => `<div class="gm ${m.plan ? 'plan' : ''}" style="left:${pct(ix(m.date) + 0.5)}" title="${esc(m.date.replace('-', '/') + ' ' + m.label)}"></div>`).join('')}</div></div>`;
+  let lane = '';
+  for (const r of rows) {
+   if (r.lane !== lane) { lane = r.lane; o += `<div class="glane">${esc(lane)}</div>`; }
+   const m = byId[r.owner];
+   const bars = r.segs.map(s => {
+    const a = ix(s.s), w = ix(s.e) - a + 1;
+    const tip = `${s.s.replace('-', '/')}–${s.e.replace('-', '/')} ${r.label}${s.t ? '：' + s.t : ''}`;
+    const st = s.plan ? `border-color:${esc(m.fg)};background:${esc(m.bg)}` : `background:${esc(m.fg)}`;
+    return `<div class="gb ${s.plan ? 'plan' : ''} ${s.cont ? 'cont' : ''}" style="left:${pct(a)};width:${pct(w)};${st}" title="${esc(tip)}"></div>`;
+   }).join('');
+   o += `<div class="grow"><div class="gl"><span class="av" style="background:${esc(m.bg)};color:${esc(m.fg)}">${esc(m.name[0])}</span>${esc(r.label)}</div><div class="gt">${weekendBands}${nowLine}${bars}</div></div>`;
+  }
+  if (!rows.length) o += '<div class="empty" style="margin-top:8px">這位成員目前沒有排入時程的項目</div>';
+  $('gantt').innerHTML = o;
+ };
+
+ $('log').innerHTML = D.log.map((d, i) => `<details ${i === D.log.length - 1 ? 'open' : ''}><summary><span class="dt">${esc(d.date)}（${esc(d.day)}）</span><span class="tt">${esc(d.items[0])}</span><span class="due">${d.items.length} 項</span><svg class="cv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul>${d.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>`).join('');
+
+ const allTips = t => t.tips || [];
+
+ const current = () => {
+  const h = location.hash.slice(1);
+  return byId[h] ? h : 'all';
+ };
+
+ const render = () => {
+  const f = current();
+  const tasks = D.tasks.filter(t => f === 'all' || t.owner === f);
+  renderGantt(f);
+  $('kcount').textContent = `${tasks.length} 項`;
+
+  $('chips').innerHTML =
+   [{id:'all', name:'全部'}].concat(D.members)
+    .map(m => `<button class="chip" data-id="${esc(m.id)}" aria-pressed="${f === m.id}">${esc(m.name)}</button>`).join('') +
+   `<span class="chip add" title="成員由資料檔管理，新增一筆即可">＋ 成員</span>`;
+
+  $('stats').innerHTML = D.statuses.map(s =>
+   `<div class="stat"><span>${esc(s.label)}</span><b>${tasks.filter(t => t.status === s.id).length}</b></div>`).join('');
+
+  const who = $('who');
+  if (f === 'all') { who.className = 'who'; who.innerHTML = ''; }
+  else {
+   const m = byId[f];
+   who.className = 'who on';
+   who.innerHTML = `<span class="av" style="background:${esc(m.bg)};color:${esc(m.fg)}">${esc(m.name[0])}</span><div><b>${esc(m.name)}</b><br>${esc(m.role)}</div>`;
+  }
+
+  let html = '';
+  for (const s of D.statuses) {
+   const g = tasks.filter(t => t.status === s.id);
+   if (!g.length) continue;
+   html += `<div class="grp"><span>${esc(s.label)}</span><span>${g.length}</span></div>`;
+   html += g.map(t => {
+    const m = byId[t.owner];
+    return `<details class="${t.status === 'done' ? 'done' : ''}">
+<summary>
+ <span class="av" style="background:${esc(m.bg)};color:${esc(m.fg)}" title="${esc(m.name)}">${esc(m.name[0])}</span>
+ <span class="tt">${esc(t.title)}${allTips(t).map(x => `<span class="tip"><b>提醒</b>　${esc(x)}</span>`).join('')}</span>
+ ${t.weekly ? '<span class="pl wk">每週</span>' : ''}${t.suggested ? '<span class="pl sg">建議</span>' : ''}
+ <span class="pl ${t.priority === 'P1' ? 'p1' : 'p2'}">${esc(t.priority)}</span>
+ <span class="due">${esc(t.due)}</span>
+ <svg class="cv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</summary>
+<div class="dl">
+ <div><b>目的</b><span>${esc(t.why)}</span></div>
+ <div><b>執行細節</b><span>${esc(t.how)}</span></div>
+ <div><b>下一步</b><span>${esc(t.next)}</span></div>
+</div>
+</details>`;
+   }).join('');
+  }
+  $('list').innerHTML = html || '<div class="empty">目前沒有待辦項目</div>';
+ };
+
+ $('chips').addEventListener('click', e => {
+  const b = e.target.closest('button[data-id]');
+  if (!b) return;
+  const id = b.dataset.id;
+  if (id === 'all') { try { history.replaceState(null, '', location.pathname + location.search); } catch (_) { location.hash = ''; } }
+  else location.hash = id;
+  render();
+ });
+
+ window.addEventListener('hashchange', render);
+ render();
+ }
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
