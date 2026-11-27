@@ -1,6 +1,10 @@
 {
   "updated": "2026-11-27",
   "owner": "嘉華",
+  "notes": {
+    "csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6CfiyQg7jjrtRuQLk867BrhKg_BGjnKsmTeZG-QQDbNkBQWFUTLuI6k19M0aVCQFF_I3DAWVrR4j7/pub?gid=1118104125&single=true&output=csv",
+    "form": "https://docs.google.com/forms/d/e/1FAIpQLSdjc76kyexVhgMEX5dMdP-3EuS3-vbDxQNL5JV1V_g1R2Hznw/viewform?usp=pp_url&entry.787750649=TASK"
+  },
   "members": [
     {
       "id": "ppc",
